@@ -190,8 +190,6 @@ function block_theme_suggestions_block(array $variables) {
     $suggestions[] = 'block__' . $variables['elements']['#id'];
   }
 
-  // Remove duplicate suggestions.
-  $suggestions = array_keys(array_count_values($suggestions));
   return $suggestions;
 }
 

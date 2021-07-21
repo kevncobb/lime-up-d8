@@ -6,9 +6,7 @@ global-styling:
   css:
     component:
       css/components/affix.css: {}
-      css/components/alerts.css: {}
       css/components/book.css: {}
-      css/components/comments.css: {}
       css/components/contextual.css: {}
       # @see https://www.drupal.org/node/2389735
       css/components/feed-icon.css: {}
@@ -19,7 +17,6 @@ global-styling:
       css/components/image-button.css: {}
       css/components/item-list.css: {}
       css/components/list-group.css: {}
-      css/components/node-preview.css: {}
       css/components/page.css: {}
       css/components/search-form.css: {}
       css/components/shortcut.css: {}
@@ -32,6 +29,7 @@ global-styling:
       css/components/tablesort-indicator.css: {}
       css/components/ui.widget.css: {}
       css/components/tabs.css: {}
+      css/components/toolbar.css: {}
       css/components/user.css: { weight: -10 }
       # @see https://www.drupal.org/node/2389735
       css/components/vertical-tabs.css: {}
@@ -74,6 +72,11 @@ breadcrumb:
   css:
     component:
       css/components/breadcrumb.css: {}
+
+comments:
+  css:
+    component:
+      css/components/comments.css: {}
 
 dropbutton:
   version: VERSION
@@ -169,6 +172,13 @@ commerce:
   css:
     component:
       css/components/commerce.css: {}
+
+# Core
+
+drupal.node.preview:
+  css:
+    component:
+      css/components/node-preview.css: {}
 
 # Fonts
 

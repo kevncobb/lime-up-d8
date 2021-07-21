@@ -1,8 +1,6 @@
 name: 'Total Control'
 description: 'Total Control Administration Dashboard'
 type: module
-core: 8.x
-# version: 8.x-2.x-dev
 package: Administration
 # project: total_control
 core_version_requirement: ^8 || ^9
@@ -14,7 +12,7 @@ dependencies:
   - panels:panels
   - page_manager:page_manager
 
-# Information added by Drupal.org packaging script on 2020-03-05
-version: '8.x-2.0'
+# Information added by Drupal.org packaging script on 2021-06-19
+version: '3.0.1'
 project: 'total_control'
-datestamp: 1583396772
+datestamp: 1624101717

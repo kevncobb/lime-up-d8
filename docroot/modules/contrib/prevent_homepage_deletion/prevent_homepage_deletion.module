@@ -61,7 +61,12 @@ function _prevent_homepage_deletion_check(EntityInterface $entity, AccountInterf
 
   $config = \Drupal::config('system.site');
   $front_uri = $config->get('page.front');
-  $params = Url::fromUri("internal:" . $front_uri)->getRouteParameters();
+
+  $url = Url::fromUri("internal:" . $front_uri);
+  if (!$url->isRouted()) {
+    return TRUE;
+  }
+  $params = $url->getRouteParameters();
 
   if (!empty($params)) {
     $entity_type = key($params);

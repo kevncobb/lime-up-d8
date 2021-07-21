@@ -9,6 +9,7 @@ use Drupal\Core\Block\BlockPluginInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Render\RendererInterface;
+use Drupal\Core\Render\RenderableInterface;
 use Drupal\Core\Routing\RedirectDestinationInterface;
 use Drupal\Core\Session\AccountInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
@@ -115,6 +116,21 @@ class AdministerMenus extends BlockBase implements BlockPluginInterface, Contain
     }
 
     $menus = menu_ui_get_menus();
+
+    // Support the custom permissions from the "menu_admin_per_menu" module.
+    if (\Drupal::moduleHandler()->moduleExists('menu_admin_per_menu')) {
+      if (!\Drupal::currentUser()->hasPermission('administer menu')) {
+        /** @var \Drupal\menu_admin_per_menu\MenuAdminPerMenuAccessInterface $allowedMenusService */
+        $allowedMenusService = \Drupal::service('menu_admin_per_menu.allowed_menus');
+        $allowed_menus = $allowedMenusService->getPerMenuPermissions(\Drupal::currentUser());
+        foreach ($menus as $id => $label) {
+          if (!in_array($id, $allowed_menus)) {
+            unset($menus[$id]);
+          }
+        }
+      }
+    }
+
     $config = $this->getConfiguration();
 
     $header = [
@@ -156,7 +172,7 @@ class AdministerMenus extends BlockBase implements BlockPluginInterface, Contain
     }
 
     // Build a link to the menu admin UI.
-    $link = '';
+    $link = NULL;
     if ($this->currentUser->hasPermission('administer menu')) {
       $link = Link::fromTextAndUrl($this->t('Menu administration'),
       new Url('entity.menu.collection'));
@@ -175,10 +191,12 @@ class AdministerMenus extends BlockBase implements BlockPluginInterface, Contain
       '#theme' => 'table',
       '#header' => $header,
       '#rows' => $rows,
-      '#footer' => $link,
     ];
 
-    $markup_data = $this->renderer->render($body_data) . $link->toString();
+    $markup_data = $this->renderer->render($body_data);
+    if ($link instanceof RenderableInterface) {
+      $markup_data .= $link->toString();
+    }
 
     return [
       '#type' => 'markup',

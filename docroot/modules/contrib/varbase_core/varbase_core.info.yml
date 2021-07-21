@@ -24,7 +24,7 @@ dependencies:
   - drupal:block
   - drupal:block_content
   - drupal:config
-  - drupal:config_update
+  - config_update:config_update
   - config_ignore:config_ignore
   - drupal:datetime
   - drupal:file
@@ -88,7 +88,7 @@ install:
   - betterlogin
   - varbase_update_helper
 
-# Information added by Drupal.org packaging script on 2021-05-05
-version: '8.x-8.31'
+# Information added by Drupal.org packaging script on 2021-07-13
+version: '8.x-8.32'
 project: 'varbase_core'
-datestamp: 1620220111
+datestamp: 1626188228

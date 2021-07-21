@@ -7,7 +7,7 @@ description: 'Provides starter default content for varbase.'
 dependencies:
   - default_content:default_content
 
-# Information added by Drupal.org packaging script on 2021-05-05
-version: '8.x-8.31'
+# Information added by Drupal.org packaging script on 2021-07-13
+version: '8.x-8.32'
 project: 'varbase_core'
-datestamp: 1620220111
+datestamp: 1626188228

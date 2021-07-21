@@ -244,9 +244,6 @@ class ThemeManager implements ThemeManagerInterface {
     $this->moduleHandler->alter($hooks, $suggestions, $variables, $base_theme_hook);
     $this->alter($hooks, $suggestions, $variables, $base_theme_hook);
 
-    // Remove duplicate suggestions.
-    $suggestions = array_unique($suggestions);
-    
     // Check if each suggestion exists in the theme registry, and if so,
     // use it instead of the base hook. For example, a function may use
     // '#theme' => 'node', but a module can add 'node__article' as a suggestion

@@ -7,7 +7,7 @@ package: Access control
 dependencies:
   - drupal:node
 
-# Information added by Drupal.org packaging script on 2020-05-20
-version: '8.x-1.3'
+# Information added by Drupal.org packaging script on 2021-06-02
+version: '8.x-1.4'
 project: 'prevent_homepage_deletion'
-datestamp: 1589985613
+datestamp: 1622617745
