@@ -606,4 +606,7 @@ a.pdf {
 //Formstack embedded forms
 form.fsForm {
   max-width: 840px;
+  select:not([multiple="multiple"]) {
+    padding-right: 5px;
+  }
 }
