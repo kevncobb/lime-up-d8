@@ -8,6 +8,9 @@ global:
     js/limestone.js: {}
     js/trunk8.min.js: {}
     js/colorbox.js: {}
+colorbox-fix:
+  dependencies:
+    - core/drupalSettings
 lc-slider:
   version: 1.x
   css:
