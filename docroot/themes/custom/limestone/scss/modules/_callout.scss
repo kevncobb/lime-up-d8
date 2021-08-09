@@ -143,7 +143,8 @@ $pull-quote-maxwidth: 50%;
 $pull-quote-color: $primary-color;
 $pull-quote-offset-large: -25%;
 $pull-quote-offset-medium: -15%;
-$pull-quote-fontsize-medium-up: 1.875rem;
+$pull-quote-fontsize-medium-up: 1.375rem;
+$pull-quote-fontsize-large-up: 1.875rem;
 $pull-quote-fontsize-small: 1.125rem;
 $pull-quote-gradient: true;
 
@@ -182,6 +183,7 @@ $pull-quote-gradient: true;
   }
 
   @include breakpoint(large) {
+    font-size: $pull-quote-fontsize-large-up;
     max-width: calc(#{$pull-quote-maxwidth} + 5%);
     margin-right: $pull-quote-offset-large;
   }
