@@ -205,7 +205,15 @@
       }
     }
   };
-/*
+  /*
+  Drupal.behaviors.fastClick = {
+    attach: function (context, settings) {
+      $(function() {
+        FastClick.attach(document.body);
+      });
+    }
+  };
+
   Drupal.behaviors.onPageLoad = {
     attach: function (context, settings) {
       $(window).bind("load", function() {
