@@ -55,6 +55,9 @@
     font-weight: 700;
     font-size: 0.7rem;
     letter-spacing: -0.5px;
+    span {
+      display: none;
+    }
   }
   th {
     font-family: $header-font-family;
@@ -116,6 +119,9 @@
     a.learn-more-link {
       font-size: 1rem;
       letter-spacing: -0.1px;
+      span {
+        display: inline;
+      }
     }
     th {
       font-size: 1.4rem;
