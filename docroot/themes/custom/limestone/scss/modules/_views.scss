@@ -154,7 +154,11 @@
         left: -9999px;
       }
 
-      tr { border: 1px solid #ccc; }
+      tr {
+        //border: 1px solid #ccc;
+        width: 100%;
+        float: left;
+      }
 
       td {
         /* Behave  like a "row" */
@@ -162,6 +166,8 @@
         border-bottom: 1px solid #eee;
         position: relative;
         padding-left: 50%;
+        width: 100%;
+        float: left;
       }
 
       td:before {
@@ -178,12 +184,12 @@
       /*
       Label the data
       */
-      td:nth-of-type(1):before { content: "Name"; }
-      td:nth-of-type(2):before { content: "Job Title"; }
-      td:nth-of-type(3):before { content: "Email"; }
-      td:nth-of-type(4):before { content: "Building"; }
-      td:nth-of-type(5):before { content: "Room"; }
-      td:nth-of-type(6):before { content: "Office Phone"; }
+      td:nth-of-type(1):before { content: "Name"; font-weight: bold; }
+      td:nth-of-type(2):before { content: "Job Title"; font-weight: bold; }
+      td:nth-of-type(3):before { content: "Email"; font-weight: bold; }
+      td:nth-of-type(4):before { content: "Building"; font-weight: bold; }
+      td:nth-of-type(5):before { content: "Room"; font-weight: bold; }
+      td:nth-of-type(6):before { content: "Office Phone"; font-weight: bold; }
     }
   }
 }
