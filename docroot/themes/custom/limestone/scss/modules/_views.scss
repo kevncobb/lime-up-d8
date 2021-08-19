@@ -63,7 +63,7 @@
     font-family: $header-font-family;
     text-transform: uppercase;
     font-size: 0.8rem;
-    line-height: 0.8rem;
+    line-height: 1.4rem;
     padding: .5rem .625rem .5rem;
     background-color: $limestone-blue;
     color: white;
@@ -110,7 +110,7 @@
     }
   }
   th {
-    font-size: 0.8rem;
+    font-size: 0.7rem;
     &:first-child {
       width: 205px;
     }
