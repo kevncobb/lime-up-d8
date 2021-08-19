@@ -54,16 +54,18 @@
     text-transform: uppercase;
     font-weight: 700;
     font-size: 0.7rem;
+    letter-spacing: -0.5px;
   }
   th {
     font-family: $header-font-family;
     text-transform: uppercase;
     font-size: 0.8rem;
-    line-height: 1.2rem;
+    line-height: 0.8rem;
+    padding: .5rem .625rem .5rem;
     background-color: $limestone-blue;
     color: white;
     &:first-child {
-      width: 40%;
+      width: 202px;
     }
   }
   td {
@@ -101,15 +103,19 @@
   }
   @include breakpoint(phone) {
     a.learn-more-link {
-      font-size: 0.8rem;
+      font-size: 0.7rem;
     }
   }
   th {
-    font-size: 1rem;
+    font-size: 0.8rem;
+    &:first-child {
+      width: 205px;
+    }
   }
   @include breakpoint(smedium) {
     a.learn-more-link {
       font-size: 1rem;
+      letter-spacing: -0.1px;
     }
     th {
       font-size: 1.4rem;
