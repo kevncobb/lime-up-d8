@@ -53,12 +53,12 @@
     text-decoration: none;
     text-transform: uppercase;
     font-weight: 700;
-    font-size: 0.8rem;
+    font-size: 0.7rem;
   }
   th {
     font-family: $header-font-family;
     text-transform: uppercase;
-    font-size: 1rem;
+    font-size: 0.8rem;
     line-height: 1.2rem;
     background-color: $limestone-blue;
     color: white;
@@ -99,6 +99,14 @@
       font-weight: bold;
     }
   }
+  @include breakpoint(phone) {
+    a.learn-more-link {
+      font-size: 0.8rem;
+    }
+  }
+  th {
+    font-size: 1rem;
+  }
   @include breakpoint(smedium) {
     a.learn-more-link {
       font-size: 1rem;
@@ -125,4 +133,57 @@
   display: inline-block;
   vertical-align: middle;
   float: none;
+}
+
+//Directory
+.directory-page {
+  .views-form {
+    @media
+    only screen and (max-width: 760px),
+    (min-device-width: 768px) and (max-device-width: 1024px)  {
+
+      /* Force table to not be like tables anymore */
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      /* Hide table headers (but not display: none;, for accessibility) */
+      thead tr {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+      }
+
+      tr { border: 1px solid #ccc; }
+
+      td {
+        /* Behave  like a "row" */
+        border: none;
+        border-bottom: 1px solid #eee;
+        position: relative;
+        padding-left: 50%;
+      }
+
+      td:before {
+        /* Now like a table header */
+        position: absolute;
+        /* Top/left values mimic padding */
+        top: 6px;
+        left: 6px;
+        width: 45%;
+        padding-right: 10px;
+        white-space: nowrap;
+      }
+
+      /*
+      Label the data
+      */
+      td:nth-of-type(1):before { content: "Name"; }
+      td:nth-of-type(2):before { content: "Job Title"; }
+      td:nth-of-type(3):before { content: "Email"; }
+      td:nth-of-type(4):before { content: "Building"; }
+      td:nth-of-type(5):before { content: "Room"; }
+      td:nth-of-type(6):before { content: "Office Phone"; }
+    }
+  }
 }
