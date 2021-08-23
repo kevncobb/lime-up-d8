@@ -108,11 +108,12 @@
     a.learn-more-link {
       font-size: 0.7rem;
     }
-  }
-  th {
-    font-size: 0.7rem;
-    &:first-child {
-      width: 205px;
+    th {
+      font-size: 0.7rem;
+
+      &:first-child {
+        width: 205px;
+      }
     }
   }
   @include breakpoint(smedium) {
@@ -124,13 +125,18 @@
       }
     }
     th {
-      font-size: 1.4rem;
+      font-size: 1rem;
       &:first-child {
         width: auto;
       }
     }
     td {
       font-size: 1.1rem;
+    }
+  }
+  @include breakpoint(large) {
+    th {
+      font-size: 1.4rem;
     }
   }
 }
