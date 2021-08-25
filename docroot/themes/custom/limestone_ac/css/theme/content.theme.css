@@ -148,7 +148,7 @@
   border-top: thin solid #a6a6a69c;
   padding-top: 5px;
 }
-a.catalog-link a[target=_blank]::after {
+a[target=_blank].catalog-link::after {
   font-size: 1.5rem;
   left: 0.3rem;
   top: 0;
