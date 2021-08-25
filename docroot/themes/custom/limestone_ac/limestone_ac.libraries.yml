@@ -44,6 +44,7 @@ global-styles:
       css/theme/content.theme.css: {}
       css/theme/footer.theme.css: {}
       css/layout/layouts.css: {}
+      fonts/icomoon.css: {}
   dependencies:
     - core/jquery
 
