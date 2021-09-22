@@ -11,7 +11,7 @@ dependencies:
 - ctools:ctools
 - token:token
 
-# Information added by Drupal.org packaging script on 2020-07-12
-version: '4.0.0'
+# Information added by Drupal.org packaging script on 2021-01-03
+version: '4.0.1'
 project: 'view_mode_page'
-datestamp: 1594571764
+datestamp: 1609683110

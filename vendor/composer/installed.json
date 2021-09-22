@@ -13961,6 +13961,57 @@
         }
     },
     {
+        "name": "drupal/time_field",
+        "version": "2.0.0",
+        "version_normalized": "2.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupalcode.org/project/time_field.git",
+            "reference": "2.0.0"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/time_field-2.0.0.zip",
+            "reference": "2.0.0",
+            "shasum": "7385d8ca94dcdaf725e6a3f72ef348db5232d022"
+        },
+        "require": {
+            "drupal/core": "^8 || ^9"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "drupal": {
+                "version": "2.0.0",
+                "datestamp": "1626688764",
+                "security-coverage": {
+                    "status": "covered",
+                    "message": "Covered by Drupal's security advisory policy"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "BramDriesen",
+                "homepage": "https://www.drupal.org/user/3383264"
+            },
+            {
+                "name": "lostkoder",
+                "homepage": "https://www.drupal.org/user/3545132"
+            }
+        ],
+        "description": "Provides 'Time Field' and 'Time Range Field'.",
+        "homepage": "https://www.drupal.org/project/time_field",
+        "support": {
+            "source": "http://git.drupal.org/project/time_field.git",
+            "issues": "https://www.drupal.org/project/issues/time_field"
+        }
+    },
+    {
         "name": "drupal/token",
         "version": "1.9.0",
         "version_normalized": "1.9.0.0",
@@ -16325,6 +16376,62 @@
         "homepage": "https://www.drupal.org/project/varbase_bootstrap_paragraphs",
         "support": {
             "source": "https://git.drupalcode.org/project/varbase_bootstrap_paragraphs"
+        }
+    },
+    {
+        "name": "drupal/view_mode_page",
+        "version": "4.0.1",
+        "version_normalized": "4.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupalcode.org/project/view_mode_page.git",
+            "reference": "4.0.1"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/view_mode_page-4.0.1.zip",
+            "reference": "4.0.1",
+            "shasum": "42e745be85e28c0f236a8b2d000324d6afb08500"
+        },
+        "require": {
+            "drupal/core": "^8 || ^9",
+            "drupal/ctools": "*",
+            "drupal/token": "*"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "drupal": {
+                "version": "4.0.1",
+                "datestamp": "1609683108",
+                "security-coverage": {
+                    "status": "covered",
+                    "message": "Covered by Drupal's security advisory policy"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0-or-later"
+        ],
+        "authors": [
+            {
+                "name": "VladimirAus",
+                "homepage": "https://www.drupal.org/user/673120"
+            },
+            {
+                "name": "davy-r",
+                "homepage": "https://www.drupal.org/user/3278771"
+            },
+            {
+                "name": "rballou",
+                "homepage": "https://www.drupal.org/user/1840982"
+            }
+        ],
+        "description": "Makes it possible to create (additional) paths where entities will be shown in a given view_mode",
+        "homepage": "https://www.drupal.org/project/view_mode_page",
+        "support": {
+            "source": "https://git.drupalcode.org/project/view_mode_page"
         }
     },
     {

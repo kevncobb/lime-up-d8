@@ -119,6 +119,19 @@ class Time {
   }
 
   /**
+   * Creates Time object from a DateTime object.
+   *
+   * @param \DateTime $date_time
+   *   The DateTime object to create the time for.
+   *
+   * @return \Drupal\time_field\Time
+   *   Time object created based upon the date time.
+   */
+  public static function createFromDateTime(\DateTime $date_time) {
+    return new static($date_time->format('H'), $date_time->format('i'), $date_time->format('s'));
+  }
+
+  /**
    * Creates Time object from timestamp.
    *
    * @param int $timestamp
@@ -132,7 +145,7 @@ class Time {
     self::assertInRange($timestamp, 0, 86400);
     $time = self::baseDateTime();
     $time->setTimestamp($time->getTimestamp() + $timestamp);
-    return new self($time->format('H'), $time->format('i'), $time->format('s'));
+    return static::createFromDateTime($time);
   }
 
   /**

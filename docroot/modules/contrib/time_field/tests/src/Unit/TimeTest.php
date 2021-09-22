@@ -21,6 +21,16 @@ class TimeTest extends TestCase {
   }
 
   /**
+   * Test it can be created by a DateTime object.
+   */
+  public function testItCanBeCreatedByDateTime() {
+    $time = Time::createFromDateTime(new \DateTime('2020-09-08 13:33:26'));
+    $this->assertEquals('13', $time->getHour());
+    $this->assertEquals('33', $time->getMinute());
+    $this->assertEquals('26', $time->getSecond());
+  }
+
+  /**
    * Test it can be created by html5 string.
    */
   public function testItCanBeCreatedByHtml5String() {
