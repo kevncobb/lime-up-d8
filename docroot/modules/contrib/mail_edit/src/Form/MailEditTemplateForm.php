@@ -3,14 +3,42 @@
 namespace Drupal\mail_edit\Form;
 
 use Drupal\Component\Utility\Xss;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Form\FormBase;
 use Drupal\Core\Form\FormStateInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 /**
  * Edit an email template.
  */
 class MailEditTemplateForm extends FormBase {
+
+  /**
+   * The module handler service.
+   *
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
+   */
+  protected $moduleHandler;
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('module_handler'),
+    );
+  }
+
+  /**
+   * Constructor.
+   *
+   * @param \Drupal\Core\Extension\ModuleHandlerInterface $module_handler
+   *   The module handler service.
+   */
+  public function __construct(ModuleHandlerInterface $module_handler) {
+    $this->moduleHandler = $module_handler;
+  }
 
   /**
    * {@inheritdoc}
@@ -65,14 +93,13 @@ class MailEditTemplateForm extends FormBase {
     ];
 
     // If the Token module is installed, show a link to the token tree.
-    $module_handler = \Drupal::moduleHandler();
-    if ($module_handler->moduleExists('token')) {
+    if ($this->moduleHandler->moduleExists('token')) {
       $module_name = $this->getModuleName($id);
 
-      // Trigger hook_mail_edit_token_types().
-      // The 'user' entity will always be available.
+      // Trigger hook_mail_edit_token_types(). The 'user' entity will always be
+      // available.
       $tokens = ['user']
-        + (array) $module_handler
+        + (array) $this->moduleHandler
           ->invoke($module_name, 'mail_edit_token_types', [$template['name']]);
 
       // Show a link to the token browser.
@@ -86,7 +113,6 @@ class MailEditTemplateForm extends FormBase {
 
     // @todo WYSIWYG support.
     // @todo Plaintext support.
-
     $form['actions'] = [
       '#type' => 'actions',
     ];
@@ -102,27 +128,22 @@ class MailEditTemplateForm extends FormBase {
   /**
    * {@inheritdoc}
    */
-  public function validateForm(array &$form, FormStateInterface $form_state) {
-    // @todo
-  }
-
-  /**
-   * {@inheritdoc}
-   */
   public function submitForm(array &$form, FormStateInterface $form_state) {
     // Work out the template ID.
     $id = $form_state->getValue('id');
 
     // Get the config object for this template.
-    $configFactory = $this->configFactory()->getEditable($this->getConfigName($id));
+    $config_factory = $this->configFactory()
+      ->getEditable($this->getConfigName($id));
     $name = $this->getEmailName($id);
 
     // Update the config object.
-    $configFactory->set($name . '.subject', $form_state->getValue('subject'));
-    $configFactory->set($name . '.body', $form_state->getValue('body'));
-    $configFactory->save();
+    $config_factory->set($name . '.subject', $form_state->getValue('subject'));
+    $config_factory->set($name . '.body', $form_state->getValue('body'));
+    $config_factory->save();
 
-    $this->messenger()->addMessage($this->t('Email "%mesg" has been updated.', ['%mesg' => $name]));
+    $this->messenger()
+      ->addMessage($this->t('Email "%mesg" has been updated.', ['%mesg' => $name]));
     $form_state->setRedirect('mail_edit.list');
   }
 
@@ -199,7 +220,7 @@ class MailEditTemplateForm extends FormBase {
    */
   private function getTemplate($id) {
     // Load the config entity.
-    /* @var $config \Drupal\Core\Config\Config */
+    /** @var \Drupal\Core\Config\Config $config */
     $config = $this->getConfig($id);
     // The email structure's name.
     $template_name = $this->getEmailName($id);
@@ -215,12 +236,11 @@ class MailEditTemplateForm extends FormBase {
     // config objects to be dynamically generated but block someone from being
     // able to create random config objects.
     if (empty($config) || !isset($template)) {
-      $module_handler = \Drupal::moduleHandler();
       $module_name = $this->getModuleName($id);
       $config_name = $this->getConfigName($id);
 
       // Trigger hook_mail_edit_templates().
-      $data = $module_handler->invoke($module_name, 'mail_edit_templates');
+      $data = $this->moduleHandler->invoke($module_name, 'mail_edit_templates');
       if (!isset($data, $data[$config_name], $data[$config_name][$template_name])) {
         throw new NotFoundHttpException();
       }

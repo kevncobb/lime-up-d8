@@ -119,11 +119,14 @@ class ResourceTypeRepository implements ResourceTypeRepositoryInterface {
     $cached = $this->cache->get('jsonapi.resource_types', FALSE);
     if ($cached === FALSE) {
       $resource_types = [];
-      foreach ($this->entityTypeManager->getDefinitions() as $entity_type_id => $entity_type) {
-        foreach ($this->getAllBundlesForEntityType($entity_type_id) as $bundle) {
-          $resource_type = $this->createResourceType($entity_type, $bundle);
-          $resource_types[$resource_type->getTypeName()] = $resource_type;
-        }
+      foreach ($this->entityTypeManager->getDefinitions() as $entity_type) {
+        $bundles = array_keys($this->entityTypeBundleInfo->getBundleInfo($entity_type->id()));
+        $resource_types = array_reduce($bundles, function ($resource_types, $bundle) use ($entity_type) {
+          $resource_type = $this->createResourceType($entity_type, (string) $bundle);
+          return array_merge($resource_types, [
+            $resource_type->getTypeName() => $resource_type,
+          ]);
+        }, $resource_types);
       }
       foreach ($resource_types as $resource_type) {
         $relatable_resource_types = $this->calculateRelatableResourceTypes($resource_type, $resource_types);
@@ -176,7 +179,7 @@ class ResourceTypeRepository implements ResourceTypeRepositoryInterface {
       throw new PreconditionFailedHttpException('Server error. The current route is malformed.');
     }
 
-    return static::lookupResourceType($this->all(), $entity_type_id, $bundle);
+    return $this->getByTypeName("$entity_type_id--$bundle");
   }
 
   /**
@@ -467,11 +470,8 @@ class ResourceTypeRepository implements ResourceTypeRepositoryInterface {
       : $this->getAllBundlesForEntityType($entity_type_id);
 
     return array_map(function ($target_bundle) use ($entity_type_id, $resource_types) {
-      if ($resource_type = static::lookupResourceType($resource_types, $entity_type_id, $target_bundle)) {
-        return $resource_type;
-      }
-
-      throw new \RuntimeException('Unable to locate the resource type neither by the internal or public name.');
+      $type_name = "$entity_type_id--$target_bundle";
+      return isset($resource_types[$type_name]) ? $resource_types[$type_name] : NULL;
     }, $target_bundles);
   }
 
@@ -510,36 +510,7 @@ class ResourceTypeRepository implements ResourceTypeRepositoryInterface {
    *   The bundle IDs.
    */
   protected function getAllBundlesForEntityType($entity_type_id) {
-    // Ensure all keys are strings, because numeric values are allowed
-    // as bundle names and "array_keys()" will cast "42" to 42.
-    return array_map('strval', array_keys($this->entityTypeBundleInfo->getBundleInfo($entity_type_id)));
-  }
-
-  /**
-   * Lookups resource type by the internal and public identifiers.
-   *
-   * @param \Drupal\jsonapi\ResourceType\ResourceType[] $resource_types
-   *   The list of resource types to do a lookup.
-   * @param string $entity_type_id
-   *   The entity type of a seekable resource.
-   * @param string $bundle
-   *   The entity bundle of a seekable resource.
-   *
-   * @return \Drupal\jsonapi\ResourceType\ResourceType|null
-   *   The resource type or NULL if it cannot be found.
-   */
-  protected static function lookupResourceType(array $resource_types, $entity_type_id, $bundle) {
-    if (isset($resource_types["$entity_type_id--$bundle"])) {
-      return $resource_types["$entity_type_id--$bundle"];
-    }
-
-    foreach ($resource_types as $resource_type) {
-      if ($resource_type->getEntityTypeId() === $entity_type_id && $resource_type->getBundle() === $bundle) {
-        return $resource_type;
-      }
-    }
-
-    return NULL;
+    return array_keys($this->entityTypeBundleInfo->getBundleInfo($entity_type_id));
   }
 
 }

@@ -4,11 +4,10 @@ namespace Drupal\mail_edit\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
 use Drupal\Core\Link;
-use Drupal\Component\Utility\Unicode;
 use Drupal\Component\Utility\Xss;
 
 /**
- * List all of the emails that may be edited by the module.
+ * List all the emails that may be edited by the module.
  */
 class MailListController extends ControllerBase {
 
@@ -35,7 +34,7 @@ class MailListController extends ControllerBase {
     foreach ($this->getAllTemplates() as $config_name => $templates) {
       $config_label = $config_name;
       if ($config_name == 'user.mail') {
-        $config_label = t('Drupal core');
+        $config_label = $this->t('Drupal core');
       }
       foreach ($templates as $name => $data) {
         $body_length = mb_strlen($data['body']);
@@ -63,7 +62,7 @@ class MailListController extends ControllerBase {
    */
   private function getAllTemplates() {
     $all_templates = [];
-    $module_handler = \Drupal::moduleHandler();
+    $module_handler = $this->moduleHandler();
 
     // Trigger hook_mail_edit_templates().
     // Get a list of the email templates as defined by other modules.

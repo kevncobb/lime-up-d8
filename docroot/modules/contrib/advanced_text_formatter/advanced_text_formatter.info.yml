@@ -8,7 +8,7 @@ dependencies:
   - drupal:text
   - drupal:filter
 
-# Information added by Drupal.org packaging script on 2020-06-01
-version: '2.0.0'
+# Information added by Drupal.org packaging script on 2021-09-16
+version: '2.1.1'
 project: 'advanced_text_formatter'
-datestamp: 1591025595
+datestamp: 1631794806

@@ -49,6 +49,7 @@ class PasswordPolicyValidator implements PasswordPolicyValidatorInterface {
 
     if (empty($edited_user_roles)) {
       $edited_user_roles = $user->getRoles();
+      $edited_user_roles = array_combine($edited_user_roles, $edited_user_roles);
     }
 
     $valid = TRUE;
@@ -57,12 +58,11 @@ class PasswordPolicyValidator implements PasswordPolicyValidatorInterface {
     $applicable_policies = $this->getApplicablePolicies($edited_user_roles);
 
     $original_roles = $user->getRoles();
-    $has_new_policies = !empty(array_diff_key($applicable_policies, $this->getApplicablePolicies($original_roles)));
+    $original_roles = array_combine($original_roles, $original_roles);
 
     $force_failure = FALSE;
-    if ($password === '' && !empty($applicable_policies) && $has_new_policies) {
-      // New applicable policies are available, ensure a
-      // password has been entered.
+    if (!empty(array_diff($edited_user_roles, $original_roles)) && $password === '' && !empty($applicable_policies)) {
+      // New role has been added and applicable policies are available.
       $force_failure = TRUE;
     }
 

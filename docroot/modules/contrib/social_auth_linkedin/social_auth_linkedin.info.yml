@@ -9,7 +9,7 @@ configure: social_auth_linkedin.settings_form
 dependencies:
   - social_auth:social_auth
 
-# Information added by Drupal.org packaging script on 2021-01-05
-version: '3.0.0'
+# Information added by Drupal.org packaging script on 2021-08-21
+version: '3.0.1'
 project: 'social_auth_linkedin'
-datestamp: 1609887589
+datestamp: 1629545834

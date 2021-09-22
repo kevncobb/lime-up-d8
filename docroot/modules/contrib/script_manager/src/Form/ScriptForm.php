@@ -159,7 +159,7 @@ class ScriptForm extends EntityForm {
    * Get the enabled visibility plugin definitions.
    */
   protected function getEnabledVisibilityDefinitions() {
-    $definitions = $this->conditionManager->getDefinitions();
+    $definitions = $this->conditionManager->getFilteredDefinitions('script_manager');
     $enabled_plugins = $this->configuration->get('enabled_visibility_plugins');
     return $enabled_plugins ? array_filter($definitions, function($definition) use ($enabled_plugins) {
       return in_array($definition['id'], $enabled_plugins);

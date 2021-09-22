@@ -397,12 +397,11 @@ class ResourceType {
    */
   public function getRelatableResourceTypes() {
     if (!isset($this->relatableResourceTypesByField)) {
-      $this->relatableResourceTypesByField = [];
-      foreach ($this->fields as $field) {
-        if ($field instanceof ResourceTypeRelationship) {
-          $this->relatableResourceTypesByField[$field->getPublicName()] = $field->getRelatableResourceTypes();
-        }
-      }
+      $this->relatableResourceTypesByField = array_reduce(array_map(function (ResourceTypeRelationship $field) {
+        return [$field->getPublicName() => $field->getRelatableResourceTypes()];
+      }, array_filter($this->fields, function (ResourceTypeField $field) {
+        return $field instanceof ResourceTypeRelationship && $field->isFieldEnabled();
+      })), 'array_merge', []);
     }
     return $this->relatableResourceTypesByField;
   }
@@ -419,7 +418,7 @@ class ResourceType {
    * @see self::getRelatableResourceTypes()
    */
   public function getRelatableResourceTypesByField($field_name) {
-    return ($field = $this->getFieldByPublicName($field_name)) && $field instanceof ResourceTypeRelationship
+    return ($field = $this->getFieldByPublicName($field_name)) && $field instanceof ResourceTypeRelationship && $field->isFieldEnabled()
       ? $field->getRelatableResourceTypes()
       : [];
   }

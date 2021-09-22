@@ -10,6 +10,7 @@ use Drupal\Component\Utility\Unicode;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Field\FieldDefinitionInterface;
 use Drupal\Core\Field\WidgetInterface;
+use Drupal\advanced_text_formatter\AdvancedTextFormatterTokenTree;
 use Drupal\filter\Plugin\Filter;
 
 /**
@@ -136,12 +137,12 @@ function _advanced_text_formatter_widget_text_format_alter(&$element, FormStateI
   }
 
   if (empty($element['#pre_render'])) {
-    $info = element_info('text_format');
+    $info = \Drupal::service('element_info')->getInfo('text_format');
     $element['#pre_render'] = empty($info['#pre_render']) ? array() : $info['#pre_render'];
   }
-	$element['#entity_type'] = $context['items']->getFieldDefinition()->getTargetEntityTypeId();
+  $element['#entity_type'] = $context['items']->getFieldDefinition()->getTargetEntityTypeId();
 
-  $element['#pre_render'][] = '_advanced_text_formatter_field_add_token_tree';
+  $element['#pre_render'][] = [AdvancedTextFormatterTokenTree::class, 'preRender'];
 }
 
 /**
@@ -244,6 +245,8 @@ function advanced_text_formatter_trim_text($text, $options) {
     }
   }
 
+  $text = trim($text);
+
   if (!empty($options['html'])) {
     $text = Html::normalize($text);
   }
@@ -286,30 +289,6 @@ function _advanced_text_formatter_browse_tokens($token_types) {
  */
 function _advanced_text_formatter_show_token_tree($widget) {
   return $widget->getThirdPartySetting('advanced_text_formatter', 'show_token_tree');
-}
-
-/**
- * Add available tokens link to text_format element.
- *
- * @param array $element
- *   Form element
- *
- * @return array
- *   Form element
- */
-function _advanced_text_formatter_field_add_token_tree($element) {
-  $element['format']['show_token'] = array(
-    '#type' => 'container',
-    'link'  => array(
-      '#markup' => _advanced_text_formatter_browse_tokens($element['#entity_type']),
-    ),
-    '#attributes' => array(
-      'class' => array('clearfix'),
-    ),
-    '#weight' => 99,
-  );
-
-  return $element;
 }
 
 /**

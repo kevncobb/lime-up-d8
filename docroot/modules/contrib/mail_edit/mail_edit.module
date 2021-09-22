@@ -25,15 +25,15 @@ function mail_edit_help($route_name, RouteMatchInterface $route_match) {
 function user_mail_edit_templates() {
   return [
     'user.mail' => [
-      'register_no_approval_required'   => t('Welcome message when user self-registers'),
-      'register_admin_created'          => t('Welcome message for user created by the admin'),
-      'register_pending_approval'       => t('Welcome message, user pending admin approval'),
+      'register_no_approval_required' => t('Welcome message when user self-registers'),
+      'register_admin_created' => t('Welcome message for user created by the admin'),
+      'register_pending_approval' => t('Welcome message, user pending admin approval'),
       'register_pending_approval_admin' => t('Message to admin, user is pending'),
-      'password_reset'                  => t('Password recovery request'),
-      'status_activated'                => t('Account activated'),
-      'status_blocked'                  => t('Account blocked'),
-      'cancel_confirm'                  => t('Request to confirm cancelation'),
-      'status_canceled'                 => t('Account canceled'),
+      'password_reset' => t('Password recovery request'),
+      'status_activated' => t('Account activated'),
+      'status_blocked' => t('Account blocked'),
+      'cancel_confirm' => t('Request to confirm cancellation'),
+      'status_canceled' => t('Account canceled'),
     ],
   ];
 }

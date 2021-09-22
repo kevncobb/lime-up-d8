@@ -5,7 +5,7 @@ namespace Drupal\taxonomy_menu\Controller;
 use Drupal\Core\Controller\ControllerBase;
 
 /**
- * Class TaxonomyMenu.
+ * Render taxonomy links.
  *
  * @package Drupal\taxonomy_menu\Controller
  */
@@ -18,11 +18,10 @@ class TaxonomyMenu extends ControllerBase {
    *   Return Hello string.
    */
   public function renderTaxonomyLinks() {
-    $markup = '';
-
     // Load taxonomy menus.
-    $storage = \Drupal::entityTypeManager()->getStorage('taxonomy_menu');
-    $taxonomy_menus = $storage->loadMultiple();
+    $taxonomy_menus = $this->entityTypeManager()
+      ->getStorage('taxonomy_menu')
+      ->loadMultiple();
     $links = [];
 
     // Get taxonomy and create menu links from vocabularies.
@@ -32,7 +31,7 @@ class TaxonomyMenu extends ControllerBase {
 
     return [
       '#type' => 'markup',
-      '#markup' => $this->t($markup),
+      '#markup' => '',
     ];
   }
 

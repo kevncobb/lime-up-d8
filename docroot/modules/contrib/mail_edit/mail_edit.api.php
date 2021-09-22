@@ -31,6 +31,9 @@ function hook_mail_edit_templates() {
       'never_gonna_let_you_down' => t('Never gonna let you down'),
       'never_gonna_run_around' => t('Never gonna run around'),
       'and_desert_you' => t('And desert you'),
+    ],
+    // Config object name.
+    'mymodule.moreemails' => [
       // Template name.
       'never_gonna_make_you_cry',
       'never_gonna_say_goodbye',
