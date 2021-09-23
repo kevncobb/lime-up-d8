@@ -29,7 +29,8 @@
         "drupal/ng_lightbox": "^2.0@beta",
         "drupal/conditional_fields": "^4.0@alpha",
         "drupal/time_field": "^2.0",
-        "drupal/view_mode_page": "^4.0"
+        "drupal/view_mode_page": "^4.0",
+        "drupal/fullcalendar_view": "^5.1"
     },
     "conflict": {
         "drupal/drupal": "*"
