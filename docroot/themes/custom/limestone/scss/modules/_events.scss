@@ -84,3 +84,26 @@
     }
   }
 }
+.full-calendar {
+  .views-exposed-form .js-form-item.js-form-type-checkbox {
+    float: none;
+    text-align: center;
+    padding: 0;
+    margin: -9px -20% 10px;
+    background-color: #f7efba;
+    text-transform: uppercase;
+  }
+  .js-form-type-checkbox input {
+    width: 18px;
+    height: 18px;
+    top: 18px;
+    border-radius: 0px;
+    border: 1px solid #333;
+  }
+  .js-form-type-checkbox input+label {
+    font-size: large;
+    font-family: "futura-pt","Arial Narrow",sans-serif;
+    font-weight: 900;
+    line-height: 2.8rem;
+  }
+}
