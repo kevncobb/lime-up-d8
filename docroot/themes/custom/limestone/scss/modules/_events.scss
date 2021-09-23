@@ -78,6 +78,7 @@
     .fc-time {
       order: 2;
       font-weight: bold;
+      padding-left: 4px;
     }
     .fc-title {
       order: 1;
@@ -85,6 +86,20 @@
   }
 }
 .full-calendar {
+  .fc-event > .fc-content {
+    display: flex;
+    font-size: 12px;
+    line-height: 23px;
+    font-weight: 100;
+    .fc-time {
+      //order: 2;
+      font-weight: bold;
+      padding-right: 4px;
+    }
+    .fc-title {
+      //order: 1;
+    }
+  }
   .views-exposed-form .js-form-item.js-form-type-checkbox {
     float: none;
     text-align: center;
