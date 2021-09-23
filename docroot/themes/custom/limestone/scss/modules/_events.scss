@@ -69,3 +69,18 @@
     color: $limestone-blue-body;
   }
 }
+.flip-time-title {
+  .fc-event > .fc-content {
+    display: flex;
+    font-size: 12px;
+    line-height: 23px;
+    font-weight: 100;
+    .fc-time {
+      order: 2;
+      font-weight: bold;
+    }
+    .fc-title {
+      order: 1;
+    }
+  }
+}
