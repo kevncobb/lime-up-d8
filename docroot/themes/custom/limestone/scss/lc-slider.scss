@@ -89,22 +89,23 @@
     }
   }
 }
+.views_slideshow_cycle_slide {
+  min-width: 100% !important;
+  width: 100% !important;
+  height: auto !important;
+  position: relative !important;
+}
+.views_slideshow_cycle_slide img {
+  min-width: 100% !important;
+  width: 100% !important;
+  height: auto !important;
+}
 .lc-slide {
   position: relative;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
   letter-spacing: 0;
   overflow: hidden;
-  .views_slideshow_cycle_slide {
-    min-width: 100% !important;
-    width: 100% !important;
-    height: auto !important;
-    position: relative !important;
-  }
-  .views_slideshow_cycle_slide img {
-    min-width: 100% !important;
-    width: 100% !important;
-    height: auto !important;
-  }
+
   .slide-cover-image {
     &:after {
       left: 0;
