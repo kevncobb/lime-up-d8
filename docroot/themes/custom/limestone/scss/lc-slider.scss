@@ -8,8 +8,8 @@
 @include foundation-grid;
 .lc-slider {
   width: 100%;
-  float: left;
-  height: 525px !important;
+  //float: left;
+  //height: 525px !important;
   overflow: hidden;
   /*
   .views_slideshow_slide {
@@ -97,14 +97,17 @@
 }
 .views_slideshow_cycle_slide img {
   min-width: 100% !important;
-  width: 100% !important;
-  height: auto !important;
+  max-width: none !important;
+  width: auto !important;
+  min-height: 545px !important;
+  margin-bottom: 0;
 }
 .lc-slide {
   position: relative;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
   letter-spacing: 0;
-  overflow: hidden;
+  height: 545px;
+  //overflow: hidden;
 
   .slide-cover-image {
     &:after {
@@ -137,9 +140,13 @@
   .desktop-image {
     display: none;
     position: absolute;
-
+    height: 100%;
+    width: 100%;
     img {
       opacity: 1;
+      left: -100%;
+      position: absolute;
+      transform: translateX(50%);
     }
   }
 
@@ -158,7 +165,7 @@
 
 
   .lc-slide-container {
-    position: absolute;
+    position: relative;
     width: 100%;
     top: 0;
     z-index: 1;
