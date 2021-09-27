@@ -128,19 +128,19 @@
     position: absolute;
 
     img {
-      opacity: 0;
+      opacity: 1;
     }
   }
 
   .mobile-image {
     position: absolute;
-    display: none;
+    display: block;
     z-index: -1;
-    //bottom: 0;
+    bottom: 0;
     width: 100%;
 
     img {
-      opacity: 0;
+      opacity: 1;
     }
   }
 }
