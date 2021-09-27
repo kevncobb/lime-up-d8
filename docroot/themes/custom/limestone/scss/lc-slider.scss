@@ -178,6 +178,7 @@
     .medium-8 {
       z-index: 1;
       padding: 1em;
+      max-width: 600px;
       p {
         text-shadow: 0px 2px 1px rgba(0, 0, 0, 0.7);
         max-width: 675px;
@@ -314,7 +315,8 @@
       width: 100%;
       img {
         min-height: 545px !important;
-        height: 545px;
+        height: auto !important;
+        width: auto !important;
       }
     }
 
