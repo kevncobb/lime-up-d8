@@ -94,8 +94,20 @@
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
   letter-spacing: 0;
   overflow: hidden;
-  .slide-cover-image {
 
+  .slide-cover-image {
+    &:after {
+      left: 0;
+      opacity: 0.2;
+      bottom: -31px;
+      position: absolute;
+      bottom: 0;
+      height: 80px;
+      width: 100%;
+      content: "";
+      background: url(/themes/custom/limestone/images/stripes-dark-tile.svg);
+      opacity: 0.1;
+    }
     .overlay {
       width: 100%;
       height: 100%;
@@ -110,9 +122,11 @@
       }
     }
   }
+
   .desktop-image {
     display: none;
     position: absolute;
+
     img {
       opacity: 0;
     }
@@ -129,7 +143,7 @@
       opacity: 0;
     }
   }
-
+}
 
 
   .lc-slide-container {
@@ -268,19 +282,7 @@
     }
   }
 
-  &:after {
-    left: 0;
-    opacity: 0.2;
-    bottom: -31px;
-    position: absolute;
-    bottom: 0;
-    height: 80px;
-    width: 100%;
-    content: "";
-    background: url(/themes/custom/limestone/images/stripes-dark-tile.svg);
-    opacity: 0.1;
-  }
-}
+
 
 
 // Desktop changes  768px
