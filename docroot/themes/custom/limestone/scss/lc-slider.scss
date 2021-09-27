@@ -22,7 +22,7 @@
     height: 100%;
     .skin-default {
       height: 100%;
-      .views_slideshow_cycle_teaser_section {
+      .views_slideshow_cycle_teaser_section, .viewsSlideshowCycle-processed, .views_slideshow_slide {
         height: 100% !important;
       }
     }
@@ -90,11 +90,12 @@
   }
 }
 .lc-slide {
+  position: relative;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+  letter-spacing: 0;
+  overflow: hidden;
   .slide-cover-image {
-    position: relative;
-    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
-    letter-spacing: 0;
-    overflow: hidden;
+
     .overlay {
       width: 100%;
       height: 100%;
@@ -281,19 +282,6 @@
   }
 }
 
-.slide-cover-image img {
-  background-size: cover;
-  background-position: bottom right; // Desktop changes  768px
-  margin: 0;
-  @include breakpoint(smedium) {
-    background-position: 80% 0;
-  }
-
-
-  @media screen and (min-width: 64em) {
-    background-position: bottom right;
-  }
-}
 
 // Desktop changes  768px
 @include breakpoint(smedium) {
