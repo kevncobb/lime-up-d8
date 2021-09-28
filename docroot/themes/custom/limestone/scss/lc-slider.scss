@@ -317,7 +317,7 @@
         min-height: 500px !important;
         height: 100% !important;
         width: auto !important;
-        @media print, screen and (min-width: 1900px) {
+        @media screen and (min-width: 1900px) {
           height: auto !important;
           width: 100% !important;
         }
