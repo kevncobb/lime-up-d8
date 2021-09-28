@@ -314,8 +314,8 @@
         opacity: 1;
         right: 50%;
         position: absolute;
-        transform: translateX(50%);
-        @media screen and (min-width: 1400px) {
+        transform: translateX(38%);
+        @media screen and (min-width: 1200px) {
           transform: none;
           right: 0;
         }
