@@ -2,7 +2,11 @@
 .thirds {
 
 }
-
+.mobile-hide {
+  @media screen and (max-width: 520px) {
+    display: none;
+  }
+}
 .hide-for-medium {
   @include hide-for(medium);
 }
