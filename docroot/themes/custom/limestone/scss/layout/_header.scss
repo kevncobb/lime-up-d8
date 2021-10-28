@@ -261,6 +261,20 @@ header.site-header {
         }
       }
     }
+    &.taller2x {
+      @include breakpoint(medium) {
+        padding-top: 1rem;
+        padding-bottom: 0;
+      }
+      @include breakpoint(large) {
+        padding-top: 5rem;
+        padding-bottom: 0;
+        .sub-header-title {
+          padding-top: 3rem;
+          top: -1rem;
+        }
+      }
+    }
     figure {
       display: none;
     }
