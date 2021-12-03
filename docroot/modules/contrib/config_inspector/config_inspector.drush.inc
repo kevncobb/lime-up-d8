@@ -37,7 +37,7 @@ function drush_config_inspector_inspect_config($key = NULL) {
   $onlyError = drush_get_option('only-error');
   $detail = drush_get_option('detail');
   $skipKeys = array_fill_keys(explode(',', drush_get_option('skip-keys')), '1');
-  $inspector = \Drupal::service('plugin.manager.config_inspector');
+  $inspector = \Drupal::service('config_inspector.manager');
 
   foreach ($keys as $name) {
     if (isset($skipKeys[$name])) {

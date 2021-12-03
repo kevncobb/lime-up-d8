@@ -20,7 +20,7 @@ function config_inspector_requirements($phase) {
 
   $errors = [];
   foreach (\Drupal::service('config.storage')->listAll() as $name) {
-    $result = \Drupal::service('plugin.manager.config_inspector')->checkValues($name);
+    $result = \Drupal::service('config_inspector.manager')->checkValues($name);
     if (is_array($result)) {
       $text = \Drupal::translation()->formatPlural(count($result), '@configuration_key: @count error', '@configuration_key: @count errors', [
         '@configuration_key' => $name,

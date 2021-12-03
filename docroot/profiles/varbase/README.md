@@ -1,4 +1,4 @@
-[![Vardot](https://circleci.com/gh/Vardot/varbase/tree/8.x-8.x.svg?style=shield)](https://app.circleci.com/pipelines/github/Vardot/varbase/334/workflows/532cc770-dbd4-4ab7-8b24-aa3661fa7901) Varbase 8.8.11
+[![Vardot](https://circleci.com/gh/Vardot/varbase/tree/8.x-8.x.svg?style=shield)](https://app.circleci.com/pipelines/github/Vardot/varbase/388/workflows/45f9bac1-501d-4a8b-8740-55faccb2529f) Varbase 8.8.12
 
 [![](https://www.drupal.org/files/styles/grid-3/public/project-images/Medium-Logo%20Color%20with%20padding.png)](https://www.drupal.org/project/varbase)
 
@@ -17,7 +17,7 @@ in every project.
 * Speeds up development.
 * Offers standardized configuration and best-practices.
 * Comes with a lot of needed functionalities/modules for every-day Drupal site.
-* [Tested, tested, and tested.](https://travis-ci.org/Vardot/varbase/builds)
+* [Tested, tested, and tested.](https://app.circleci.com/pipelines/github/Vardot/varbase?branch=8.x-8.x)
 
 Starting a new project? Consider Varbase for Drupal 8.
 Installing Varbase 8.x-8.x comes with several extra automated installation
@@ -29,7 +29,7 @@ instructions.
 
 To install the most recent stable release of Varbase 8.8.x run this command:
 ```
-composer create-project vardot/varbase-project:^8.8.11 PROJECT_DIR_NAME --no-dev --no-interaction
+composer create-project vardot/varbase-project:^8.8.12 PROJECT_DIR_NAME --no-dev --no-interaction
 ```
 
 To install the dev version of Varbase 8.8.x run this command:

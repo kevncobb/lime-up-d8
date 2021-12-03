@@ -21,7 +21,7 @@ class ConfigInspectorManagerTest extends KernelTestBase {
    * Tests retrieving definitions list.
    */
   public function testGetDefinitionsMethod() {
-    $manager = \Drupal::service('plugin.manager.config_inspector');
+    $manager = \Drupal::service('config_inspector.manager');
     $this->assertInstanceOf(ConfigInspectorManager::class, $manager);
     $this->assertArrayHasKey('label', $manager->getDefinition('user.settings'));
   }

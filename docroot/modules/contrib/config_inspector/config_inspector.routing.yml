@@ -30,7 +30,7 @@ config_inspector.raw_page:
   requirements:
     _permission: 'inspect configuration'
 config_inspector.download:
-  path: 'admin/config/development/configuration/inspect/{name}/download'
+  path: '/admin/config/development/configuration/inspect/{name}/download'
   defaults:
     _controller: '\Drupal\config_inspector\Controller\ConfigInspectorController::download'
   requirements:

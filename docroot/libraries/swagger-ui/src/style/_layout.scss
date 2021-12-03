@@ -281,7 +281,7 @@
         font-weight: bold;
 
         min-width: 80px;
-        padding: 6px 15px;
+        padding: 6px 0;
 
         text-align: center;
 
@@ -499,6 +499,17 @@
         &.active
         {
             font-weight: bold;
+        }
+
+        button.tablinks
+        {
+            background: none;
+            border: 0;
+            padding: 0;
+
+            color: inherit;
+            font-family: inherit;
+            font-weight: inherit;
         }
     }
 }

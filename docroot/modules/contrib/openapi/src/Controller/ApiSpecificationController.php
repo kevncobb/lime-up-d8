@@ -35,7 +35,7 @@ class ApiSpecificationController extends ControllerBase {
    */
   public function getSpecification(OpenApiGeneratorInterface $openapi_generator, Request $request) {
     $options = $request->get('options', []);
-    $openapi_generator->setOptions($options);
+    $openapi_generator->setOptions($options + $openapi_generator->getOptions());
     $spec = $openapi_generator->getSpecification();
     return new JsonResponse($spec);
   }

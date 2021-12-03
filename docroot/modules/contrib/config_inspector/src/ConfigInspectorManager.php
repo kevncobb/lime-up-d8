@@ -2,18 +2,15 @@
 
 namespace Drupal\config_inspector;
 
-use Drupal\Core\Cache\CacheBackendInterface;
 use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\TypedConfigManagerInterface;
 use Drupal\Core\Config\Schema\Element;
 use Drupal\Core\Config\Schema\SchemaCheckTrait;
-use Drupal\Core\Extension\ModuleHandlerInterface;
-use Drupal\Core\Plugin\DefaultPluginManager;
 
 /**
  * Manages plugins for configuration translation mappers.
  */
-class ConfigInspectorManager extends DefaultPluginManager {
+class ConfigInspectorManager {
 
   use SchemaCheckTrait;
 
@@ -32,14 +29,14 @@ class ConfigInspectorManager extends DefaultPluginManager {
   protected $typedConfigManager;
 
   /**
-   * {@inheritdoc}
+   * Constructs a ConfigInspectorManager object.
+   *
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The configuration factory.
+   * @param \Drupal\Core\Config\TypedConfigManagerInterface $typed_config_manager
+   *   The typed configuration manager.
    */
-  public function __construct(\Traversable $namespaces, CacheBackendInterface $cache_backend, ModuleHandlerInterface $module_handler, ConfigFactoryInterface $config_factory, TypedConfigManagerInterface $typed_config_manager) {
-    parent::__construct('', $namespaces, $module_handler);
-
-    $this->alterInfo('config_inspector_manager_info');
-    $this->setCacheBackend($cache_backend, 'config_inspector_manager_plugins');
-
+  public function __construct(ConfigFactoryInterface $config_factory, TypedConfigManagerInterface $typed_config_manager) {
     $this->configFactory = $config_factory;
     $this->typedConfigManager = $typed_config_manager;
   }

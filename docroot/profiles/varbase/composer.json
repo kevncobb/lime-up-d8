@@ -33,7 +33,7 @@
     "cweagans/composer-patches": "~1.0",
     "drupal/core-composer-scaffold": "^8.8.0",
     "webflo/drupal-finder": "~1.0",
-    "drupal/core": "^8.8.0 || ~9.0.0",
+    "drupal/core": "~8.0 || ~9.0",
     "drupal/varbase_core": "~8.0",
     "drupal/varbase_api": "~7.0",
     "drupal/varbase_media": "~7.0",

@@ -14,4 +14,17 @@
     }
   };
 
+  Drupal.behaviors.MediaLibraryWidgetEditLink = {
+    attach: function attach() {
+      $('.media-library-widget .media-library-edit__link')
+          .once('media-library-edit-link')
+          .on('click', function () {
+            // Remove any "selected-media" classes.
+            $(this).parent().parent().find('selected-media').removeClass('selected-media');
+            // Mark the media item as selected to render it properly when submitting an ajax media edit request.
+            $(this).parent().find('article').addClass('selected-media');
+          })
+    },
+  };
+
 })(jQuery, Drupal, window);

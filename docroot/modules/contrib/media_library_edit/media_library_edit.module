@@ -5,6 +5,7 @@
  * Contains media_library_edit.module.
  */
 
+use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\Component\Utility\Html;
 use Drupal\Component\Utility\UrlHelper;
 use Drupal\Core\Ajax\AjaxResponse;
@@ -140,7 +141,7 @@ function media_library_edit_form_alter(&$form, FormStateInterface $form_state, $
     $form['actions']['delete']['#access'] = FALSE;
 
     // Modify the save action to make sure the dialog closes.
-    unset($form['actions']['submit']['#submit']);
+    $form['actions']['submit']['#submit'] = [];
     $form['actions']['submit']['#ajax'] = [
       'callback' => '_media_library_edit_media_edit_save',
       'event' => 'click',
@@ -159,30 +160,11 @@ function _media_library_edit_media_edit_save(array &$form, FormStateInterface $f
     // Run the (inherited) media save callbacks.
     $media_form->submitForm($form, $form_state);
     $media = $media_form->getEntity();
-    if ($media->save()) {
-      // Close the dialog.
-      $response->addCommand(new CloseDialogCommand('.media-library-edit__modal'));
-
-      // Figure out the media item field name and the form structure from the request.
-      $field_name = \Drupal::request()->query->get('media_library_edit_field_name');
-      $entity_type = \Drupal::request()->query->get('media_library_edit_entity_type');
-      $entity_id = \Drupal::request()->query->get('media_library_edit_entity_id');
-      $entity = \Drupal::entityTypeManager()->getStorage($entity_type)->load($entity_id);
-      if ($entity) {
-        // Ensure the value of the media field is set to the media entity.
-        // This new value will be saved to the parent entity when the entity is saved in the UI.
-        $entity->set($field_name, $media->id());
-        $form = \Drupal::service('entity.form_builder')->getForm($entity);
-
-        // Re-render the widget markup.
-        $widget = $form[$field_name]['widget'];
-        $markup = \Drupal::service('renderer')->renderRoot($widget);
-
-        // Replace the widget container on the form.
-        $widget_class = '.js-media-library-edit-' . Html::cleanCssIdentifier($field_name) . '-wrapper';
-        $response->addCommand(new ReplaceCommand($widget_class, $markup));
-      }
-    }
+    $media->save();
+    $response->addCommand(new CloseDialogCommand('.media-library-edit__modal'));
+    $render_array = \Drupal::entityTypeManager()->getViewBuilder('media')->view($media, 'media_library');
+    $html = \Drupal::service('renderer')->render($render_array);
+    $response->addCommand(new ReplaceCommand('.selected-media', $html));
   }
   else {
     $message = [

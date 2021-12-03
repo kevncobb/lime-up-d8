@@ -1,5 +1,5 @@
-name: 'Varbase Workflow'
-description: 'Provides a toolkit for robust, quick, and enterprise content moderation features.'
+name: "Varbase Workflow"
+description: "Provides a toolkit for robust, quick, and enterprise content moderation features."
 type: module
 package: Varbase
 core_version_requirement: ^8 || ^9
@@ -11,7 +11,7 @@ install:
   - scheduler_content_moderation_integration
   - admin_audit_trail_workflows
 
-# Information added by Drupal.org packaging script on 2021-06-20
-version: '2.0.0'
+# Information added by Drupal.org packaging script on 2021-10-09
+version: '2.0.2'
 project: 'varbase_workflow'
-datestamp: 1624185438
+datestamp: 1633804857

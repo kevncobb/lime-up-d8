@@ -79,7 +79,7 @@ class ConfigInspectorController extends ControllerBase {
   public static function create(ContainerInterface $container) {
     $form = new static(
       $container->get('config.storage'),
-      $container->get('plugin.manager.config_inspector'),
+      $container->get('config_inspector.manager'),
       $container->get('string_translation'),
       $container->get('form_builder'),
       $container->get('module_handler')

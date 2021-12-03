@@ -1,3 +1,71 @@
+# 8.8.12
+
+### Highlighted important changes since Varbase 8.x-8.11:
+This is a **patch (bugfix)** release of **Varbase 8** and is ready for use
+ on production sites.
+
+* Issue [#3217857](https://www.drupal.org/i/3217857):
+        Support PHP7.4 for Varbase ~8.0 and all used components with automated testing
+* Issue [#3241753](https://www.drupal.org/i/3241753):
+        Fixed Varbase profile requires drupal/core ^8.8.0 || ~9.0.0 with ~8.0 || ~9.0
+* Issue [#3242196](https://www.drupal.org/i/3242196):
+        Fixed to have a better build and test with CircleCI with 4 concurrent jobs
+
+### Added since Varbase 8.x-8.11:
+* No additions. All new features and add-on will be in Varbase 9.0.x
+
+### Changed since Varbase 8.x-8.11:
+* No changes. All changes will be in Varbase 9.0.x
+
+### Updates since Varbase 8.x-8.11:
+* Issue [#3233156](https://www.drupal.org/i/3233156)
+        by [jedgar1mx](https://www.drupal.org/u/jedgar1mx)
+       : Updated Drupal core from 8.9.18 to 8.9.19 ( ~8.0 ) and removed
+        committed patches
+* Issue [#3231956](https://www.drupal.org/i/3231956)
+        by [YousefAnbar](https://www.drupal.org/u/yousefanbar)
+       : Updated Password Policy from 8.x-3.0-beta1
+        to 8.x-3.0 ( ~3.0 ) and remove applied patches
+* Issue [#3233381](https://www.drupal.org/i/3233381)
+       : Updated Entity Embed module from 1.1 to 1.2
+* Issue [#3202379](https://www.drupal.org/i/3202379)
+        by [jedgar1mx](https://www.drupal.org/u/jedgar1mx)
+       : Updated Taxonomy Menu module from 3.x-dev to ~3.0
+* Issue [#3236467](https://www.drupal.org/i/3236467):
+        Update Advanced Text Formatter module from 2.1.0
+        to 2.1.1 ( ~2.0 ) and remove committed patches
+* Issue [#3229932](https://www.drupal.org/i/3229932):
+        Updated Admin Toolbar module from ~2.0 to ~3.0
+
+### Fixes since Varbase 8.x-8.11:
+* Issue [#3241747](https://www.drupal.org/i/3241747):
+        Fixed Varbase Core requires drupal/core ~8.9 || ~9.0.0 with ~8.0 || ~9.0
+* Issue [#3241751](https://www.drupal.org/i/3241751):
+        Fixed Varbase Workflow requires drupal/core ~8.9 || ~9.0.0 with ~8.0 || ~9.0
+* Issue [#3241752](https://www.drupal.org/i/3241752):
+        Fixed Varbase Theme Admin requires drupal/core ^8.8.0 || ~9.0.0 with ~8.0 || ~9.0
+* Issue [#3233388](https://www.drupal.org/i/3233388)
+        by [jedgar1mx](https://www.drupal.org/u/jedgar1mx)
+       : Fixed not existing method notice for the Advanced Text Formatter
+        module and filter html tags in formatter
+* Issue [#3240119](https://www.drupal.org/i/3240119)
+        by [dejan0](https://www.drupal.org/u/dejan0)
+       , [RajabNatshah](https://www.drupal.org/u/rajabnatshah)
+       : Fixed Support for drupal/core >= 9.1 is missing
+        in the 8.x-6.x-dev branch, Use the vartheme_bs4 9.0.x branch
+* Issue [#3225626](https://www.drupal.org/i/3225626):
+        Fixed and removed _core: default_config_hash: and uuid: from default configs
+* Issue [#3223393](https://www.drupal.org/i/3223393):
+        Fixed dependencies enable for Configuration Update Manager module
+        by changing drupal:config_update to config_update:config_update
+* Issue [#3222735](https://www.drupal.org/i/3222735)
+        by [mohammad faqeh](https://www.drupal.org/u/mohammad-faqeh)
+       : Fixed and removed divider div from node edit
+* Issue [#3239668](https://www.drupal.org/i/3239668)
+        by [Ahmad Abbad](https://www.drupal.org/u/ahmad-abbad)
+       : Fixed by removing config varbase_bootstrap_paragraphs.settings
+        from Varbase installation profile
+
 # 8.8.11
 
 ### Highlighted important changes since Varbase 8.x-8.10:
@@ -6,7 +74,7 @@
 
 ### Added since Varbase 8.x-8.10:
 * Issue [#3210225](https://www.drupal.org/i/3210225)
-         by Omar Alahmed
+         by [Omar Alahmed](https://www.drupal.org/u/omar-alahmed)
         : Added more options for pathauto user control.
          To alter the list of punctuation characters for Pathauto
 
@@ -33,20 +101,20 @@
          Fixed issues of not loading the Varbase Media Player and the Blazy Blurry
          in Drupal 8 with Varbase 8 and caching issues
 * Issue [#3213517](https://www.drupal.org/i/3213517)
-         by earthday47
+         by [earthday47](https://www.drupal.org/u/earthday47)
         : Fixed PHP 7.4 + warnings = cannot add to entity queues
 * Issue [#3220659](https://www.drupal.org/i/3220659)
-         by jedgar1mx
-        , RajabNatshah
+         by [jedgar1mx](https://www.drupal.org/u/jedgar1mx)
+        , [RajabNatshah](https://www.drupal.org/u/rajabnatshah)
         : Fixed missing Swagger-ui library
 * Issue [#3220406](https://www.drupal.org/i/3220406):
          Fixed The specified library "claro/claro.tabledrag" does not exist upon
          update to the latest theme with Drupal 8.x
 * Issue [#3175233](https://www.drupal.org/i/3175233)
-         by Abdelrahman Amer
+         by [Abdelrahman Amer](https://www.drupal.org/u/abdelrahman-amer)
         : Fixed permission Issues on Subqueues
 * Issue [#3205399](https://www.drupal.org/i/3205399)
-        by mhawwari
+        by [mhawwari](https://www.drupal.org/u/mhawwari)
         : Fixed input width inside tables on mobile
 
 --------------------------------------------------------------------------------

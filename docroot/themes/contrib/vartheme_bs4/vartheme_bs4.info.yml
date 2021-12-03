@@ -1,4 +1,3 @@
-core: 8.x
 type: theme
 base theme: bootstrap_barrio
 name: 'Vartheme (Bootstrap 4 - SASS)'
@@ -143,7 +142,7 @@ ckeditor_stylesheets:
   - css/theme/vbp-colors.theme.css
   - css/theme/vlb-colors.theme.css
 
-# Information added by Drupal.org packaging script on 2021-05-26
-version: '8.x-6.31'
+# Information added by Drupal.org packaging script on 2021-10-04
+version: '8.x-6.32'
 project: 'vartheme_bs4'
-datestamp: 1622019291
+datestamp: 1633362862

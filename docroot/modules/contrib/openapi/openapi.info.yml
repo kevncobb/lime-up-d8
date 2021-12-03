@@ -7,7 +7,7 @@ package: OpenAPI
 dependencies:
   - drupal:serialization
 
-# Information added by Drupal.org packaging script on 2020-04-25
-version: '8.x-2.0-rc3'
+# Information added by Drupal.org packaging script on 2021-09-26
+version: '8.x-2.0'
 project: 'openapi'
-datestamp: 1587845668
+datestamp: 1632637191

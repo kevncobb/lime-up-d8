@@ -15,6 +15,29 @@ class TotalControlDashboardPageCheckTest extends WebDriverTestBase {
   use StringTranslationTrait;
 
   /**
+   * A user with the 'have total control' permission.
+   *
+   * @var \Drupal\user\UserInterface
+   */
+  protected $dashboardAdminUser;
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $profile = 'standard';
+
+  /**
+   * {@inheritdoc}
+   */
+  protected $defaultTheme = 'olivero';
+
+  /**
+   * {@inheritdoc}
+   */
+  // phpcs:ignore
+  protected $strictConfigSchema = FALSE;
+
+  /**
    * Modules to install.
    *
    * @var array
@@ -40,34 +63,21 @@ class TotalControlDashboardPageCheckTest extends WebDriverTestBase {
     'layout_discovery',
     'panels',
     'page_manager',
+    'page_manager_ui',
     'total_control',
   ];
 
   /**
-   * A user with the 'have total control' permission.
-   *
-   * @var \Drupal\user\UserInterface
-   */
-  protected $webUser;
-
-  /**
-   * The profile to install as a basis for testing.
-   *
-   * Using the standard profile to test user picture display in comments.
-   *
-   * @var string
-   */
-  protected $profile = 'standard';
-
-   /**
    * {@inheritdoc}
    */
-  protected $defaultTheme = 'bartik';
+  protected function setUp(): void {
+    parent::setUp();
 
-  /**
-   * Tests Total Control Dashboard Page Check.
-   */
-  public function testTotalControlDashboardPageCheck() {
+    // Insall the Claro admin theme.
+    $this->container->get('theme_installer')->install(['claro']);
+
+    // Set the Claro theme as the default admin theme.
+    $this->config('system.theme')->set('admin', 'claro')->save();
 
     $permissions = [
       'administer content types',
@@ -97,8 +107,16 @@ class TotalControlDashboardPageCheckTest extends WebDriverTestBase {
       'have total control',
     ];
 
-    $this->webUser = $this->drupalCreateUser($permissions);
-    $this->drupalLogin($this->webUser);
+    $this->dashboardAdminUser = $this->drupalCreateUser($permissions);
+
+  }
+
+  /**
+   * Tests Total Control Dashboard Page Check.
+   */
+  public function testTotalControlDashboardPageCheck() {
+
+    $this->drupalLogin($this->dashboardAdminUser);
 
     $this->drupalGet('admin');
     $this->assertSession()->waitForElementVisible('css', '#toolbar-link-page_manager-page_view_total_control_dashboard_total_control_dashboard-http_status_code-0');
@@ -117,6 +135,29 @@ class TotalControlDashboardPageCheckTest extends WebDriverTestBase {
     $this->assertSession()->pageTextContains($this->t('Administer Content Types'));
     $this->assertSession()->pageTextContains($this->t('Administer Taxonomy'));
     $this->assertSession()->pageTextContains($this->t('Administer Panel Pages'));
+  }
+
+  /**
+   * Test check on Clicking on Edit this panel to add more blocks.
+   */
+  public function testCheckOnClickingEditThisPanelToAddMoreBlocksLink() {
+
+    $this->drupalLogin($this->dashboardAdminUser);
+
+    $this->drupalGet('admin/dashboard');
+    $this->assertSession()->pageTextContains('Dashboard');
+    $this->assertSession()->pageTextContains($this->t('Welcome to your administrative dashboard. Edit this panel to add more blocks here, or configure those provided by default.'));
+
+    $this->clickLink('Edit this panel');
+    $this->assertSession()->pageTextContains('Variants');
+    $this->assertSession()->pageTextContains('Top');
+    $this->assertSession()->pageTextContains('First above');
+    $this->assertSession()->pageTextContains('Second above');
+
+    $page = $this->getSession()->getPage();
+    $page->findButton('Update and save')->click();
+    $this->assertSession()->pageTextContains('The page Total Control dashboard has been updated.');
+
   }
 
 }

@@ -31,3 +31,8 @@
   left: 0;
   z-index: -1;
 }
+
+/* Hide media library edit modal backdrop if wrapped inside .ui-dialog */
+.ui-dialog .media-library-edit__modal::before{
+  display:none;
+}
