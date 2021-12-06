@@ -2,8 +2,6 @@
 
 namespace Drupal\feeds_ex\Feeds\Parser;
 
-use RuntimeException;
-use Drupal\Component\Utility\Html;
 use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\feeds\FeedInterface;
 use Drupal\feeds\Result\FetcherResultInterface;
@@ -92,20 +90,25 @@ class JmesPathParser extends JsonParserBase {
    * {@inheritdoc}
    */
   protected function executeContext(FeedInterface $feed, FetcherResultInterface $fetcher_result, StateInterface $state) {
-    $raw = $this->prepareRaw($fetcher_result);
-    $parsed = $this->utility->decodeJsonArray($raw);
+    $parsed = $this->utility->decodeJsonObject($this->prepareRaw($fetcher_result));
     $parsed = $this->search($this->configuration['context']['value'], $parsed);
-    if (!is_array($parsed)) {
-      throw new RuntimeException($this->t('The context expression must return an object or array.'));
+
+    if (!is_array($parsed) && !is_object($parsed)) {
+      throw new \RuntimeException($this->t('The context expression must return an object or array.'));
+    }
+
+    // If an object is returned, consider it one item.
+    if (is_object($parsed)) {
+      return [$parsed];
     }
 
     if (!$state->total) {
       $state->total = count($parsed);
     }
 
-    // @todo Consider using array slice syntax when it is supported.
     $start = (int) $state->pointer;
     $state->pointer = $start + $this->configuration['line_limit'];
+
     return array_slice($parsed, $start, $this->configuration['line_limit']);
   }
 
@@ -124,14 +127,31 @@ class JmesPathParser extends JsonParserBase {
    * {@inheritdoc}
    */
   protected function executeSourceExpression($machine_name, $expression, $row) {
-    $result = $this->search($expression, $row);
+    try {
+      $result = $this->search($expression, $row);
+    }
+    catch (\Exception $e) {
+      // There was an error executing this expression, transform it to a runtime
+      // exception, so that it gets properly catched by Feeds.
+      throw new \RuntimeException($e->getMessage());
+    }
 
-    if (is_scalar($result)) {
+    if (is_object($result)) {
+      $result = (array) $result;
+    }
+
+    if (!is_array($result)) {
       return $result;
     }
 
+    $count = count($result);
+
+    if ($count === 0) {
+      return;
+    }
+
     // Return a single value if there's only one value.
-    return count($result) === 1 ? reset($result) : $result;
+    return count($result) === 1 ? reset($result) : array_values($result);
   }
 
   /**
@@ -147,9 +167,46 @@ class JmesPathParser extends JsonParserBase {
       $this->search($expression, []);
     }
     catch (SyntaxErrorException $e) {
-      // Remove newlines after nl2br() to make testing easier.
-      return str_replace("\n", '', nl2br(Html::escape(trim($e->getMessage()))));
+      return $this->formatSyntaxError($e->getMessage());
     }
+    catch (\RuntimeException $e) {
+      if (strpos($e->getMessage(), 'Argument 0') === 0) {
+        // Ignore 'Argument 0 errors'.
+        return;
+      }
+
+      // In all other cases, rethrow the exception.
+      throw $e;
+    }
+  }
+
+  /**
+   * Formats a syntax error message with HTML.
+   *
+   * A syntax error message can be for example:
+   * @code
+   * items[].join(`__`,[title,description)
+   *                                     ^
+   * @endcode
+   *
+   * @param string $message
+   *   The message to format.
+   *
+   * @return string
+   *   The HTML formatted message.
+   */
+  protected function formatSyntaxError($message) {
+    $message = trim($message);
+    $message = nl2br($message);
+    // Spaces in the error message can be used to point to a specific
+    // character in the line above.
+    $message = str_replace('  ', '&nbsp;&nbsp;', $message);
+    // Remove newlines to make testing easier.
+    $message = str_replace("\n", '', $message);
+
+    // Return the message between <pre>-tags so that the error message can be
+    // displayed correctly. Else the double spaces may not get displayed.
+    return '<pre>' . $message . '</pre>';
   }
 
   /**
@@ -177,7 +234,7 @@ class JmesPathParser extends JsonParserBase {
    */
   protected function loadLibrary() {
     if (!class_exists('JmesPath\AstRuntime')) {
-      throw new RuntimeException($this->t('The JMESPath library is not installed.'));
+      throw new \RuntimeException($this->t('The JMESPath library is not installed.'));
     }
   }
 

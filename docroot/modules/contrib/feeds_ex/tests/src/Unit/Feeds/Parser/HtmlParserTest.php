@@ -51,7 +51,7 @@ class HtmlParserTest extends ParserTestBase {
     $this->parser->setConfiguration($config);
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
-    $this->assertSame(count($result), 3);
+    $this->assertCount(3, $result);
 
     $this->assertSame('I am a title<thing>Stuff</thing>', $result[0]->get('title'));
     $this->assertSame('I am a description0', $result[0]->get('description'));
@@ -86,7 +86,7 @@ class HtmlParserTest extends ParserTestBase {
     $this->parser->setConfiguration($config);
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
-    $this->assertSame(count($result), 3);
+    $this->assertCount(3, $result);
 
     $this->assertSame('I am a title<thing>Stuff</thing>', $result[0]->get('title'));
     $this->assertSame('<p>I am a description0</p>', $result[0]->get('description'));
@@ -122,7 +122,7 @@ class HtmlParserTest extends ParserTestBase {
     $this->parser->setConfiguration($config);
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
-    $this->assertSame(count($result), 3);
+    $this->assertCount(3, $result);
 
     $this->assertSame('I am a title<thing>Stuff</thing>', $result[0]->get('title'));
     $this->assertSame('I am a description0', $result[0]->get('description'));
@@ -156,7 +156,7 @@ class HtmlParserTest extends ParserTestBase {
     $this->parser->setConfiguration($config);
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
-    $this->assertSame(count($result), 3);
+    $this->assertCount(3, $result);
 
     foreach ($result as $delta => $item) {
       $this->assertSame('Я название' . $delta, $item->get('title'));
@@ -191,7 +191,7 @@ class HtmlParserTest extends ParserTestBase {
     $this->parser->setConfiguration($config);
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
-    $this->assertSame(count($result), 3);
+    $this->assertCount(3, $result);
 
     foreach ($result as $delta => $item) {
       $this->assertSame('私はタイトルです' . $delta, $item->get('title'));

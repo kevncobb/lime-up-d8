@@ -4,15 +4,17 @@ namespace Drupal\feeds_ex\Feeds\Parser;
 
 use Exception;
 use RuntimeException;
+use Drupal\Component\Render\FormattableMarkup;
 use Drupal\Component\Utility\Html;
+use Drupal\Component\Utility\Xss;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Core\Logger\RfcLogLevel;
 use Drupal\Core\Messenger\MessengerInterface;
-use Drupal\Core\Render\Element;
+use Drupal\Core\Plugin\PluginFormInterface;
 use Drupal\feeds\Exception\EmptyFeedException;
 use Drupal\feeds\FeedInterface;
 use Drupal\feeds\Feeds\Item\DynamicItem;
-use Drupal\feeds\Plugin\Type\ConfigurablePluginBase;
+use Drupal\feeds\Feeds\Parser\ParserBase as FeedsParserBase;
 use Drupal\feeds\Plugin\Type\MappingPluginFormInterface;
 use Drupal\feeds\Plugin\Type\Parser\ParserInterface;
 use Drupal\feeds\Result\FetcherResultInterface;
@@ -24,7 +26,7 @@ use Drupal\feeds_ex\Encoder\EncoderInterface;
 /**
  * The Feeds extensible parser.
  */
-abstract class ParserBase extends ConfigurablePluginBase implements ParserInterface, MappingPluginFormInterface {
+abstract class ParserBase extends FeedsParserBase implements ParserInterface, PluginFormInterface, MappingPluginFormInterface {
 
   /**
    * The messenger, for compatibility with Drupal 8.5.
@@ -46,6 +48,19 @@ abstract class ParserBase extends ConfigurablePluginBase implements ParserInterf
    * @var \Drupal\feeds_ex\Encoder\EncoderInterface
    */
   protected $encoder;
+
+  /**
+   * The default list of HTML tags allowed by Xss::filter().
+   *
+   * In addition of \Drupal\Component\Utility\Xss::$htmlTags also the <pre>-tag
+   * is added to the list of allowed tags. This is because for the JMESPath
+   * parser an error can be generated that needs to be displayed preformatted.
+   *
+   * @var array
+   *
+   * @see \Drupal\Component\Utility\Xss::filter()
+   */
+  protected static $htmlTags = ['a', 'em', 'strong', 'cite', 'blockquote', 'br', 'pre', 'code', 'ul', 'ol', 'li', 'dl', 'dt', 'dd'];
 
   /**
    * Constructs a ParserBase object.
@@ -168,7 +183,7 @@ abstract class ParserBase extends ConfigurablePluginBase implements ParserInterf
    * Subclasses can override this to load the necessary library. It will be
    * called automatically.
    *
-   * @throws RuntimeException
+   * @throws \RuntimeException
    *   Thrown if the library does not exist.
    */
   protected function loadLibrary() {
@@ -460,6 +475,13 @@ abstract class ParserBase extends ConfigurablePluginBase implements ParserInterf
   /**
    * {@inheritdoc}
    */
+  public function validateConfigurationForm(array &$form, FormStateInterface $form_state) {
+    // Validation is optional.
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function submitConfigurationForm(array &$form, FormStateInterface $form_state) {
     // Preserve some configuration.
     $config = array_merge([
@@ -479,7 +501,9 @@ abstract class ParserBase extends ConfigurablePluginBase implements ParserInterf
         '#type' => 'textfield',
         '#title' => $this->t('Context'),
         '#default_value' => $this->configuration['context']['value'],
-        '#description' => $this->t('The base query to run.'),
+        '#description' => $this->t('The base query to run. See the <a href=":link" target="_new">Context query documentation</a> for more information.', [
+          ':link' => 'https://www.drupal.org/node/3227985',
+        ]),
         '#size' => 50,
         '#required' => TRUE,
         '#maxlength' => 1024,
@@ -487,21 +511,7 @@ abstract class ParserBase extends ConfigurablePluginBase implements ParserInterf
       ];
     }
 
-    // Override the label for adding new sources, so it is more clear what the
-    // source value represents.
-    $source_label = $this->configSourceLabel();
-    if ($source_label) {
-      foreach (Element::children($form['mappings']) as $i) {
-        if (!isset($form['mappings'][$i]['map'])) {
-          continue;
-        }
-        foreach (Element::children($form['mappings'][$i]['map']) as $subtarget) {
-          $form['mappings'][$i]['map'][$subtarget]['select']['#options']['__new'] = $this->t('New @label...', [
-            '@label' => $source_label,
-          ]);
-        }
-      }
-    }
+    parent::mappingFormAlter($form, $form_state);
   }
 
   /**
@@ -512,6 +522,7 @@ abstract class ParserBase extends ConfigurablePluginBase implements ParserInterf
       // Validate context.
       if ($this->hasConfigurableContext()) {
         if ($message = $this->validateExpression($form_state->getValue('context'))) {
+          $message = new FormattableMarkup(Xss::filter($message, static::$htmlTags), []);
           $form_state->setErrorByName('context', $message);
         }
       }
@@ -522,6 +533,7 @@ abstract class ParserBase extends ConfigurablePluginBase implements ParserInterf
         foreach ($mapping['map'] as $subtarget => $map) {
           if ($map['select'] == '__new' && isset($map['__new']['value'])) {
             if ($message = $this->validateExpression($map['__new']['value'])) {
+              $message = new FormattableMarkup(Xss::filter($message, static::$htmlTags), []);
               $form_state->setErrorByName("mappings][$i][map][$subtarget][__new][value", $message);
             }
           }

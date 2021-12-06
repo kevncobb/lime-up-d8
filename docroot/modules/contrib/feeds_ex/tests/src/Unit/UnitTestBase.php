@@ -62,7 +62,7 @@ abstract class UnitTestBase extends FeedsUnitTestCase {
    *   The list of error messages.
    */
   protected function assertEmptyFeedMessage(array $messages) {
-    $this->assertSame(1, count($messages), strtr('There is one message (actual: @actual).', [
+    $this->assertCount(1, $messages, strtr('There is one message (actual: @actual).', [
       '@actual' => count($messages),
     ]));
     $this->assertSame((string) $messages[0]['message'], 'The feed is empty.', 'Message text is correct.');

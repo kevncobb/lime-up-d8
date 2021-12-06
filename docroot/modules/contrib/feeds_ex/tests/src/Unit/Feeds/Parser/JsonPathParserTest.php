@@ -53,7 +53,7 @@ class JsonPathParserTest extends ParserTestBase {
     $this->parser->setConfiguration($config);
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
-    $this->assertSame(count($result), 3);
+    $this->assertCount(3, $result);
 
     foreach ($result as $delta => $item) {
       $this->assertSame('I am a title' . $delta, $item->get('title'));
@@ -98,25 +98,47 @@ class JsonPathParserTest extends ParserTestBase {
 
     foreach (range(0, 2) as $delta) {
       $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
-      $this->assertSame(count($result), 1);
+      $this->assertCount(1, $result);
       $this->assertSame('I am a title' . $delta, $result[0]->get('title'));
       $this->assertSame('I am a description' . $delta, $result[0]->get('description'));
     }
 
     // We should be out of items.
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
-    $this->assertSame(count($result), 0);
+    $this->assertCount(0, $result);
+  }
+
+  /**
+   * Tests parsing with a root object.
+   */
+  public function testRootContext() {
+    $fetcher_result = new RawFetcherResult(file_get_contents($this->moduleDir . '/tests/resources/test.json'), $this->fileSystem);
+
+    $config = [
+      'context' => [
+        'value' => '.',
+      ],
+      'sources' => [
+        'title' => [
+          'name' => 'Title',
+          'value' => 'items[0].title',
+        ],
+      ],
+    ] + $this->parser->defaultConfiguration();
+    $this->parser->setConfiguration($config);
+
+    $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
+    $this->assertCount(1, $result);
+    $this->assertEquals('I am a title0', $result[0]->get('title'));
   }
 
   /**
    * Tests JSONPath validation.
-   *
-   * @todo Do real validation.
    */
   public function testValidateExpression() {
     // Invalid expression.
     $expression = '!! ';
-    $this->assertSame(NULL, $this->invokeMethod($this->parser, 'validateExpression', [&$expression]));
+    $this->assertStringStartsWith('Unable to parse token !! in expression', $this->invokeMethod($this->parser, 'validateExpression', [&$expression]));
 
     // Test that value was trimmed.
     $this->assertSame($expression, '!!', 'Value was trimmed.');
@@ -159,7 +181,7 @@ class JsonPathParserTest extends ParserTestBase {
     }
 
     $log_messages = $this->feed->getLogMessages();
-    $this->assertSame(count($log_messages), 1);
+    $this->assertCount(1, $log_messages);
     $this->assertSame($log_messages[0]['message'], 'Syntax error');
     $this->assertSame($log_messages[0]['type'], 'feeds_ex');
     $this->assertSame($log_messages[0]['severity'], 3);

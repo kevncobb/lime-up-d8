@@ -9,6 +9,7 @@ return array(
     'Twig_' => array($vendorDir . '/twig/twig/lib'),
     'Stack' => array($vendorDir . '/stack/builder/src'),
     'Smtpapi' => array($vendorDir . '/sendgrid/smtpapi/lib'),
+    'QueryPath' => array($vendorDir . '/querypath/querypath/src'),
     'HTMLPurifier' => array($vendorDir . '/ezyang/htmlpurifier/library'),
     'EasyRdf_' => array($vendorDir . '/easyrdf/easyrdf/lib'),
     'Drupal\\Composer' => array($vendorDir . '/drupal/drupal-library-installer-plugin/src'),

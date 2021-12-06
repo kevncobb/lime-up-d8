@@ -31,18 +31,12 @@ class XmlUtility {
     // Fun hack to force parsing as utf-8.
     $source = '<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />' . "\n" . $source;
     $document = $this->buildDomDocument();
-    // Pass in options if available.
-    if (version_compare(PHP_VERSION, '5.4.0', '>=')) {
-      $options = $options | LIBXML_NOENT | LIBXML_NONET | defined('LIBXML_COMPACT') ? LIBXML_COMPACT : 0;
 
-      if (version_compare(LIBXML_DOTTED_VERSION, '2.7.0', '>=')) {
-        $options = $options | LIBXML_PARSEHUGE;
-      }
-      $success = $document->loadHTML($source, $options);
-    }
-    else {
-      $success = $document->loadHTML($source);
-    }
+    $options |= LIBXML_NONET;
+    $options |= defined('LIBXML_COMPACT') ? LIBXML_COMPACT : 0;
+    $options |= defined('LIBXML_PARSEHUGE') ? LIBXML_PARSEHUGE : 0;
+
+    $success = $document->loadHTML($source, $options);
 
     if (!$success) {
       throw new RuntimeException($this->t('There was an error parsing the HTML document.'));
@@ -73,13 +67,13 @@ class XmlUtility {
    *   A new DOMDocument.
    */
   protected function buildDomDocument() {
-    $document = new DOMDocument('1.0', 'UTF-8');
+    $document = new DOMDocument();
     $document->strictErrorChecking = FALSE;
     $document->resolveExternals = FALSE;
     // Libxml specific.
     $document->substituteEntities = FALSE;
     $document->recover = TRUE;
-    $document->encoding = 'UTF-8';
+
     return $document;
   }
 

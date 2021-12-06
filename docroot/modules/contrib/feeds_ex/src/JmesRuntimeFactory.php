@@ -24,7 +24,7 @@ class JmesRuntimeFactory implements JmesRuntimeFactoryInterface {
       case static::COMPILER:
       default:
         try {
-          return $this->createCompilerRuntime($this->getCompileDirectory());
+          return $this->createCompilerRuntime(\Drupal::service('file_system')->realpath($this->getCompileDirectory()));
         }
         catch (RuntimeException $e) {
           // Fallback to AstRuntime if creating a CompilerRuntime failed.

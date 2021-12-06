@@ -65,7 +65,9 @@ class QueryPathXmlParser extends XmlParser {
       return;
     }
 
-    $config = $this->configuration['sources'][$machine_name];
+    $config = $this->configuration['sources'][$machine_name] + [
+      'attribute' => '',
+    ];
 
     $return = [];
 

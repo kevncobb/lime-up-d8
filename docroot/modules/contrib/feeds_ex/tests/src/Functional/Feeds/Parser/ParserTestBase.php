@@ -35,4 +35,29 @@ abstract class ParserTestBase extends FeedsExBrowserTestBase {
     ]);
   }
 
+  /**
+   * Tests basic mapping.
+   */
+  public function doMappingTest() {
+    $this->drupalGet('/admin/structure/feeds/manage/' . $this->feedType->id() . '/mapping');
+
+    // Set source for title target.
+    $edit = [
+      'mappings[1][map][value][select]' => '__new',
+      'mappings[1][map][value][__new][value]' => 'name',
+      'mappings[1][map][value][__new][machine_name]' => 'name',
+    ];
+    $this->drupalPostForm(NULL, $edit, 'Save');
+
+    // Now check the parser configuration.
+    $this->feedType = $this->reloadEntity($this->feedType);
+    $expected_sources = [
+      'name' => [
+        'label' => 'name',
+        'value' => 'name',
+      ],
+    ];
+    $this->assertEquals($expected_sources, $this->feedType->getParser()->getConfiguration('sources'));
+  }
+
 }

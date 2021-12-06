@@ -39,10 +39,10 @@ required libraries are already installed. Else, read on.
 ### JSONPath
 The JSONPath parsers require a JSONPath library. To require it with Composer:
 
-$ composer require flow/jsonpath:~0.3
+$ composer require softcreatr/jsonpath:^0.5 || ^0.7
 
 The source code for this library can be found at:
-https://github.com/FlowCommunications/JSONPath
+https://github.com/SoftCreatR/JSONPath
 
 ### JMESPath
 To use the JMESPath parsers, you will need the JMESPath library. To require it

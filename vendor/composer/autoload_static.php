@@ -45,6 +45,8 @@ class ComposerStaticInit6872d14edd3f825f03f324a54b50bb39
         '0d273777b2b0d96e49fb3d800c6b0e81' => __DIR__ . '/..' . '/lcobucci/jwt/compat/json-exception-polyfill.php',
         'd6b246ac924292702635bb2349f4a64b' => __DIR__ . '/..' . '/lcobucci/jwt/compat/lcobucci-clock-polyfill.php',
         '2c102faa651ef8ea5874edb585946bce' => __DIR__ . '/..' . '/swiftmailer/swiftmailer/lib/swift_required.php',
+        'b067bc7112e384b61c701452d53a14a8' => __DIR__ . '/..' . '/mtdowling/jmespath.php/src/JmesPath.php',
+        'e9b046393eb3376a21bcc1a30bd2fe64' => __DIR__ . '/..' . '/querypath/querypath/src/qp_functions.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -153,6 +155,7 @@ class ComposerStaticInit6872d14edd3f825f03f324a54b50bb39
         'J' => 
         array (
             'JsonSchema\\' => 11,
+            'JmesPath\\' => 9,
         ),
         'H' => 
         array (
@@ -167,6 +170,7 @@ class ComposerStaticInit6872d14edd3f825f03f324a54b50bb39
         'F' => 
         array (
             'FontLib\\' => 8,
+            'Flow\\JSONPath\\' => 14,
             'FileEye\\MimeMap\\' => 16,
         ),
         'E' => 
@@ -470,6 +474,10 @@ class ComposerStaticInit6872d14edd3f825f03f324a54b50bb39
         array (
             0 => __DIR__ . '/..' . '/justinrainbow/json-schema/src/JsonSchema',
         ),
+        'JmesPath\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/mtdowling/jmespath.php/src',
+        ),
         'Html2Text\\' => 
         array (
             0 => __DIR__ . '/..' . '/html2text/html2text/src',
@@ -490,6 +498,10 @@ class ComposerStaticInit6872d14edd3f825f03f324a54b50bb39
         'FontLib\\' => 
         array (
             0 => __DIR__ . '/..' . '/phenx/php-font-lib/src/FontLib',
+        ),
+        'Flow\\JSONPath\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/softcreatr/jsonpath/src',
         ),
         'FileEye\\MimeMap\\' => 
         array (
@@ -621,6 +633,13 @@ class ComposerStaticInit6872d14edd3f825f03f324a54b50bb39
             'Smtpapi' => 
             array (
                 0 => __DIR__ . '/..' . '/sendgrid/smtpapi/lib',
+            ),
+        ),
+        'Q' => 
+        array (
+            'QueryPath' => 
+            array (
+                0 => __DIR__ . '/..' . '/querypath/querypath/src',
             ),
         ),
         'H' => 

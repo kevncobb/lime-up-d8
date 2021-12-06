@@ -88,6 +88,11 @@ function addtoany_entity_extra_field_info() {
  * Implements hook_ENTITY_TYPE_view().
  */
 function addtoany_entity_view(array &$build, EntityInterface $entity, EntityViewDisplayInterface $display, $view_mode) {
+  // Prevent error on preview of an unpublished node.
+  if ($entity->id() === NULL) {
+    return;
+  }
+
   if ($display->getComponent('addtoany')) {
     $config = Drupal::config('addtoany.settings');
     $isAllowed = $config->get("entities.{$entity->getEntityTypeId()}");
@@ -129,60 +134,52 @@ function addtoany_page_attachments(&$page) {
       $additional_js = \Drupal::token()->replace($additional_js, $data);
     }
   }
-  // Only load the library if addtoany is enabled in default view_mode for node type.
-  //@todo Needs to implement a check for other entity types and loop through all view_modes.
-  if($config->get('entities.node') == TRUE && !empty($node)) {
-    $display = \Drupal::entityTypeManager()->getStorage('entity_view_display')->load('node.' . $node->bundle() . '.' . 'default');
 
-    if(!empty($display->getComponent('addtoany'))) {
-      $javascript_header = 'window.a2a_config=window.a2a_config||{};'
-        . 'a2a_config.callbacks=[];a2a_config.overlays=[];'
-        . 'a2a_config.templates={};'
-        . (($config->get('no_3p')) ? 'a2a_config.no_3p=1;' : '')
-        . $additional_js;
+  $javascript_header = 'window.a2a_config=window.a2a_config||{};'
+    . 'a2a_config.callbacks=[];a2a_config.overlays=[];'
+    . 'a2a_config.templates={};'
+    . $additional_js;
 
-      // Add AddToAny initial JS config.
-      $page['#attached']['html_head'][] = [
-        // The data.
-        [
-          // Add a <script> tag.
-          '#tag' => 'script',
-          // Add JavaScript to the <script> tag.
-          '#value' => Markup::create($javascript_header),
-          // Give weight so it appears after meta tags, etc.
-          '#weight' => 10,
-        ],
-        // Assign a key to reference this HTML <HEAD> element when altering.
-        'addtoany-js',
-      ];
+  // Add AddToAny initial JS config.
+  $page['#attached']['html_head'][] = [
+    // The data.
+    [
+      // Add a <script> tag.
+      '#tag' => 'script',
+      // Add JavaScript to the <script> tag.
+      '#value' => Markup::create($javascript_header),
+      // Give weight so it appears after meta tags, etc.
+      '#weight' => 10,
+    ],
+    // Assign a key to reference this HTML <HEAD> element when altering.
+    'addtoany-js',
+  ];
 
-      // Custom CSS.
-      $css = $config->get('additional_css');
-      if (!empty($css)) {
-        // Add AddToAny custom CSS.
-        $page['#attached']['html_head'][] = [
-          // The data.
-          [
-            // Add a <style> tag.
-            '#tag' => 'style',
-            // Add CSS to the <style> tag.
-            '#value' => $css,
-            // Give weight so it appears after meta tags, etc.
-            '#weight' => 10,
-          ],
-          // Assign a key to reference this HTML <HEAD> element when altering.
-          'addtoany-css',
-        ];
-      }
+  // Custom CSS.
+  $css = $config->get('additional_css');
+  if (!empty($css)) {
+    // Add AddToAny custom CSS.
+    $page['#attached']['html_head'][] = [
+      // The data.
+      [
+        // Add a <style> tag.
+        '#tag' => 'style',
+        // Add CSS to the <style> tag.
+        '#value' => $css,
+        // Give weight so it appears after meta tags, etc.
+        '#weight' => 10,
+      ],
+      // Assign a key to reference this HTML <HEAD> element when altering.
+      'addtoany-css',
+    ];
+  }
 
-      // Add module's main library, which includes external AddToAny core JS,
-      // and the module's CSS.
-      // Enable the libraries if the current route is not an admin page.
-      $route = \Drupal::routeMatch()->getRouteObject();
-      if (!\Drupal::service('router.admin_context')->isAdminRoute($route)) {
-        $page['#attached']['library'][] = 'addtoany/addtoany';
-      }
-    }
+  // Add module's main library, which includes external AddToAny core JS,
+  // and the module's CSS.
+  // Enable the libraries if the current route is not an admin page.
+  $route = \Drupal::routeMatch()->getRouteObject();
+  if (!\Drupal::service('router.admin_context')->isAdminRoute($route)) {
+    $page['#attached']['library'][] = 'addtoany/addtoany';
   }
 }
 
@@ -230,7 +227,7 @@ function addtoany_create_data($url = NULL, $title = NULL, $config = NULL) {
   $is_front = \Drupal::service('path.matcher')->isFrontPage();
 
   // Default to <front> or the current path.
-  if (!isset($url)) {
+  if (!isset($url) || $is_front) {
     // Use <front> for the front page to avoid '/node' as the final URL,
     // otherwise use current path.
     $url = ($is_front) ? Url::fromRoute('<front>')
@@ -252,8 +249,13 @@ function addtoany_create_data($url = NULL, $title = NULL, $config = NULL) {
     else {
       $request = \Drupal::request();
       $route_match = \Drupal::routeMatch();
-      $title = \Drupal::service('title_resolver')
-        ->getTitle($request, $route_match->getRouteObject());
+      $route_object = $route_match->getRouteObject();
+
+      if ($route_object !== NULL) {
+        $title = \Drupal::service('title_resolver')
+          ->getTitle($request, $route_object);
+      }
+
       // Expecting array|string|null from getTitle.
       if (is_array($title)) {
         $title['#allowed_tags'] = [];

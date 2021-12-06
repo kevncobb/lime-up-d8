@@ -2,7 +2,6 @@
 
 namespace Drupal\feeds_ex\Utility;
 
-use RuntimeException;
 use Drupal\Component\Serialization\Json;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 
@@ -23,20 +22,16 @@ class JsonUtility {
    *   The JSON parsing error message.
    */
   public function translateError($error) {
-    if (version_compare(PHP_VERSION, '5.5.0', '>=')) {
-      switch ($error) {
-        case JSON_ERROR_RECURSION:
-          return 'One or more recursive references in the value to be encoded';
-
-        case JSON_ERROR_INF_OR_NAN:
-          return 'One or more NAN or INF values in the value to be encoded';
-
-        case JSON_ERROR_UNSUPPORTED_TYPE:
-          return 'A value of a type that cannot be encoded was given';
-      }
-    }
-
     switch ($error) {
+      case JSON_ERROR_RECURSION:
+        return 'One or more recursive references in the value to be encoded';
+
+      case JSON_ERROR_INF_OR_NAN:
+        return 'One or more NAN or INF values in the value to be encoded';
+
+      case JSON_ERROR_UNSUPPORTED_TYPE:
+        return 'A value of a type that cannot be encoded was given';
+
       case JSON_ERROR_UTF8:
         return 'Malformed UTF-8 characters, possibly incorrectly encoded';
 
@@ -69,14 +64,36 @@ class JsonUtility {
    * @return array
    *   A PHP array.
    *
-   * @throws RuntimeException
+   * @throws \RuntimeException
    *   Thrown if the encoded JSON does not result in an array.
    */
   public function decodeJsonArray($json) {
     $parsed = Json::decode($json);
 
     if (!is_array($parsed)) {
-      throw new RuntimeException($this->t('The JSON is invalid.'));
+      throw new \RuntimeException($this->t('The JSON is invalid.'));
+    }
+
+    return $parsed;
+  }
+
+  /**
+   * Decodes a JSON string into an object or array.
+   *
+   * @param string $json
+   *   A JSON string.
+   *
+   * @return object|array
+   *   A PHP object or array.
+   *
+   * @throws \RuntimeException
+   *   Thrown if the encoded JSON does not result in an array or object.
+   */
+  public function decodeJsonObject($json) {
+    $parsed = json_decode($json, FALSE);
+
+    if (!is_array($parsed) && !is_object($parsed)) {
+      throw new \RuntimeException($this->t('The JSON is invalid.'));
     }
 
     return $parsed;

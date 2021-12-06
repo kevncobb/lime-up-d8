@@ -56,7 +56,7 @@ class XmlParserTest extends ParserTestBase {
     $this->parser->setConfiguration($config);
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
-    $this->assertSame(count($result), 3);
+    $this->assertCount(3, $result);
 
     foreach ($result as $delta => $item) {
       $this->assertSame('I am a title' . $delta, $item->get('title'));
@@ -89,7 +89,7 @@ class XmlParserTest extends ParserTestBase {
     $this->parser->setConfiguration($config);
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
-    $this->assertSame(count($result), 3);
+    $this->assertCount(3, $result);
 
     foreach ($result as $delta => $item) {
       $this->assertSame('I am a title' . $delta, $item->get('title'));
@@ -123,7 +123,7 @@ class XmlParserTest extends ParserTestBase {
     $this->parser->setConfiguration($config);
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
-    $this->assertSame(count($result), 3);
+    $this->assertCount(3, $result);
 
     foreach ($result as $delta => $item) {
       $this->assertSame('I am a title' . $delta, $item->get('title'));
@@ -155,7 +155,7 @@ class XmlParserTest extends ParserTestBase {
     $this->parser->setConfiguration($config);
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
-    $this->assertSame(count($result), 3);
+    $this->assertCount(3, $result);
 
     foreach ($result as $delta => $item) {
       $this->assertSame('Я название' . $delta, $item->get('title'));
@@ -190,7 +190,7 @@ class XmlParserTest extends ParserTestBase {
     $this->parser->setConfiguration($config);
 
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
-    $this->assertSame(count($result), 3);
+    $this->assertCount(3, $result);
 
     foreach ($result as $delta => $item) {
       $this->assertSame('私はタイトルです' . $delta, $item->get('title'));
@@ -224,14 +224,14 @@ class XmlParserTest extends ParserTestBase {
 
     foreach (range(0, 2) as $delta) {
       $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
-      $this->assertSame(count($result), 1);
+      $this->assertCount(1, $result);
       $this->assertSame('I am a title' . $delta, $result[0]->get('title'));
       $this->assertSame('I am a description' . $delta, $result[0]->get('description'));
     }
 
     // Should be empty.
     $result = $this->parser->parse($this->feed, $fetcher_result, $this->state);
-    $this->assertSame(count($result), 0);
+    $this->assertCount(0, $result);
   }
 
   /**
@@ -279,7 +279,7 @@ class XmlParserTest extends ParserTestBase {
   public function testEmptyFeed() {
     $this->parser->parse($this->feed, new RawFetcherResult(' ', $this->fileSystem), $this->state);
     $messages = $this->parser->getMessenger()->getMessages();
-    $this->assertSame(1, count($messages), 'The expected number of messages.');
+    $this->assertCount(1, $messages, 'The expected number of messages.');
     $this->assertSame((string) $messages[0]['message'], 'The feed is empty.', 'Message text is correct.');
     $this->assertSame($messages[0]['type'], 'warning', 'Message type is warning.');
     $this->assertFalse($messages[0]['repeat'], 'Repeat is set to false.');

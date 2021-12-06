@@ -51,7 +51,7 @@ class JsonPathLinesParserTest extends ParserTestBase {
    */
   public function testSimpleParsing() {
     $result = $this->parser->parse($this->feed, $this->fetcherResult, $this->state);
-    $this->assertSame(count($result), 4);
+    $this->assertCount(4, $result);
 
     foreach (['Gilbert', 'Alexa', 'May', 'Deloise'] as $delta => $name) {
       $this->assertSame($name, $result[$delta]->get('title'));
@@ -75,13 +75,13 @@ class JsonPathLinesParserTest extends ParserTestBase {
 
     foreach (['Gilbert', 'Alexa', 'May', 'Deloise'] as $name) {
       $result = $this->parser->parse($this->feed, $this->fetcherResult, $this->state);
-      $this->assertSame(count($result), 1);
+      $this->assertCount(1, $result);
       $this->assertSame($result[0]->get('title'), $name);
     }
 
     // We should be out of items.
     $result = $this->parser->parse($this->feed, $this->fetcherResult, $this->state);
-    $this->assertSame(count($result), 0);
+    $this->assertCount(0, $result);
   }
 
   /**

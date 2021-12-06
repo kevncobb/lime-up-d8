@@ -18,7 +18,7 @@ class LineIteratorTest extends UnitTestBase {
    */
   public function test() {
     $iterator = new LineIterator($this->moduleDir . '/tests/resources/test.jsonl');
-    $this->assertSame(count(iterator_to_array($iterator)), 4);
+    $this->assertCount(4, iterator_to_array($iterator));
   }
 
   /**
@@ -29,7 +29,7 @@ class LineIteratorTest extends UnitTestBase {
       $iterator = new LineIterator($this->moduleDir . '/tests/resources/test.jsonl');
       $iterator->setLineLimit($limit);
       $array = iterator_to_array($iterator);
-      $this->assertSame(count($array), $limit, new FormattableMarkup('@count lines read.', ['@count' => count($array)]));
+      $this->assertCount($limit, $array, new FormattableMarkup('@count lines read.', ['@count' => count($array)]));
     }
   }
 

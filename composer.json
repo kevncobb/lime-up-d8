@@ -31,7 +31,22 @@
         "drupal/time_field": "^2.0",
         "drupal/view_mode_page": "^4.0",
         "drupal/fullcalendar_view": "^5.1",
-        "drupal/feedback": "3.x-dev@dev"
+        "drupal/feedback": "3.x-dev@dev",
+        "drupal/views_conditional": "^1.4",
+        "drupal/weight": "^3.3",
+        "drupal/twigsuggest": "^1.0@beta",
+        "drupal/tvi": "^1.0@RC",
+        "drupal/token": "^1.10",
+        "drupal/scanner": "^1.0@RC",
+        "drupal/nodeaccess": "^1.1",
+        "drupal/menu_item_extras": "^2.16",
+        "drupal/menu_breadcrumb": "^1.16",
+        "drupal/imce": "^2.4",
+        "drupal/feeds_ex": "^1.0@alpha",
+        "drupal/feeds": "^3.0@alpha",
+        "drupal/draggableviews": "^2.0",
+        "drupal/block_field": "^1.0@RC",
+        "drupal/addtoany": "^1.15"
     },
     "conflict": {
         "drupal/drupal": "*"

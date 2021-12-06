@@ -9,6 +9,7 @@ use Drupal\feeds\Result\FetcherResultInterface;
 use Drupal\feeds\Result\ParserResultInterface;
 use Drupal\feeds\StateInterface;
 use Flow\JSONPath\JSONPath;
+use Flow\JSONPath\JSONPathLexer;
 
 /**
  * Defines a JSON parser using JSONPath.
@@ -65,6 +66,19 @@ class JsonPathParser extends JsonParserBase {
    */
   protected function validateExpression(&$expression) {
     $expression = trim($expression);
+
+    // Try to validate if possible.
+    if (!class_exists('Flow\JSONPath\JSONPathLexer')) {
+      return;
+    }
+
+    try {
+      $lexer = new JSONPathLexer($expression);
+      $lexer->parseExpression();
+    }
+    catch (\Exception $e) {
+      return $e->getMessage();
+    }
   }
 
   /**
@@ -100,7 +114,7 @@ class JsonPathParser extends JsonParserBase {
    */
   protected function search(array $data, $expression) {
     $json_path = new JSONPath($data);
-    return $json_path->find($expression)->data();
+    return $json_path->find($expression)->getData();
   }
 
   /**
