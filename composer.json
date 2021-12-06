@@ -20,7 +20,7 @@
         "webmozart/path-util": "~2.0",
         "drupal/image_effects": "^3.0",
         "drupal/advagg": "^4.1",
-        "drupal/search_api": "^1.19",
+        "drupal/search_api": "^1.21",
         "drupal/search_api_solr": "^4.1",
         "drupal/context": "^4.0@beta",
         "drupal/mobile_detect": "^2.5",
