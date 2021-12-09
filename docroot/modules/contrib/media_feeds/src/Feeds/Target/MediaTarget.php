@@ -24,7 +24,7 @@ use Drupal\feeds\Plugin\Type\Target\ConfigurableTargetInterface;
 use Drupal\feeds\Plugin\Type\Target\FieldTargetBase;
 use Drupal\field\FieldConfigInterface;
 use Drupal\media\Entity\Media;
-use Drupal\Core\Entity\Query\QueryFactory;
+use Drupal\Core\Entity\Query\QueryFactoryInterface;
 
 /**
  * Defines a wrapper target around a paragraph bundle's target field.
@@ -97,7 +97,7 @@ class MediaTarget extends EntityReference implements ConfigurableTargetInterface
                               EntityFieldManagerInterface $entityFieldManager,
                               EntityTypeManagerInterface $entity_type_manager,
                               EntityRepositoryInterface $entity_repository,
-                              QueryFactory $query_factory)
+                              QueryFactoryInterface $query_factory)
   {
     $this->messenger = $messenger;
     $this->plugin_manager = $plugin_manager;
@@ -443,6 +443,27 @@ class MediaTarget extends EntityReference implements ConfigurableTargetInterface
       }
       $this->targetInstance->setTarget($feed, $mediaEntity, $target->getName(), $values);
     }
+  }
+  public function isEmpty($values){
+    $properties = $this->targetDefinition->getProperties();
+    $emptyValues = 0;
+    foreach ($values as $value) {
+      $currentProperties = array_keys($value);
+      $emptyProps = [];
+      foreach ($properties as $property) {
+        foreach ($currentProperties as $currentProperty) {
+          if($currentProperty === $property){
+            if(!strlen($value[$currentProperty])){
+              $emptyProps[] = $currentProperty;
+            }
+          }
+        }
+      }
+      if(count($emptyProps) === count($properties)){
+        $emptyValues++;
+      }
+    }
+    return $emptyValues === count($values);
   }
   /**
    * @param $host_entity
