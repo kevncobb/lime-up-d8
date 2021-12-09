@@ -424,7 +424,7 @@ class MediaTarget extends EntityReference implements ConfigurableTargetInterface
    */
   public function setTarget(FeedInterface $feed, EntityInterface $entity, $field_name, array $values)
   {
-    if($this->isEmpty($values)){
+    if($this->isEmptyMediaFeeds($values)){
       return null;
     }
     $target = $this->targetDefinition;
@@ -444,7 +444,7 @@ class MediaTarget extends EntityReference implements ConfigurableTargetInterface
       $this->targetInstance->setTarget($feed, $mediaEntity, $target->getName(), $values);
     }
   }
-  public function isEmpty($values){
+  public function isEmptyMediaFeeds($values){
     $properties = $this->targetDefinition->getProperties();
     $emptyValues = 0;
     foreach ($values as $value) {
