@@ -181,17 +181,13 @@ function limestone_theme_suggestions_page_alter(array &$suggestions, array $vari
  * Implements hook__suggestions_HOOK_alter().
  */
 function limestone_theme_suggestions_block_alter(array &$suggestions, array $variables) {
-
-
-  // Block suggestions for custom block bundles.
-  if (isset($variables['elements']['content']['#block_content'])) {
-    array_splice($suggestions, 1, 0, 'block__bundle__' . $variables['elements']['content']['#block_content']->bundle());
-  }
-  // Add theme suggestions to blocks based on region.
   if (!empty($variables['elements']['#id'])) {
-    $block = Drupal\block\Entity\Block::load($variables['elements']['#id']);
-    $suggestions[] = 'block__' . $block->getRegion();
-    $suggestions[] = 'block__' . $block->getRegion() . '__' . $variables['elements']['#id'];
+    $block = Block::load($variables['elements']['#id']);
+    if ($block !== null) {
+      $block_type = $variables['elements']['#base_plugin_id'];
+      $suggestions[] = 'block__' . $block_type . '__' . $block->getRegion();
+      $suggestions[] = 'block__' . $block->getRegion() . '__' . $variables['elements']['#id'];
+    }
   }
   return $suggestions;
 }
