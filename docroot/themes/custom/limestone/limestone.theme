@@ -1,4 +1,5 @@
 <?php
+use Drupal\block\Entity\Block;
 
 // Add your custom theme override functions here.
 
