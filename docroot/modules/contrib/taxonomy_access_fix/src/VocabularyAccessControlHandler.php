@@ -55,11 +55,13 @@ class VocabularyAccessControlHandler extends OriginalVocabularyAccessControlHand
           ->orIf(AccessResult::allowedIf($account->hasPermission('delete terms in ' . $entity->id())))
           ->orIf(AccessResult::allowedIf($account->hasPermission('edit terms in ' . $entity->id())))
           ->orIf($this->checkAccess($entity, 'reorder_terms', $account));
+        /** @var \Drupal\Core\Access\AccessResult $access_result */
         $access_result = $access_result
-          ->andIf($access_result_operation)
-          ->cachePerPermissions()
+          ->andIf($access_result_operation);
+        $access_result->cachePerPermissions()
           ->addCacheableDependency($entity);
         if (!$access_result->isAllowed()) {
+          /** @var \Drupal\Core\Access\AccessResultReasonInterface $access_result */
           $access_result->setReason("The 'access taxonomy overview' and one of the 'create terms in {$entity->id()}', 'delete terms in {$entity->id()}', 'edit terms in {$entity->id()}', 'reorder terms in {$entity->id()}' permissions OR the 'administer taxonomy' permission are required.");
         }
       }
@@ -74,6 +76,7 @@ class VocabularyAccessControlHandler extends OriginalVocabularyAccessControlHand
         ->cachePerPermissions()
         ->addCacheableDependency($entity);
       if (!$access_result->isAllowed()) {
+        /** @var \Drupal\Core\Access\AccessResultReasonInterface $access_result */
         $access_result->setReason("The 'reorder terms in {$entity->id()}' OR the 'administer taxonomy' permission is required.");
       }
     }

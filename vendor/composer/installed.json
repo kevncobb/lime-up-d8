@@ -181,7 +181,7 @@
         "version_normalized": "3.6.0.0",
         "source": {
             "type": "git",
-            "url": "git@github.com:jquery/jquery-dist.git",
+            "url": "https://github.com/jquery/jquery-dist.git",
             "reference": "e786e3d9707ffd9b0dd330ca135b66344dcef85a"
         },
         "dist": {
@@ -5309,18 +5309,18 @@
     },
     {
         "name": "drupal/devel",
-        "version": "4.1.1",
-        "version_normalized": "4.1.1.0",
+        "version": "4.1.2",
+        "version_normalized": "4.1.2.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/devel.git",
-            "reference": "4.1.1"
+            "reference": "4.1.2"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/devel-4.1.1.zip",
-            "reference": "4.1.1",
-            "shasum": "88e5d49dda26a3136291ecd97bc6c8e897b24198"
+            "url": "https://ftp.drupal.org/files/projects/devel-4.1.2.zip",
+            "reference": "4.1.2",
+            "shasum": "62e3d25787285e7333c49f5d0203f513cc1ef717"
         },
         "require": {
             "doctrine/common": "^2.7",
@@ -5339,8 +5339,8 @@
         "type": "drupal-module",
         "extra": {
             "drupal": {
-                "version": "4.1.1",
-                "datestamp": "1609419527",
+                "version": "4.1.2",
+                "datestamp": "1638973249",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
@@ -6872,18 +6872,12 @@
     },
     {
         "name": "drupal/features",
-        "version": "3.12.0",
-        "version_normalized": "3.12.0.0",
+        "version": "dev-3.x",
+        "version_normalized": "dev-3.x",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/features.git",
-            "reference": "8.x-3.12"
-        },
-        "dist": {
-            "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/features-8.x-3.12.zip",
-            "reference": "8.x-3.12",
-            "shasum": "f28d6e7d3340e32666a3e8ae515ed746dbe86b98"
+            "reference": "d62788ecefa7f4f14eb0263232e695aa70f9038e"
         },
         "require": {
             "drupal/config_update": "^1.4",
@@ -6891,12 +6885,15 @@
         },
         "type": "drupal-module",
         "extra": {
+            "branch-alias": {
+                "dev-3.x": "3.x-dev"
+            },
             "drupal": {
-                "version": "8.x-3.12",
-                "datestamp": "1612830531",
+                "version": "8.x-3.12+1-dev",
+                "datestamp": "1628545669",
                 "security-coverage": {
-                    "status": "covered",
-                    "message": "Covered by Drupal's security advisory policy"
+                    "status": "not-covered",
+                    "message": "Dev releases are not covered by Drupal security advisories."
                 }
             },
             "drush": {
@@ -6905,7 +6902,7 @@
                 }
             }
         },
-        "installation-source": "dist",
+        "installation-source": "source",
         "notification-url": "https://packages.drupal.org/8/downloads",
         "license": [
             "GPL-2.0-or-later"
@@ -14601,18 +14598,18 @@
     },
     {
         "name": "drupal/swiftmailer",
-        "version": "2.0.0",
-        "version_normalized": "2.0.0.0",
+        "version": "2.1.0",
+        "version_normalized": "2.1.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/swiftmailer.git",
-            "reference": "8.x-2.0"
+            "reference": "8.x-2.1"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/swiftmailer-8.x-2.0.zip",
-            "reference": "8.x-2.0",
-            "shasum": "9a4d9f511885246262224a81ec736c9c6aa2b466"
+            "url": "https://ftp.drupal.org/files/projects/swiftmailer-8.x-2.1.zip",
+            "reference": "8.x-2.1",
+            "shasum": "49774a2c1210b937fbbf23a9e76ae4b5a4ea4ece"
         },
         "require": {
             "drupal/core": "^8.9.11 || ^9.0.10",
@@ -14626,8 +14623,8 @@
         "type": "drupal-module",
         "extra": {
             "drupal": {
-                "version": "8.x-2.0",
-                "datestamp": "1609585507",
+                "version": "8.x-2.1",
+                "datestamp": "1638870626",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
@@ -14673,18 +14670,18 @@
     },
     {
         "name": "drupal/taxonomy_access_fix",
-        "version": "3.1.0",
-        "version_normalized": "3.1.0.0",
+        "version": "3.3.0",
+        "version_normalized": "3.3.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/taxonomy_access_fix.git",
-            "reference": "8.x-3.1"
+            "reference": "8.x-3.3"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/taxonomy_access_fix-8.x-3.1.zip",
-            "reference": "8.x-3.1",
-            "shasum": "bc455a2b9cec94f1615d2761883bf516dc623a19"
+            "url": "https://ftp.drupal.org/files/projects/taxonomy_access_fix-8.x-3.3.zip",
+            "reference": "8.x-3.3",
+            "shasum": "38d95d8aa0953cd68c112f01d146f2eb8c4b125c"
         },
         "require": {
             "drupal/core": "^8.8 || ^9"
@@ -14692,8 +14689,8 @@
         "type": "drupal-module",
         "extra": {
             "drupal": {
-                "version": "8.x-3.1",
-                "datestamp": "1605457888",
+                "version": "8.x-3.3",
+                "datestamp": "1639058437",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
@@ -17851,18 +17848,18 @@
     },
     {
         "name": "drupal/webform",
-        "version": "6.1.1",
-        "version_normalized": "6.1.1.0",
+        "version": "6.1.2",
+        "version_normalized": "6.1.2.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/webform.git",
-            "reference": "6.1.1"
+            "reference": "6.1.2"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/webform-6.1.1.zip",
-            "reference": "6.1.1",
-            "shasum": "0d3c619a165f4a84b5cced8aa35c54e1296df22e"
+            "url": "https://ftp.drupal.org/files/projects/webform-6.1.2.zip",
+            "reference": "6.1.2",
+            "shasum": "3afb96566f5d31474483e163b4e0138d43cffdcd"
         },
         "require": {
             "drupal/core": "^8.8 || ^9"
@@ -17872,15 +17869,15 @@
             "drupal/bootstrap": "~3.0",
             "drupal/captcha": "~1.0",
             "drupal/chosen": "~3.0",
-            "drupal/clientside_validation": "~3.0",
+            "drupal/clientside_validation": "*",
             "drupal/clientside_validation_jquery": "*",
-            "drupal/devel": "~3.0",
+            "drupal/devel": "*",
             "drupal/entity": "~1.0",
-            "drupal/entity_print": "~2.0",
+            "drupal/entity_print": "*",
             "drupal/gnode": "*",
-            "drupal/group": "1.0",
+            "drupal/group": "*",
             "drupal/jquery_ui": "~1.0",
-            "drupal/jquery_ui_checkboxradio": "~1.0",
+            "drupal/jquery_ui_checkboxradio": "*",
             "drupal/jquery_ui_datepicker": "~1.0",
             "drupal/lingotek": "~3.0",
             "drupal/mailsystem": "~4.0",
@@ -17889,7 +17886,7 @@
             "drupal/smtp": "~1.0",
             "drupal/styleguide": "~1.0",
             "drupal/telephone_validation": "~2.0",
-            "drupal/token": "~1.0",
+            "drupal/token": "*",
             "drupal/variationcache": "~1.0",
             "drupal/webform_access": "*",
             "drupal/webform_attachment": "*",
@@ -17910,8 +17907,8 @@
         "type": "drupal-module",
         "extra": {
             "drupal": {
-                "version": "6.1.1",
-                "datestamp": "1638398898",
+                "version": "6.1.2",
+                "datestamp": "1638988073",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
@@ -19355,17 +19352,17 @@
     },
     {
         "name": "laminas/laminas-stdlib",
-        "version": "3.6.1",
-        "version_normalized": "3.6.1.0",
+        "version": "3.6.2",
+        "version_normalized": "3.6.2.0",
         "source": {
             "type": "git",
             "url": "https://github.com/laminas/laminas-stdlib.git",
-            "reference": "db581851a092246ad99e12d4fddf105184924c71"
+            "reference": "6fe0842909638ca6bea8401b7e8168fb154bffb5"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/laminas/laminas-stdlib/zipball/db581851a092246ad99e12d4fddf105184924c71",
-            "reference": "db581851a092246ad99e12d4fddf105184924c71",
+            "url": "https://api.github.com/repos/laminas/laminas-stdlib/zipball/6fe0842909638ca6bea8401b7e8168fb154bffb5",
+            "reference": "6fe0842909638ca6bea8401b7e8168fb154bffb5",
             "shasum": ""
         },
         "require": {
@@ -19381,7 +19378,7 @@
             "psalm/plugin-phpunit": "^0.16.0",
             "vimeo/psalm": "^4.7"
         },
-        "time": "2021-11-10T11:33:52+00:00",
+        "time": "2021-12-07T21:06:58+00:00",
         "type": "library",
         "installation-source": "dist",
         "autoload": {
@@ -24128,29 +24125,29 @@
     },
     {
         "name": "tijsverkoyen/css-to-inline-styles",
-        "version": "2.2.3",
-        "version_normalized": "2.2.3.0",
+        "version": "2.2.4",
+        "version_normalized": "2.2.4.0",
         "source": {
             "type": "git",
             "url": "https://github.com/tijsverkoyen/CssToInlineStyles.git",
-            "reference": "b43b05cf43c1b6d849478965062b6ef73e223bb5"
+            "reference": "da444caae6aca7a19c0c140f68c6182e337d5b1c"
         },
         "dist": {
             "type": "zip",
-            "url": "https://api.github.com/repos/tijsverkoyen/CssToInlineStyles/zipball/b43b05cf43c1b6d849478965062b6ef73e223bb5",
-            "reference": "b43b05cf43c1b6d849478965062b6ef73e223bb5",
+            "url": "https://api.github.com/repos/tijsverkoyen/CssToInlineStyles/zipball/da444caae6aca7a19c0c140f68c6182e337d5b1c",
+            "reference": "da444caae6aca7a19c0c140f68c6182e337d5b1c",
             "shasum": ""
         },
         "require": {
             "ext-dom": "*",
             "ext-libxml": "*",
             "php": "^5.5 || ^7.0 || ^8.0",
-            "symfony/css-selector": "^2.7 || ^3.0 || ^4.0 || ^5.0"
+            "symfony/css-selector": "^2.7 || ^3.0 || ^4.0 || ^5.0 || ^6.0"
         },
         "require-dev": {
-            "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.0 || ^7.5"
+            "phpunit/phpunit": "^4.8.35 || ^5.7 || ^6.0 || ^7.5 || ^8.5.21 || ^9.5.10"
         },
-        "time": "2020-07-13T06:12:54+00:00",
+        "time": "2021-12-08T09:12:39+00:00",
         "type": "library",
         "extra": {
             "branch-alias": {

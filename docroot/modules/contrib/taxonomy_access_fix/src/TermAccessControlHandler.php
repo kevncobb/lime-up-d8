@@ -16,6 +16,7 @@ class TermAccessControlHandler extends OriginalTermAccessControlHandler {
    * {@inheritdoc}
    */
   protected function checkAccess(EntityInterface $entity, $operation, AccountInterface $account) {
+    /** @var \Drupal\taxonomy\TermInterface $entity */
     if ($operation !== 'view') {
       return parent::checkAccess($entity, $operation, $account);
     }
@@ -27,6 +28,7 @@ class TermAccessControlHandler extends OriginalTermAccessControlHandler {
       ->cachePerPermissions()
       ->addCacheableDependency($entity);
     if (!$access_result->isAllowed()) {
+      /** @var \Drupal\Core\Access\AccessResultReasonInterface $access_result */
       $access_result->setReason("The 'view terms in {$entity->bundle()}' OR 'administer taxonomy' permission is required and the taxonomy term must be published.");
     }
     return $access_result;

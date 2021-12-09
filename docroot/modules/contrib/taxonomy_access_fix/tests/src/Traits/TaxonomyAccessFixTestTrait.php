@@ -23,15 +23,15 @@ trait TaxonomyAccessFixTestTrait {
    *   messages: use strtr() to embed variables in the message text, not
    *   t(). If left blank, a default message will be displayed.
    *
-   * @return bool
-   *   TRUE if the assertion succeeded, FALSE otherwise.
+   * @throws \PHPUnit\Framework\ExpectationFailedException
+   *   When the assertion failed.
    */
   protected function assertElementByCssSelector($selector, $index = 0, $message = '') {
     $elements = $this->cssSelect($selector);
     $message = $message ? $message : new FormattableMarkup('Element with CSS selector %selector found.', [
       '%selector' => $selector,
     ]);
-    return $this->assertTrue(isset($elements[$index]), $message);
+    $this->assertTrue(isset($elements[$index]), $message);
   }
 
   /**
@@ -46,15 +46,15 @@ trait TaxonomyAccessFixTestTrait {
    *   messages: use strtr() to embed variables in the message text, not
    *   t(). If left blank, a default message will be displayed.
    *
-   * @return bool
-   *   TRUE if the assertion succeeded, FALSE otherwise.
+   * @throws \PHPUnit\Framework\ExpectationFailedException
+   *   When the assertion failed.
    */
   protected function assertNoElementByCssSelector($selector, $message = '') {
     $elements = $this->cssSelect($selector);
     $message = $message ? $message : new FormattableMarkup('Element with CSS selector %selector not found.', [
       '%selector' => $selector,
     ]);
-    return $this->assertTrue(empty($elements), $message);
+    $this->assertTrue(empty($elements), $message);
   }
 
   /**
@@ -73,8 +73,8 @@ trait TaxonomyAccessFixTestTrait {
    *   messages: use strtr() to embed variables in the message text, not
    *   t(). If left blank, a default message will be displayed.
    *
-   * @return bool
-   *   TRUE if the assertion succeeded, FALSE otherwise.
+   * @throws \PHPUnit\Framework\ExpectationFailedException
+   *   When the assertion failed.
    */
   protected function assertLinkByEndOfHref($href, $index = 0, $message = '') {
     // This is an XPath 1.0 implementation of the ends-with() function.
@@ -84,7 +84,7 @@ trait TaxonomyAccessFixTestTrait {
     $message = $message ? $message : new FormattableMarkup('Link with href %href found.', [
       '%href' => $href,
     ]);
-    return $this->assertTrue(isset($links[$index]), $message);
+    $this->assertTrue(isset($links[$index]), $message);
   }
 
   /**
@@ -101,8 +101,8 @@ trait TaxonomyAccessFixTestTrait {
    *   messages: use strtr() to embed variables in the message text, not
    *   t(). If left blank, a default message will be displayed.
    *
-   * @return bool
-   *   TRUE if the assertion succeeded, FALSE otherwise.
+   * @throws \PHPUnit\Framework\ExpectationFailedException
+   *   When the assertion failed.
    */
   protected function assertNoLinkByEndOfHref($href, $message = '') {
     // This is an XPath 1.0 implementation of the ends-with() function.
@@ -112,7 +112,7 @@ trait TaxonomyAccessFixTestTrait {
     $message = $message ? $message : new FormattableMarkup('No link with href %href found.', [
       '%href' => $href,
     ]);
-    return $this->assertTrue(empty($links), $message);
+    $this->assertTrue(empty($links), $message);
   }
 
   /**
@@ -124,6 +124,9 @@ trait TaxonomyAccessFixTestTrait {
    * @param bool $assert_overview_page
    *   Whether to assert sortable table on overview page (Default). If FALSE,
    *   sortable table on index page will be asserted.
+   *
+   * @throws \PHPUnit\Framework\ExpectationFailedException
+   *   When the assertion failed.
    */
   protected function assertSortableTable($assert_overview_page = TRUE) {
     if ($assert_overview_page) {
@@ -147,6 +150,9 @@ trait TaxonomyAccessFixTestTrait {
    * @param bool $assert_overview_page
    *   Whether to assert no sortable table on overview page (Default). If FALSE,
    *   no sortable table on index page will be asserted.
+   *
+   * @throws \PHPUnit\Framework\ExpectationFailedException
+   *   When the assertion failed.
    */
   protected function assertNoSortableTable($assert_overview_page = TRUE) {
     if ($assert_overview_page) {

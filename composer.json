@@ -46,7 +46,8 @@
         "drupal/feeds": "^3.0@alpha",
         "drupal/draggableviews": "^2.0",
         "drupal/block_field": "^1.0@RC",
-        "drupal/addtoany": "^1.15"
+        "drupal/addtoany": "^1.15",
+        "drupal/features": "3.x-dev@dev"
     },
     "conflict": {
         "drupal/drupal": "*"
