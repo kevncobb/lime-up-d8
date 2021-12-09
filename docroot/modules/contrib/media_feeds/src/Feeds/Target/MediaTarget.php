@@ -118,9 +118,9 @@ class MediaTarget extends EntityReference implements ConfigurableTargetInterface
         $plugin_id,
         $plugin_definition,
         $entity_type_manager,
-        $query_factory,
         $entityFieldManager,
-        $entity_repository);
+        $entity_repository,
+        $query_factory);
     }
   }
 
@@ -479,7 +479,7 @@ class MediaTarget extends EntityReference implements ConfigurableTargetInterface
         return $value['entity'];
       }
     }
-    $media = $this->media_storage->create(["bundle" => $bundle, 'name' => 'Default name']);
+    $media = $this->media_storage->create(["bundle" => $bundle, 'name' => $value ]);
     $host_entity->get($host_field)->setValue($media);
     return $media;
 
