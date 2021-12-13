@@ -3802,6 +3802,130 @@
         }
     },
     {
+        "name": "drupal/colorbox",
+        "version": "1.7.0",
+        "version_normalized": "1.7.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupalcode.org/project/colorbox.git",
+            "reference": "8.x-1.7"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/colorbox-8.x-1.7.zip",
+            "reference": "8.x-1.7",
+            "shasum": "64c7290be86fe1d3bf80dcf4003a37b3698bba50"
+        },
+        "require": {
+            "drupal/core": "^8.8 || ^9"
+        },
+        "suggest": {
+            "jackmoore/colorbox": "The Colorbox library is required to use the drupal/colorbox module."
+        },
+        "type": "drupal-module",
+        "extra": {
+            "drupal": {
+                "version": "8.x-1.7",
+                "datestamp": "1615218004",
+                "security-coverage": {
+                    "status": "covered",
+                    "message": "Covered by Drupal's security advisory policy"
+                }
+            },
+            "drush": {
+                "services": {
+                    "drush.services.yml": "^9"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0-or-later"
+        ],
+        "authors": [
+            {
+                "name": "Neslee Canil Pinto",
+                "homepage": "https://www.drupal.org/u/neslee-canil-pinto",
+                "role": "Maintainer"
+            },
+            {
+                "name": "Fredrik Jonsson",
+                "homepage": "https://www.drupal.org/u/frjo",
+                "role": "Maintainer"
+            },
+            {
+                "name": "Sam152",
+                "homepage": "https://www.drupal.org/user/1485048"
+            },
+            {
+                "name": "frjo",
+                "homepage": "https://www.drupal.org/user/5546"
+            },
+            {
+                "name": "jdwfly",
+                "homepage": "https://www.drupal.org/user/298179"
+            }
+        ],
+        "description": "A light-weight, customizable lightbox plugin for jQuery.",
+        "homepage": "https://www.drupal.org/project/colorbox",
+        "support": {
+            "source": "https://git.drupalcode.org/project/colorbox",
+            "issues": "https://www.drupal.org/project/issues/colorbox"
+        }
+    },
+    {
+        "name": "drupal/colorbox_simple_load",
+        "version": "2.0.0",
+        "version_normalized": "2.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupalcode.org/project/colorbox_simple_load.git",
+            "reference": "2.0.0"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/colorbox_simple_load-2.0.0.zip",
+            "reference": "2.0.0",
+            "shasum": "74e8a57616bbb44d80a09ce52fd3f5e58e7023ed"
+        },
+        "require": {
+            "drupal/colorbox": "*",
+            "drupal/core": "^8 || ^9"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "drupal": {
+                "version": "2.0.0",
+                "datestamp": "1591256839",
+                "security-coverage": {
+                    "status": "covered",
+                    "message": "Covered by Drupal's security advisory policy"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0-or-later"
+        ],
+        "authors": [
+            {
+                "name": "mr.york",
+                "homepage": "https://www.drupal.org/user/52785"
+            },
+            {
+                "name": "nagy.balint",
+                "homepage": "https://www.drupal.org/user/1763952"
+            }
+        ],
+        "description": "Enabled the \"colorbox simple load\" functionality for Drupal 8.",
+        "homepage": "https://www.drupal.org/project/colorbox_simple_load",
+        "support": {
+            "source": "https://git.drupalcode.org/project/colorbox_simple_load"
+        }
+    },
+    {
         "name": "drupal/conditional_fields",
         "version": "4.0.0-alpha1",
         "version_normalized": "4.0.0.0-alpha1",
@@ -7199,6 +7323,72 @@
         }
     },
     {
+        "name": "drupal/field_formatter",
+        "version": "3.0.0-alpha3",
+        "version_normalized": "3.0.0.0-alpha3",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupalcode.org/project/field_formatter.git",
+            "reference": "3.0.0-alpha3"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/field_formatter-3.0.0-alpha3.zip",
+            "reference": "3.0.0-alpha3",
+            "shasum": "c11bb6ac0470ae870e454c01feea37dd19f3e3ec"
+        },
+        "require": {
+            "drupal/core": "^8 || ^9"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "drupal": {
+                "version": "3.0.0-alpha3",
+                "datestamp": "1636820392",
+                "security-coverage": {
+                    "status": "not-covered",
+                    "message": "Alpha releases are not covered by Drupal security advisories."
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0-or-later"
+        ],
+        "authors": [
+            {
+                "name": "Anybody",
+                "homepage": "https://www.drupal.org/user/291091"
+            },
+            {
+                "name": "Dave Reid",
+                "homepage": "https://www.drupal.org/user/53892"
+            },
+            {
+                "name": "Drupal Media Team",
+                "homepage": "https://www.drupal.org/user/3260690"
+            },
+            {
+                "name": "Drupal media CI",
+                "homepage": "https://www.drupal.org/user/3057985"
+            },
+            {
+                "name": "dawehner",
+                "homepage": "https://www.drupal.org/user/99340"
+            },
+            {
+                "name": "slashrsm",
+                "homepage": "https://www.drupal.org/user/744628"
+            }
+        ],
+        "description": "Collection of general formatters that display a single field from the referenced entity.",
+        "homepage": "https://www.drupal.org/project/field_formatter",
+        "support": {
+            "source": "https://git.drupalcode.org/project/field_formatter"
+        }
+    },
+    {
         "name": "drupal/field_group",
         "version": "3.2.0",
         "version_normalized": "3.2.0.0",
@@ -7262,6 +7452,53 @@
         "support": {
             "source": "https://git.drupalcode.org/project/field_group",
             "issues": "https://www.drupal.org/project/issues/field_group"
+        }
+    },
+    {
+        "name": "drupal/field_token_value",
+        "version": "2.0.1",
+        "version_normalized": "2.0.1.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupalcode.org/project/field_token_value.git",
+            "reference": "2.0.1"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/field_token_value-2.0.1.zip",
+            "reference": "2.0.1",
+            "shasum": "0a4644753ba7603f3d4fc033f7d83de116aaa804"
+        },
+        "require": {
+            "drupal/core": "^8 || ^9",
+            "drupal/token": "*"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "drupal": {
+                "version": "2.0.1",
+                "datestamp": "1629160323",
+                "security-coverage": {
+                    "status": "covered",
+                    "message": "Covered by Drupal's security advisory policy"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0-or-later"
+        ],
+        "authors": [
+            {
+                "name": "haydent",
+                "homepage": "https://www.drupal.org/user/2763191"
+            }
+        ],
+        "description": "Provides a field allowing the value to be set using a string containing tokens.",
+        "homepage": "https://www.drupal.org/project/field_token_value",
+        "support": {
+            "source": "https://git.drupalcode.org/project/field_token_value"
         }
     },
     {
@@ -12315,18 +12552,18 @@
     },
     {
         "name": "drupal/redirect",
-        "version": "1.6.0",
-        "version_normalized": "1.6.0.0",
+        "version": "1.7.0",
+        "version_normalized": "1.7.0.0",
         "source": {
             "type": "git",
             "url": "https://git.drupalcode.org/project/redirect.git",
-            "reference": "8.x-1.6"
+            "reference": "8.x-1.7"
         },
         "dist": {
             "type": "zip",
-            "url": "https://ftp.drupal.org/files/projects/redirect-8.x-1.6.zip",
-            "reference": "8.x-1.6",
-            "shasum": "f848e001deac8425ae57d4b9397087c491d37294"
+            "url": "https://ftp.drupal.org/files/projects/redirect-8.x-1.7.zip",
+            "reference": "8.x-1.7",
+            "shasum": "013b2541a5ef0cf423a3caa1ae89cc5866504877"
         },
         "require": {
             "drupal/core": "^8.8 || ^9"
@@ -12334,8 +12571,8 @@
         "type": "drupal-module",
         "extra": {
             "drupal": {
-                "version": "8.x-1.6",
-                "datestamp": "1589312204",
+                "version": "8.x-1.7",
+                "datestamp": "1639380488",
                 "security-coverage": {
                     "status": "covered",
                     "message": "Covered by Drupal's security advisory policy"
@@ -15240,6 +15477,107 @@
         "support": {
             "source": "http://cgit.drupalcode.org/tvi",
             "issues": "http://drupal.org/project/issues/tvi"
+        }
+    },
+    {
+        "name": "drupal/twig_field_value",
+        "version": "2.0.0",
+        "version_normalized": "2.0.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupalcode.org/project/twig_field_value.git",
+            "reference": "2.0.0"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/twig_field_value-2.0.0.zip",
+            "reference": "2.0.0",
+            "shasum": "d2d0db6249493542bf9d568970f67d10ce143f90"
+        },
+        "require": {
+            "drupal/core": "^8 || ^9"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "drupal": {
+                "version": "2.0.0",
+                "datestamp": "1587069998",
+                "security-coverage": {
+                    "status": "covered",
+                    "message": "Covered by Drupal's security advisory policy"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0-or-later"
+        ],
+        "authors": [
+            {
+                "name": "Sutharsan",
+                "homepage": "https://www.drupal.org/user/73854"
+            }
+        ],
+        "description": "Twig filters for value(s) and label.",
+        "homepage": "https://www.drupal.org/project/twig_field_value",
+        "support": {
+            "source": "https://git.drupalcode.org/project/twig_field_value"
+        }
+    },
+    {
+        "name": "drupal/twig_tweak",
+        "version": "2.9.0",
+        "version_normalized": "2.9.0.0",
+        "source": {
+            "type": "git",
+            "url": "https://git.drupalcode.org/project/twig_tweak.git",
+            "reference": "8.x-2.9"
+        },
+        "dist": {
+            "type": "zip",
+            "url": "https://ftp.drupal.org/files/projects/twig_tweak-8.x-2.9.zip",
+            "reference": "8.x-2.9",
+            "shasum": "c45ba1a41e323a432d1ff36d0a72344b88595a39"
+        },
+        "require": {
+            "drupal/core": "^8.7 || ^9.0",
+            "twig/twig": "^1.41 || ^2.12"
+        },
+        "suggest": {
+            "symfony/var-dumper": "Better dump() function for debugging Twig variables"
+        },
+        "type": "drupal-module",
+        "extra": {
+            "drupal": {
+                "version": "8.x-2.9",
+                "datestamp": "1608093728",
+                "security-coverage": {
+                    "status": "covered",
+                    "message": "Covered by Drupal's security advisory policy"
+                }
+            }
+        },
+        "installation-source": "dist",
+        "notification-url": "https://packages.drupal.org/8/downloads",
+        "license": [
+            "GPL-2.0+"
+        ],
+        "authors": [
+            {
+                "name": "Chi",
+                "homepage": "https://www.drupal.org/user/556138"
+            }
+        ],
+        "description": "A Twig extension with some useful functions and filters for Drupal development.",
+        "homepage": "https://www.drupal.org/project/twig_tweak",
+        "keywords": [
+            "Drupal",
+            "Twig"
+        ],
+        "support": {
+            "source": "https://git.drupalcode.org/project/twig_tweak",
+            "issues": "https://www.drupal.org/project/issues/twig_tweak"
         }
     },
     {

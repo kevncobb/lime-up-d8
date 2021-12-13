@@ -2,13 +2,13 @@ name: Colorbox Simple Load
 type: module
 description: Enabled the "colorbox simple load" functionality for Drupal 8.
 package: Media
-# core: 8.x
+core: 8.x
+core_version_requirement: ^8 || ^9
 
 dependencies:
   - colorbox:colorbox
 
-# Information added by Drupal.org packaging script on 2018-08-29
-version: '8.x-1.0'
-core: '8.x'
+# Information added by Drupal.org packaging script on 2020-06-04
+version: '2.0.0'
 project: 'colorbox_simple_load'
-datestamp: 1535532196
+datestamp: 1591256841

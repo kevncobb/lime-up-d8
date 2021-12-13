@@ -21,7 +21,7 @@
         "drupal/image_effects": "^3.0",
         "drupal/advagg": "^4.1",
         "drupal/search_api": "^1.21",
-        "drupal/search_api_solr": "^4.1",
+        "drupal/search_api_solr": "^4.2",
         "drupal/context": "^4.0@beta",
         "drupal/mobile_detect": "^2.5",
         "drupal/webform": "^6.0",
@@ -47,7 +47,13 @@
         "drupal/draggableviews": "^2.0",
         "drupal/block_field": "^1.0@RC",
         "drupal/addtoany": "^1.15",
-        "drupal/features": "3.x-dev@dev"
+        "drupal/features": "3.x-dev@dev",
+        "drupal/colorbox_simple_load": "^2.0",
+        "drupal/field_formatter": "^3.0@alpha",
+        "drupal/field_token_value": "^2.0",
+        "drupal/redirect": "^1.7",
+        "drupal/twig_field_value": "^2.0",
+        "drupal/twig_tweak": "^2.9"
     },
     "conflict": {
         "drupal/drupal": "*"
