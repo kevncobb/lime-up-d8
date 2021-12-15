@@ -181,7 +181,7 @@
           {% endif %}
           <a id="main-content"></a>
           <section class="grid-container content-bump-up bg-white spacing-xs padding-sides-sm">
-            {{ drupal_block('limestone_local_tasks') }}
+            {{ drupal_entity('block', 'limestone_local_tasks') }}
             <div class="grid-x grid-margin-x">
               <div class="cell medium-7">
                 {{ drupal_entity('block', 'addtoanybuttons') }}
@@ -223,15 +223,15 @@
                   <div class="lc-header">Financial Aid Information</div>
                 {% endif %}
                 {% if node.field_display_day_financial_aid_.value == '1' %}
-                  {{ drupal_block('daycampusfinancialaidinfomodalbutton') }}
+                  {{ drupal_entity('block', 'daycampusfinancialaidinfomodalbutton') }}
                 {% endif %}
 
                 {% if node.field_display_o_e_financial_aid_.value == '1' %}
-                  {{ drupal_block('oecampusfinancialaidinfomodalbutton') }}
+                  {{ drupal_entity('block', 'oecampusfinancialaidinfomodalbutton') }}
                 {% endif %}
 
                 {% if node.field_display_grad_financial_aid.value == '1' %}
-                  {{ drupal_block('gradfinancialaidinfomodalbutton') }}
+                  {{ ddrupal_entity('block', 'gradfinancialaidinfomodalbutton') }}
                 {% endif %}
                 {{ drupal_field('field_related_minors', 'node') }}
                 {% if node.field_display_related_news_below.value == '0' %}
