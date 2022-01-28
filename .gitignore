@@ -7,6 +7,7 @@ docroot/sites/*/settings.local.php
 docroot/*/settings.local.php
 acquia-file
 /log
+update_backups
 
 
 # Ignore vim swp files and gedit temp files
