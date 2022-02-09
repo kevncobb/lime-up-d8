@@ -14,6 +14,7 @@ use Drupal\Core\Link;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Url;
 use Drupal\Core\Utility\Token;
+use Drupal\field_ui\Form\EntityViewDisplayEditForm;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
@@ -143,7 +144,10 @@ class ColorboxFieldFormatter extends FormatterBase implements ContainerFactoryPl
         ],
       ],
     ];
-    if (isset($form['#entity_type']) &&$this->moduleHandler->moduleExists('token')) {
+    if ($this->moduleHandler->moduleExists('token') &&
+      ($buildInfo = $form_state->getBuildInfo()) &&
+      ($callback_object = $buildInfo['callback_object']) &&
+      ($callback_object instanceof EntityViewDisplayEditForm)) {
       $form['token_help_wrapper'] = [
         '#type' => 'container',
         '#states' => [
@@ -154,11 +158,12 @@ class ColorboxFieldFormatter extends FormatterBase implements ContainerFactoryPl
         ],
       ];
       $form['token_help_wrapper']['token_help'] = [
-        '#theme' => 'token_tree',
-        '#token_types' => ['entity' => $form['#entity_type']],
-        '#global_types' => FALSE,
+        '#theme' => 'token_tree_link',
+        '#token_types' => ['entity' => $callback_object->getEntity()->getTargetEntityTypeId()],
+        '#global_types' => TRUE,
       ];
     }
+
     $form['inline_selector'] = [
       '#title' => $this->t('Inline selector'),
       '#type' => 'textfield',
@@ -276,7 +281,12 @@ class ColorboxFieldFormatter extends FormatterBase implements ContainerFactoryPl
         $options['attributes']['rel'] = $this->getSetting('rel');
       }
       if ($this->getSetting('style') === 'colorbox-inline') {
-        $options['attributes']['data-colorbox-inline'] = $this->getSetting('inline_selector');
+        $colorbox_inline_attributes = [
+          'data-colorbox-inline' => $this->getSetting('inline_selector'),
+          'data-width' => $this->getSetting('width'),
+          'data-height' => $this->getSetting('height'),
+        ];
+        $options['attributes'] = array_merge($options['attributes'], $colorbox_inline_attributes);
       }
 
       $url->setOptions($options);
@@ -323,7 +333,7 @@ class ColorboxFieldFormatter extends FormatterBase implements ContainerFactoryPl
 
     $link = $this->getSetting('link');
     if ($this->moduleHandler->moduleExists('token')) {
-      $link = $this->token->replace($this->getSetting('link'), [$entity->bundle() => $entity], ['clear' => TRUE]);
+      $link = $this->token->replace($this->getSetting('link'), [$entity->getEntityTypeId() => $entity], ['clear' => TRUE]);
     }
     return Url::fromUserInput($link);
   }

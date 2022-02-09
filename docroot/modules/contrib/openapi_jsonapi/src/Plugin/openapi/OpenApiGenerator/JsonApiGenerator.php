@@ -8,6 +8,7 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\Entity\ConfigEntityTypeInterface;
 use Drupal\Core\Entity\ContentEntityTypeInterface;
 use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\Link;
@@ -78,6 +79,13 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
   private $paramConverterManager;
 
   /**
+   * The entity type bundle info.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeBundleInfoInterface
+   */
+  private $entityTypeBundleInfo;
+
+  /**
    * JsonApiGenerator constructor.
    *
    * @param array $configuration
@@ -108,12 +116,15 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
    *   The parameter converter manager service.
    * @param \Drupal\jsonapi\ResourceType\ResourceTypeRepositoryInterface $resource_type_repository
    *   The resource type manager.
+   * @param \Drupal\Core\Entity\EntityTypeBundleInfoInterface $entity_type_bundle_info
+   *   The entity type bundle info.
    */
-  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, RouteProviderInterface $routing_provider, EntityFieldManagerInterface $field_manager, SerializerInterface $serializer, RequestStack $request_stack, ConfigFactoryInterface $config_factory, AuthenticationCollectorInterface $authentication_collector, SchemaFactory $schema_factory, ModuleHandlerInterface $module_handler, ParamConverterManagerInterface $param_converter_manager, ResourceTypeRepositoryInterface $resource_type_repository) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, EntityTypeManagerInterface $entity_type_manager, RouteProviderInterface $routing_provider, EntityFieldManagerInterface $field_manager, SerializerInterface $serializer, RequestStack $request_stack, ConfigFactoryInterface $config_factory, AuthenticationCollectorInterface $authentication_collector, SchemaFactory $schema_factory, ModuleHandlerInterface $module_handler, ParamConverterManagerInterface $param_converter_manager, ResourceTypeRepositoryInterface $resource_type_repository, EntityTypeBundleInfoInterface $entity_type_bundle_info) {
     parent::__construct($configuration, $plugin_id, $plugin_definition, $entity_type_manager, $routing_provider, $field_manager, $serializer, $request_stack, $config_factory, $authentication_collector);
     $this->schemaFactory = $schema_factory;
     $this->moduleHandler = $module_handler;
     $this->paramConverterManager = $param_converter_manager;
+    $this->entityTypeBundleInfo = $entity_type_bundle_info;
 
     // Remove the disabled resource types from the output.
     $this->options['exclude'] = static::findDisabledMethods(
@@ -140,7 +151,8 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
       $container->get('schemata.schema_factory'),
       $container->get('module_handler'),
       $container->get('paramconverter_manager'),
-      $container->get('jsonapi.resource_type.repository')
+      $container->get('jsonapi.resource_type.repository'),
+      $container->get('entity_type.bundle.info')
     );
   }
 
@@ -205,9 +217,24 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
   public function getPaths() {
     $routes = $this->getJsonApiRoutes();
     $api_paths = [];
+    $read_only_mode_is_enabled = $this->configFactory->get('jsonapi.settings')->get('read_only');
+    $read_only_methods = ['GET', 'HEAD', 'OPTIONS', 'TRACE'];
+
     foreach ($routes as $route_name => $route) {
+      if ($read_only_mode_is_enabled === TRUE) {
+        $supported_methods = $route->getMethods();
+        assert(count($supported_methods) > 0, 'JSON:API routes always have a method specified.');
+        $is_read_only_route = empty(array_diff($supported_methods, $read_only_methods));
+        if ($is_read_only_route === FALSE) {
+          continue;
+        }
+      }
+
       /** @var \Drupal\jsonapi\ResourceType\ResourceType $resource_type */
       $resource_type = $this->getResourceType($route_name, $route);
+      if (!$resource_type instanceof ResourceType) {
+        continue;
+      }
       $entity_type_id = $resource_type->getEntityTypeId();
       $bundle_name = $resource_type->getBundle();
       if (!$this->includeEntityTypeBundle($entity_type_id, $bundle_name)) {
@@ -507,7 +534,8 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
           'in' => 'path',
         ];
         if ($parameter_info['converter'] === static::JSON_API_UUID_CONVERTER) {
-          $parameter['type'] = 'uuid';
+          $parameter['type'] = 'string';
+          $parameter['format'] = 'uuid';
           $parameter['description'] = $this->t('The uuid of the @entity @bundle',
             [
               '@entity' => $entity_type_id,
@@ -544,6 +572,7 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
             )->toString(),
           ]
         ),
+        'items' => [],
       ];
       $parameters[] = [
         'name' => 'sort',
@@ -557,6 +586,7 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
             )->toString(),
           ]
         ),
+        'items' => [],
       ];
       $parameters[] = [
         'name' => 'page',
@@ -570,6 +600,7 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
             )->toString(),
           ]
         ),
+        'items' => [],
       ];
       $parameters[] = [
         'name' => 'include',
@@ -706,22 +737,11 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
     if (!$definitions) {
       foreach ($this->entityTypeManager->getDefinitions() as $entity_type) {
         if ($entity_type instanceof ContentEntityTypeInterface) {
-          if ($bundle_type = $entity_type->getBundleEntityType()) {
-            $bundle_storage = $this->entityTypeManager->getStorage($bundle_type);
-            $bundles = $bundle_storage->loadMultiple();
-            foreach ($bundles as $bundle_name => $bundle) {
-              if ($this->includeEntityTypeBundle($entity_type->id(), $bundle_name)) {
-                $definition_key = $this->getEntityDefinitionKey($entity_type->id(), $bundle_name);
-                $json_schema = $this->getJsonSchema('api_json', $entity_type->id(), $bundle_name);
-                $json_schema = $this->fixReferences($json_schema, '#/definitions/' . $definition_key);
-                $definitions[$definition_key] = $json_schema;
-              }
-            }
-          }
-          else {
-            if ($this->includeEntityTypeBundle($entity_type->id())) {
-              $definition_key = $this->getEntityDefinitionKey($entity_type->id());
-              $json_schema = $this->getJsonSchema('api_json', $entity_type->id());
+          $bundles = $this->entityTypeBundleInfo->getBundleInfo($entity_type->id());
+          foreach ($bundles as $bundle_name => $bundle) {
+            if ($this->includeEntityTypeBundle($entity_type->id(), $bundle_name)) {
+              $definition_key = $this->getEntityDefinitionKey($entity_type->id(), $bundle_name);
+              $json_schema = $this->getJsonSchema('api_json', $entity_type->id(), $bundle_name);
               $json_schema = $this->fixReferences($json_schema, '#/definitions/' . $definition_key);
               $definitions[$definition_key] = $json_schema;
             }
@@ -733,16 +753,17 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
   }
 
   /**
-   * When embedding JSON Schemas you need to make sure to fix any possible $ref
+   * When embedding JSON Schemas you need to make sure to fix any possible $ref.
    *
    * @param array $schema
    *   The schema to fix.
-   * @param $prefix
+   * @param string $prefix
    *   The prefix where this schema is embedded.
    *
    * @return array
+   *   The modified schema.
    */
-  private function fixReferences(array $schema, $prefix) {
+  private function fixReferences(array $schema, string $prefix) {
     foreach ($schema as $name => $item) {
       if (is_array($item)) {
         $schema[$name] = $this->fixReferences($item, $prefix);
@@ -914,14 +935,15 @@ class JsonApiGenerator extends OpenApiGeneratorBase {
    * @param \Symfony\Component\Routing\Route $route
    *   The JSON API route for which the ResourceType is wanted.
    *
-   * @return \Drupal\jsonapi\ResourceType\ResourceType
-   *   Returns the ResourceType for the given JSON API route.
+   * @return \Drupal\jsonapi\ResourceType\ResourceType|null
+   *   Returns the ResourceType for the given JSON API route, NULL if the route
+   *   parameter could not be upcasted.
    */
   protected function getResourceType($route_name, Route $route) {
     $parameters[RouteObjectInterface::ROUTE_NAME] = $route_name;
     $parameters[RouteObjectInterface::ROUTE_OBJECT] = $route;
     $upcasted_parameters = $this->paramConverterManager->convert($parameters + $route->getDefaults());
-    return $upcasted_parameters[JsonApiRoutes::RESOURCE_TYPE_KEY];
+    return $upcasted_parameters[JsonApiRoutes::RESOURCE_TYPE_KEY] ?? NULL;
   }
 
   /**

@@ -2,14 +2,15 @@
 
 namespace Drupal\insert_block\Plugin\Filter;
 
+use Drupal\Core\Url;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\filter\Plugin\FilterBase;
 use Drupal\filter\FilterProcessResult;
 
 /**
- * Class InsertBlockFilter
+ * Class InsertBlockFilter.
  *
- * Inserts blocks into the content
+ * Inserts blocks into the content.
  *
  * @package Drupal\insert_block\Plugin\Filter
  *
@@ -23,19 +24,18 @@ use Drupal\filter\FilterProcessResult;
  *   }
  * )
  */
-
 class InsertBlockFilter extends FilterBase {
 
   /**
    * {@inheritdoc}
    */
   public function settingsForm(array $form, FormStateInterface $form_state) {
-    $form['check_roles'] = array(
+    $form['check_roles'] = [
       '#type' => 'checkbox',
       '#title' => $this->t('Check roles permissions.'),
       '#default_value' => $this->settings['check_roles'],
       '#description' => $this->t('If user does not have permissions to view block it will be hidden.'),
-    );
+    ];
     return $form;
   }
 
@@ -46,28 +46,40 @@ class InsertBlockFilter extends FilterBase {
 
     if (preg_match_all("/\[block:([^\]]+)+\]/", $text, $match)) {
       // @todo implement role restrictions.
-      $raw_tags = $repl = array();
+      $raw_tags = $repl = [];
       foreach ($match[1] as $key => $value) {
         $raw_tags[] = $match[0][$key];
-        if (strpos($value, '=') !== false) {
+        if (strpos($value, '=') !== FALSE) {
           $block_id_split = explode('=', $value);
           $block_id = $block_id_split[1];
-        } else {
+        }
+        else {
           $block_id = $value;
         }
 
         $replacement = '';
-        if (\Drupal::service('entity.manager')->getStorage('block')->load($block_id)) {
-          $block = \Drupal::service('entity.manager')->getStorage('block')->load($block_id);
-          $block_view = \Drupal::service('entity.manager')
+        // Render blocks in code.
+        if ($block = \Drupal::service('entity_type.manager')
+          ->getStorage('block')
+          ->load($block_id)) {
+          $block_view = \Drupal::service('entity_type.manager')
             ->getViewBuilder('block')
+            ->view($block);
+          $replacement = \Drupal::service('renderer')->render($block_view);
+        }
+        // Render custom blocks.
+        if ($block = \Drupal::service('entity_type.manager')
+          ->getStorage('block_content')
+          ->load($block_id)) {
+          $block_view = \Drupal::service('entity_type.manager')
+            ->getViewBuilder('block_content')
             ->view($block);
           $replacement = \Drupal::service('renderer')->render($block_view);
         }
 
         $repl[] = $replacement;
       }
-      $text =  str_replace($raw_tags, $repl, $text);
+      $text = str_replace($raw_tags, $repl, $text);
     }
 
     return new FilterProcessResult($text);
@@ -79,12 +91,12 @@ class InsertBlockFilter extends FilterBase {
    */
   public function tips($long = FALSE) {
     if ($long) {
-      return t('<a name="filter-insert_block"></a>You may use [block:<em>block_entity_id</em>] tags to display the contents of block. To discover block entity id, visit admin/structure/block and hover over a block\'s configure link and look in your browser\'s status bar. The last "word" you see is the block ID.');
+      return $this->t('<a name="filter-insert_block"></a>You may use [block:<em>block_entity_id</em>] tags to display the contents of block. To discover block entity id, visit admin/structure/block and hover over a block\'s configure link and look in your browser\'s status bar. The last "word" you see is the block ID.');
     }
     else {
-      $tips_url = \Drupal\Core\Url::fromRoute("filter.tips_all", array(), array('fragment' => 'filter-insert_block'));
-      return t('You may use <a href="@insert_block_help">[block:<em>block_entity_id</em>] tags</a> to display the contents of block.',
-        array("@insert_block_help" => $tips_url->toString()));
+      $tips_url = Url::fromRoute("filter.tips_all", [], ['fragment' => 'filter-insert_block']);
+      return $this->t('You may use <a href="@insert_block_help">[block:<em>block_entity_id</em>] tags</a> to display the contents of block.',
+        ["@insert_block_help" => $tips_url->toString()]);
     }
   }
 

@@ -1,7 +1,7 @@
 name: ZURB Foundation Limestone Theme
-description: "Custom sub-theme, inherits from the Foundation base theme read <a href=\"http://foundation.zurb.com/docs/index.php\">framework documentation</a>"
-core: 8.x
 type: theme
+description: "Custom sub-theme, inherits from the Foundation base theme read <a href=\"http://foundation.zurb.com/docs/index.php\">framework documentation</a>"
+core_version_requirement: ^8 || ^9 || ^10
 base theme: zurb_foundation
 
 # Image appears on admin/appearance

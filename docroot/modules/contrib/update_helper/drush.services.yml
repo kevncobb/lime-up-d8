@@ -3,7 +3,6 @@ services:
     class: Drupal\update_helper\Command\ApplyConfigurationUpdateCommands
     tags:
       - { name: drush.command }
-services:
   update_helper.generate.update:
     class: Drupal\update_helper\Generators\ConfigurationUpdate
     arguments: ['@extension.list.module', '@event_dispatcher', '@module_handler', '@update_helper.config_handler']
@@ -14,3 +13,4 @@ services:
     arguments: ['@module_handler']
     tags:
       - { name: event_subscriber }
+

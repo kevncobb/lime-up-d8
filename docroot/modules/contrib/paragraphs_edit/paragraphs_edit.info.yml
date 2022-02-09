@@ -5,9 +5,10 @@ core_version_requirement: ^8 || ^9
 package: Paragraphs
 
 dependencies:
+  - drupal:contextual
   - paragraphs:paragraphs
 
-# Information added by Drupal.org packaging script on 2020-06-23
-version: '8.x-2.0-alpha8'
+# Information added by Drupal.org packaging script on 2021-12-23
+version: '8.x-2.0-beta1'
 project: 'paragraphs_edit'
-datestamp: 1592930673
+datestamp: 1640269233

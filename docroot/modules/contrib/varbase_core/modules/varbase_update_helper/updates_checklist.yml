@@ -50,7 +50,7 @@
         '#description_successful': '<p class="messages messages--status">This update is successfully implemented.</p><br />'
         '#description_failed': '
         <p class="messages messages--warning">This update failed to be done automatically.<br />
-        <span class="icon-help">Try running <code>drush varbase-up --force varbase_core varbase_admin_update_8602</code> to force applying this update.</span>
+        <span class="icon-help">Try running <code>drush varbase-up --force varbase_admin varbase_admin_update_8602</code> to force applying this update.</span>
         This will likely override your previous configuration! Do this on your own risk.<p><br />
         '
     varbase_core_optional_update_8604:
@@ -223,5 +223,78 @@
         '#description_failed': '
         <p class="messages messages--warning">This update failed to be done automatically.<br />
         <span class="icon-help">Try running <code>drush varbase-up --force varbase_core varbase_core_optional_update_8706</code> to force applying this update.</span>
+        This will likely override your previous configuration! Do this on your own risk.<p><br />
+        '
+9.0.3:
+    '#title': 'New Updates in Varbase 9.0.3'
+    '#description': '<h2>These are the new features for this release:</h2>'
+    '#module': 'varbase_core'
+    varbase_core_update_9001:
+        '#title': 'Adds the ability to reroute emails when working on non-production environments'
+        '#description': '
+        <p>This update is mainly targeted to provide an easy and secure way for developers working on Varbase to reroute all emails sent out from a Varbase site to a specific email. The update is made possible via the <b><a href="https://www.drupal.org/project/reroute_email" target="_blank">Reroute Email</a></b> module.</p>
+        <p>See issue <a href="https://www.drupal.org/i/3248635" target="_blank">#3248635</a> and <a href="https://www.drupal.org/i/3248644" target="_blank">#3248644</a> for details.</p><br />'
+        '#description_successful': '<p class="messages messages--status">This functionality is now available. You can enable the Reroute Email functionality from <a href="../../../admin/modules" target="_blank">here</a>. Ensure that this done on non-production environments only.</p><br />'
+        '#description_failed': '
+        <p class="messages messages--warning">This functionality is now available. You can enable the Reroute Email functionality from <a href="../../../admin/modules" target="_blank">here</a>. Ensure that this done on non-production environments only.<p><br />
+        '
+    varbase_core_update_9002:
+        '#title': 'Add the ability to filter by "Author" in administration views (Content and Media)'
+        '#description': '
+        <p>This update adds a new filter to the <a href="../../../admin/content" target="_blank">Content administration</a> page and the <a href="../../../admin/content/media" target="_blank">Media administration</a> page.</p>
+        <p>See issue <a href="https://www.drupal.org/i/3227277" target="_blank">#3227277</a> and <a href="https://www.drupal.org/i/3249476" target="_blank">#3249476</a> for details.</p><br />'
+        '#description_successful': '<p class="messages messages--status">This update is successfully implemented.</p><br />'
+        '#description_failed': '
+        <p class="messages messages--warning">This update failed to be done automatically.<br />
+        <span class="icon-help">Try running <code>drush varbase-up --force varbase_core varbase_core_update_9002</code> to force applying this update.</span>
+        This will likely override your previous configuration! Do this on your own risk.<p><br />
+        '
+    varbase_security_update_9001:
+        '#title': 'Ability to set configurable rate limits for failed login attempts, and an interface to review and unblock locked IPs and usernames.'
+        '#description': '
+        <p>This update adds security hardening policies and rules by replacing the legacy <a href="https://www.drupal.org/project/flood_unblock" target="_blank">Flood Unblock</a> module with its successor, the <a href="https://www.drupal.org/project/flood_control" target="_blank">Flood Control</a> module. Flood Control provides an interface for hidden flood control variables (e.g. login attempt limiters) and makes it possible for site administrators to remove IP addresses and user ID''s from the flood table. Make sure to review <a href="../../../admin/people/permissions#module-flood_control">the permissions</a> for unblocking unblock locked IPs and usernames.</p>
+        <p>See issue <a href="https://www.drupal.org/i/3250823" target="_blank">#3250823</a> and <a href="https://www.drupal.org/i/3187308" target="_blank">#3187308</a> for details.</p><br />'
+        '#description_successful': '<p class="messages messages--status">This update is successfully implemented.</p><br />'
+        '#description_failed': '
+        <p class="messages messages--warning">This update failed to be done automatically.<br />
+        <span class="icon-help">Try running <code>drush varbase-up --force varbase_security varbase_security_update_9001</code> to force applying this update.</span>
+        This will likely override your previous configuration! Do this on your own risk.<p><br />
+        '
+9.0.4:
+    '#title': 'New Updates in Varbase 9.0.4'
+    '#description': '<h2>These are the new features for this release:</h2>'
+    '#module': 'varbase_core'
+    varbase_security_update_9002:
+        '#title': 'Reinforce spam protection and enable "Honeypot" spam detection on webforms by default'
+        '#description': '
+        <p>This update reinforces spam protection from the <a href="../../../admin/config/content/honeypot">Honeypot</a> module by enabling protection on a wider array of forms and enabling time limit of 2 seconds.</p>
+        <p>See issue <a href="https://www.drupal.org/i/3252060" target="_blank">#3252060</a> for details.</p><br />'
+        '#description_successful': '<p class="messages messages--status">This update is successfully implemented.</p><br />'
+        '#description_failed': '
+        <p class="messages messages--warning">This update failed to be done automatically.<br />
+        <span class="icon-help">Try running <code>drush varbase-up --force varbase_security varbase_security_update_9002</code> to force applying this update.</span>
+        This will likely override your previous configuration! Do this on your own risk.<p><br />
+        '
+    varbase_security_update_9003:
+        '#title': 'Reinforce spam protection via the "Antibot" spam detection mechanism'
+        '#description': '
+        <p>This update reinforces spam protection by enabling the <a href="https://www.drupal.org/project/antibot">Antibot</a> module, which requires end users to have JavaScript enabled to submit forms. You can choose which forms are protected by Antibot in the <a href="../../../admin/config/user-interface/antibot">Antibot configuration page</a>.</p>
+        <p>See issue <a href="https://www.drupal.org/i/3252064" target="_blank">#3252064</a> for details.</p><br />'
+        '#description_successful': '<p class="messages messages--status">This update is successfully implemented.</p><br />'
+        '#description_failed': '
+        <p class="messages messages--warning">This update failed to be done automatically.<br />
+        <span class="icon-help">Try running <code>drush varbase-up --force varbase_security varbase_security_update_9003</code> to force applying this update.</span>
+        This will likely override your previous configuration! Do this on your own risk.<p><br />
+        '
+    varbase_core_optional_update_9003:
+        '#title': 'Enable logging in using email address'
+        '#description': '
+        <p>This update enables users of the site to login via email address, along with the default username login. This functionality is provided via the <a href="https://www.drupal.org/project/email_registration">Email Registration</a> module. You can configure more options (such as setting the login to be via email only, without a username) from the Email Registration settings under the <a href="../../../admin/config/people/accounts">Account Settings</a> page.</p>
+        <p>See issue <a href="https://www.drupal.org/project/varbase_core/issues/3255491" target="_blank">#3255491</a> for details.</p><br />
+        <p><span class="icon-help">This update is optional. Please run <code>drush varbase-up varbase_core varbase_core_optional_update_9003</code> to apply this update.</span></p><br />'
+        '#description_successful': '<p class="messages messages--status">This update is successfully implemented.</p><br />'
+        '#description_failed': '
+        <p class="messages messages--warning">This update failed to be done automatically.<br />
+        <span class="icon-help">Try running <code>drush varbase-up --force varbase_core varbase_core_optional_update_9003</code> to force applying this update.</span>
         This will likely override your previous configuration! Do this on your own risk.<p><br />
         '

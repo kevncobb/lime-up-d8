@@ -1,11 +1,11 @@
 charts_google:
   version: 1.x
   js:
-    js/charts_google.js: {  }
+    js/charts_google.js: { weight: -1 }
   dependencies:
+    - charts/global
     - core/jquery
     - core/jquery.once
-    - core/drupal
 google:
   remote: 'https://www.gstatic.com/charts/loader.js'
   version: VERSION

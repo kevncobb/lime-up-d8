@@ -8,6 +8,7 @@
 
   Drupal.behaviors.chartsChartjs = {
     attach: function (context, settings) {
+      var contents = new Drupal.Charts.Contents();
 
       $('.charts-chartjs').each(function (param) {
         // Store attributes before switching div for canvas element.
@@ -21,34 +22,15 @@
 
         $('#' + chartId).once().each(function () {
           var chartjsChart = $(this).attr('data-chart');
-          var chart = JSON.parse(chartjsChart);
-
-
-          // For gauge charts
-          if (chart['type'] === 'linearGauge') {
-            var scale = [];
-            scale['range'] = chart['range'];
-            scale['scaleColorRanges'] = chart['scale_color_ranges'];
-          }
-
-          var options;
-          if (chart['type'] === 'linearGauge') {
-            options = {scale: scale}
-          }
-          else {
-            options = chart['options']
-          }
-
+          var chart = contents.getData(chartId);
+          var options = chart['options'];
           var myChart = new Chart(chartId, {
             type: chart['type'],
             data: chart['data'],
             options: options
           });
-
         });
-
       });
-
     }
   };
 

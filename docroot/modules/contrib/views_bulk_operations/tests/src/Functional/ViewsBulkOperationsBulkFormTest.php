@@ -85,7 +85,10 @@ class ViewsBulkOperationsBulkFormTest extends ViewsBulkOperationsFunctionalTestB
 
     // Log in as a user with 'edit any page content' permission
     // to have access to perform the test operation.
-    $admin_user = $this->drupalCreateUser(['edit any page content', 'execute advanced test action']);
+    $admin_user = $this->drupalCreateUser([
+      'edit any page content',
+      'execute advanced test action',
+    ]);
     $this->drupalLogin($admin_user);
 
     // First execute the simple action to test
@@ -156,8 +159,9 @@ class ViewsBulkOperationsBulkFormTest extends ViewsBulkOperationsFunctionalTestB
     $this->drupalPostForm(NULL, [], t('Execute action'));
     // Again, take offset into account (-1), also take 2 excluded
     // rows into account (-2).
+    // Also, check if the custom completed message appears.
     $assertSession->pageTextContains(
-      sprintf('Action processing results: Test (%d).', (count($this->testNodes) - 3)),
+      sprintf('Custom processing message: Test (%d).', (count($this->testNodes) - 3)),
       sprintf('Action has been executed on all %d nodes.', (count($this->testNodes) - 3))
     );
 

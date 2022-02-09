@@ -2,7 +2,7 @@
 
 namespace Drupal\charts\Plugin\views\field;
 
-use Drupal\charts\Settings\ChartsTypeInfo;
+use Drupal\charts\Element\BaseSettings;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\Core\Form\FormStateInterface;
 
@@ -14,16 +14,6 @@ use Drupal\Core\Form\FormStateInterface;
  * @ViewsField("field_exposed_chart_type")
  */
 class ExposedChartType extends FieldPluginBase {
-
-  /**
-   * @var ChartsTypeInfo
-   */
-  private $chartsTypes;
-
-  public function __construct(array $configuration, $plugin_id, $plugin_definition) {
-    parent::__construct($configuration, $plugin_id, $plugin_definition);
-    $this->chartsTypes = new ChartsTypeInfo();
-  }
 
   /**
    * {@inheritdoc}
@@ -39,11 +29,14 @@ class ExposedChartType extends FieldPluginBase {
     return TRUE;
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function buildExposedForm(&$form, FormStateInterface $form_state) {
 
-    $label = $this->options['label'] ? $this->options['label']: 'Chart Type';
+    $label = $this->options['label'] ? $this->options['label'] : 'Chart Type';
     $selected_options = $this->options['chart_types'];
-    $all_fields = $this->chartsTypes->getChartTypes();
+    $all_fields = BaseSettings::getChartTypes();
     $options = array_filter($all_fields, function ($key) use ($selected_options) {
       return in_array($key, $selected_options, TRUE);
     }, ARRAY_FILTER_USE_KEY);
@@ -92,14 +85,14 @@ class ExposedChartType extends FieldPluginBase {
       '#type' => 'checkboxes',
       '#title' => $this->t('Chart Type Options'),
       '#description' => $this->t('Pick the chart type options to be exposed. You may need to disable your Views cache.'),
-      '#options' => $this->chartsTypes->getChartTypes(),
+      '#options' => BaseSettings::getChartTypes(),
       '#default_value' => $this->options['chart_types'],
     ];
 
     $form['exposed_select_type'] = [
       '#type' => 'radios',
       '#title' => $this->t('Exposed Selection Type'),
-      '#description' => t('Choose your options widget.'),
+      '#description' => $this->t('Choose your options widget.'),
       '#options' => [
         'radios' => $this->t('Radios'),
         'select' => $this->t('Single select'),

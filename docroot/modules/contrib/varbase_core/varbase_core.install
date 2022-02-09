@@ -12,7 +12,7 @@ use Drupal\Core\Config\FileStorage;
 use Drupal\file\Entity\File;
 use Drupal\embed\Entity\EmbedButton;
 use Drupal\update_helper_checklist\Entity\Update;
-use Drupal\varbase\Entity\VarbaseEntityDefinitionUpdateManager;
+use Vardot\Entity\EntityDefinitionUpdateManager;
 use Drupal\Core\File\FileSystemInterface;
 
 /**
@@ -75,7 +75,7 @@ function varbase_core_install() {
   // Entity updates to clear up any mismatched entity and/or field definitions
   // And Fix changes were detected in the entity type and field definitions.
   \Drupal::classResolver()
-    ->getInstanceFromDefinition(VarbaseEntityDefinitionUpdateManager::class)
+    ->getInstanceFromDefinition(EntityDefinitionUpdateManager::class)
     ->applyUpdates();
 
 }
@@ -535,4 +535,53 @@ function varbase_core_update_8707() {
     }
   }
 
+}
+
+/**
+ * Issue #3248635: Add Reroute Email ~2.0 module.
+ *
+ * And enable with default config to Varbase Development module.
+ */
+function varbase_core_update_9001() {
+
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('varbase_core', 'varbase_core_update_9001');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Add the ability to filter by "Author".
+ *
+ * In administration views (Content and Media).
+ */
+function varbase_core_update_9002() {
+
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('varbase_core', 'varbase_core_update_9002');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Enable Email Registration.
+ */
+function varbase_core_optional_update_9003($force = FALSE) {
+
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('varbase_core', 'varbase_core_optional_update_9003');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

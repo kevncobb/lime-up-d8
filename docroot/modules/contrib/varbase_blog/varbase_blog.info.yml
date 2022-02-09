@@ -1,8 +1,8 @@
-name: 'Varbase Blog'
-description: 'Provides Blog post content type and related configuration. Use Blog to publish blog post by different authors in the Blog section of the site.'
+name: "Varbase Blog"
+description: "Provides Blog post content type and related configuration. Use Blog to publish blog post by different authors in the Blog section of the site."
 type: module
 package: Varbase
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^9
 dependencies:
   - varbase_core:varbase_core
   - varbase_media:varbase_media
@@ -14,8 +14,11 @@ install:
   - length_indicator
   - advanced_text_formatter
   - maxlength
+  - varbase_editor
+  - varbase_layout_builder
+  - vlplb
 
-# Information added by Drupal.org packaging script on 2021-09-16
-version: '8.x-8.7'
+# Information added by Drupal.org packaging script on 2022-01-12
+version: '9.0.5'
 project: 'varbase_blog'
-datestamp: 1631785587
+datestamp: 1641996415

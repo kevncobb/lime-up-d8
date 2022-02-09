@@ -12,6 +12,8 @@ use Drupal\charts\Services\ChartService;
 class ChartServiceTest extends UnitTestCase {
 
   /**
+   * The chart service.
+   *
    * @var \Drupal\charts\Services\ChartService
    */
   private $chartService;

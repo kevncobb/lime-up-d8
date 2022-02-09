@@ -2,6 +2,7 @@
 
 namespace Drupal\charts\Plugin\views\field;
 
+use Drupal\Component\Serialization\Json;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\views\Plugin\views\field\FieldPluginBase;
 use Drupal\views\ResultRow;
@@ -49,7 +50,7 @@ class ScatterField extends FieldPluginBase {
 
     $form['fieldset_one'] = [
       '#type' => 'fieldset',
-      '#title' => t('Select the field representing the X axis.'),
+      '#title' => $this->t('Select the field representing the X axis.'),
       '#collapsible' => FALSE,
       '#collapsed' => FALSE,
       '#weight' => -10,
@@ -57,7 +58,7 @@ class ScatterField extends FieldPluginBase {
     ];
     $form['fieldset_one']['x_axis'] = [
       '#type' => 'radios',
-      '#title' => t('X Axis Field'),
+      '#title' => $this->t('X Axis Field'),
       '#options' => $fieldList,
       '#default_value' => $this->options['fieldset_one']['x_axis'],
       '#weight' => -10,
@@ -67,13 +68,13 @@ class ScatterField extends FieldPluginBase {
       '#type' => 'fieldset',
       '#collapsible' => FALSE,
       '#collapsed' => FALSE,
-      '#title' => t('Select the field representing the Y axis.'),
+      '#title' => $this->t('Select the field representing the Y axis.'),
       '#weight' => -9,
       '#required' => TRUE,
     ];
     $form['fieldset_two']['y_axis'] = [
       '#type' => 'radios',
-      '#title' => t('Y Axis Field'),
+      '#title' => $this->t('Y Axis Field'),
       '#options' => $fieldList,
       '#default_value' => $this->options['fieldset_two']['y_axis'],
       '#weight' => -9,
@@ -85,8 +86,8 @@ class ScatterField extends FieldPluginBase {
   /**
    * Get the value of a simple math field.
    *
-   * @param ResultRow $values
-   *    Row results.
+   * @param \Drupal\views\ResultRow $values
+   *   Row results.
    * @param bool $xAxis
    *   Whether we are fetching field one's value.
    *
@@ -123,7 +124,7 @@ class ScatterField extends FieldPluginBase {
 
     // Ensure the input is numeric.
     if (!is_numeric($data)) {
-      \Drupal::messenger()->addError(t('Check the formatting of your 
+      \Drupal::messenger()->addError($this->t('Check the formatting of your
         Scatter Field inputs: one or both of them are not numeric.'));
     }
 
@@ -132,6 +133,7 @@ class ScatterField extends FieldPluginBase {
 
   /**
    * {@inheritdoc}
+   *
    * @throws \Exception
    */
   public function getValue(ResultRow $values, $field = NULL) {
@@ -140,9 +142,9 @@ class ScatterField extends FieldPluginBase {
     $xAxisFieldValue = $this->getFieldValue($values, TRUE);
     $yAxisFieldValue = $this->getFieldValue($values, FALSE);
 
-    $value = json_encode([
-      json_decode($xAxisFieldValue),
-      json_decode($yAxisFieldValue),
+    $value = Json::encode([
+      Json::decode($xAxisFieldValue),
+      Json::decode($yAxisFieldValue),
     ]);
 
     return $value;

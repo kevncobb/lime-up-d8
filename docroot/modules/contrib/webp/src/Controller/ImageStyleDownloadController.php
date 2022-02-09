@@ -106,18 +106,9 @@ class ImageStyleDownloadController extends FileDownloadController {
     $target = $request->query->get('file');
     $image_uri = $scheme . '://' . $target;
 
-    $is_uppercase = FALSE;
-    $found_extension = NULL;
     if ($webp_wanted = preg_match('/\.webp$/', $image_uri)) {
-      $path_info = pathinfo($image_uri);
-
-      $possible_image_uris = [
-        // If the image style converted the extension, it has been added to the
-        // original file, resulting in filenames like image.png.jpeg. So to find
-        // the actual source image, we remove the extension and check if that
-        // image exists.
-        $path_info['dirname'] . DIRECTORY_SEPARATOR . $path_info['filename'],
-      ];
+      $destination = $this->webp->getWebpDestination($image_uri, '@directory@filename');
+      $possible_image_uris = [$destination];
 
       // Try out the different possible sources for a webp image.
       $extensions = [
@@ -126,28 +117,34 @@ class ImageStyleDownloadController extends FileDownloadController {
         '.png',
       ];
       foreach ($extensions as $extension) {
-        $possible_image_uri = str_replace('.webp', $extension, $image_uri);
+        $possible_image_uris[] = str_replace('.webp', mb_strtoupper($extension), $image_uri);
+        $possible_image_uris[] = str_replace('.webp', $extension, $image_uri);
+      }
+
+      foreach ($possible_image_uris as $possible_image_uri) {
         if (file_exists($possible_image_uri)) {
           $image_uri = $possible_image_uri;
-          $found_extension = $extension;
           break;
-        }
-        else {
-          $possible_image_uri = str_replace('.webp', mb_strtoupper($extension), $image_uri);
-          if (file_exists($possible_image_uri)) {
-            $image_uri = $possible_image_uri;
-            $is_uppercase = TRUE;
-            $found_extension = $extension;
-            break;
-          }
         }
       }
     }
 
     // Don't try to generate file if source is missing.
     if (!file_exists($image_uri)) {
-      $this->logger->notice('Source image at %source_image_path not found while trying to generate derivative image.', ['%source_image_path' => $image_uri]);
-      return new Response($this->t('Error generating image, missing source file.'), 404);
+      // If the image style converted the extension, it has been added to the
+      // original file, resulting in filenames like image.png.jpeg. So to find
+      // the actual source image, we remove the extension and check if that
+      // image exists.
+      $path_info = pathinfo($this->streamWrapperManager->getTarget($image_uri));
+      $converted_image_uri = sprintf('%s://%s%s%s', $this->streamWrapperManager->getScheme($image_uri), $path_info['dirname'], DIRECTORY_SEPARATOR, $path_info['filename']);
+      if (!file_exists($converted_image_uri)) {
+        $this->logger->notice('Source image at %source_image_path not found while trying to generate derivative image.', ['%source_image_path' => $image_uri]);
+        return new Response($this->t('Error generating image, missing source file.'), 404);
+      }
+      else {
+        // The converted file does exist, use it as the source.
+        $image_uri = $converted_image_uri;
+      }
     }
 
     // Check that the style is defined, the scheme is valid, and the image
@@ -163,22 +160,14 @@ class ImageStyleDownloadController extends FileDownloadController {
     // starts with styles/.
     $valid = !empty($image_style) && $this->streamWrapperManager->isValidScheme($scheme);
     if (!$this->config('image.settings')->get('allow_insecure_derivatives') || strpos(ltrim($target, '\/'), 'styles/') === 0) {
-      $token_valid = $request->query->get(IMAGE_DERIVATIVE_TOKEN) === $image_style->getPathToken($image_uri);
+      $valid &= hash_equals($request->query->get(IMAGE_DERIVATIVE_TOKEN), $image_style->getPathToken($image_uri));
+
+			// ImageAPI Optimize case: generator searches for a WEBP, but image style
+			// returns a non-WEBP (!= tokens). Sanity checks that image_style returns a token.
+			if (!$valid && ($image_style->getDerivativeExtension(pathinfo($image_uri)['extension']) != "webp")) {
+				$valid = ($image_style->getPathToken($image_uri)) ? true : false;
+			}
     }
-    if (!$token_valid && $found_extension) {
-      // Try comparing to an $image_uri with the opposite case extension.
-      if ($is_uppercase) {
-        $test_ext = mb_strtoupper($found_extension);
-        $replace_ext = $found_extension;
-      }
-      else {
-        $test_ext = $found_extension;
-        $replace_ext = mb_strtoupper($found_extension);
-      }
-      $image_uri = str_replace($test_ext, $replace_ext, $image_uri);
-      $token_valid = $request->query->get(IMAGE_DERIVATIVE_TOKEN) === $image_style->getPathToken($image_uri);
-    }
-    $valid &= $token_valid;
     if (!$valid) {
       throw new AccessDeniedHttpException();
     }

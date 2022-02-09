@@ -16,8 +16,15 @@ class RouteSubscriber extends RouteSubscriberBase {
    * {@inheritdoc}
    */
   protected function alterRoutes(RouteCollection $collection) {
-    if ($route = $collection->get('image.style_public')) {
-      $route->setDefault('_controller', 'Drupal\webp\Controller\ImageStyleDownloadController::deliver');
+    foreach (['image.style_public', 'image.style_private'] as $route_id) {
+      if ($route = $collection->get($route_id)) {
+        $route->setDefault('_controller', 'Drupal\webp\Controller\ImageStyleDownloadController::deliver');
+      }
+    }
+    foreach (['system.private_file_download', 'system.files'] as $route_id) {
+      if ($route = $collection->get($route_id)) {
+        $route->setDefault('_controller', 'Drupal\webp\Controller\FileDownloadController::download');
+      }
     }
   }
 

@@ -1,8 +1,7 @@
 langcode: en
 status: true
-dependencies: {  }
+dependencies: {}
 name: Tags
 vid: tags
-description: ''
-hierarchy: 1
+description: ""
 weight: 0

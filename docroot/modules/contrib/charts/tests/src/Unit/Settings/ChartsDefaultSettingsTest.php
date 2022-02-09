@@ -13,6 +13,8 @@ use Drupal\charts\Settings\ChartsDefaultColors;
 class ChartsDefaultSettingsTest extends UnitTestCase {
 
   /**
+   * The chart default settings.
+   *
    * @var \Drupal\charts\Settings\ChartsDefaultSettings
    */
   private $chartsDefaultSettings;
@@ -48,10 +50,11 @@ class ChartsDefaultSettingsTest extends UnitTestCase {
   }
 
   /**
-   * Tests the numver of defaults settings.
+   * Tests the number of defaults settings.
    */
   public function testNumberOfDefaultSettings() {
     $this->assertCount(39, $this->chartsDefaultSettings->getDefaults());
+    $this->assertCount(7, $this->chartsDefaultSettings->getDefaults(TRUE));
   }
 
   /**
@@ -63,8 +66,15 @@ class ChartsDefaultSettingsTest extends UnitTestCase {
    * @dataProvider defaultSettingsProvider
    */
   public function testDefaults(array $defaults) {
+    // Legacy config.
     $this->chartsDefaultSettings->setDefaults($defaults);
     $this->assertArrayEquals($defaults, $this->chartsDefaultSettings->getDefaults());
+    // New format config. This also allow us to test the transform to new;
+    // Format.
+    $keys_mapping = ChartsDefaultSettings::getLegacySettingsMappingKeys();
+    $keys_mapping['colors'] = 'display_colors';
+    $new_format = ChartsDefaultSettings::transformLegacySettingsToNew($defaults, $keys_mapping);
+    $this->assertArrayEquals($new_format, $this->chartsDefaultSettings->getDefaults(TRUE));
   }
 
   /**

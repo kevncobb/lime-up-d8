@@ -256,6 +256,10 @@ class ManageComponentAttributesForm extends FormBase {
 
     $form['#tree'] = TRUE;
 
+    // Workaround for core bug:
+    // https://www.drupal.org/project/drupal/issues/2897377.
+    $form['#id'] = Html::cleanCssIdentifier($this->getFormId());
+
     $form['actions']['submit'] = [
       '#type' => 'submit',
       '#value' => $this->t('Update'),

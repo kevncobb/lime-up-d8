@@ -77,16 +77,13 @@ abstract class GTMTestBase extends BrowserTestBase {
       // Create containers in code.
       $this->createData();
       $this->saveContainers();
-      $this->checkSnippetContents();
+      $this->checkSnippetFiles();
       $this->checkPageResponse();
       // Delete containers.
       $this->deleteContainers();
       // Create containers in user interface.
       $this->submitContainers();
-      $this->checkSnippetContents();
-      $this->checkPageResponse();
-      // Switch to inline snippets.
-      $this->modifySettings(FALSE);
+      $this->checkSnippetFiles();
       $this->checkPageResponse();
     }
     catch (\Exception $e) {
@@ -100,17 +97,13 @@ abstract class GTMTestBase extends BrowserTestBase {
 
   /**
    * Modify settings for test purposes.
-   *
-   * @param bool $include_file
-   *   The include_file module setting.
    */
-  protected function modifySettings($include_file = TRUE) {
+  protected function modifySettings() {
     // Modify default settings.
     // These should propagate to each container created in test.
     $config = $this->config('google_tag.settings');
     $settings = $config->get();
     unset($settings['_core']);
-    $settings['include_file'] = $include_file;
     $settings['flush_snippets'] = 1;
     $settings['debug_output'] = 1;
     $settings['_default_container']['role_toggle'] = 'include listed';
@@ -190,7 +183,7 @@ abstract class GTMTestBase extends BrowserTestBase {
 
     // Confirm no snippet files.
     $message = 'No snippet files found after delete';
-    parent::assertDirectoryNotExists($directory . '/google_tag', $message);
+    parent::assertTrue(!is_dir($directory . '/google_tag'), $message);
   }
 
   /**
@@ -216,26 +209,9 @@ abstract class GTMTestBase extends BrowserTestBase {
   }
 
   /**
-   * Returns the snippet contents.
+   * Inspect the snippet files.
    */
-  protected function getSnippetFromFile($key, $type) {
-    $url = "$this->basePath/google_tag/{$key}/google_tag.$type.js";
-    return @file_get_contents($url);
-  }
-
-  /**
-   * Returns the snippet contents.
-   */
-  protected function getSnippetFromCache($key, $type) {
-    $cid = "google_tag:$type:$key";
-    $cache = $this->container->get('cache.data')->get($cid);
-    return $cache ? $cache->data : '';
-  }
-
-  /**
-   * Inspect the snippet contents.
-   */
-  protected function checkSnippetContents() {
+  protected function checkSnippetFiles() {
   }
 
   /**
@@ -256,19 +232,19 @@ abstract class GTMTestBase extends BrowserTestBase {
   }
 
   /**
-   * Verify the snippet cache contents.
+   * Verify the snippet file contents.
    */
   protected function verifyNoScriptSnippet($contents, $variables) {
     $status = strpos($contents, "id=$variables->container_id") !== FALSE;
-    $message = 'Found in noscript snippet cache: container_id';
+    $message = 'Found in noscript snippet file: container_id';
     parent::assertTrue($status, $message);
 
     $status = strpos($contents, "gtm_preview=$variables->environment_id") !== FALSE;
-    $message = 'Found in noscript snippet cache: environment_id';
+    $message = 'Found in noscript snippet file: environment_id';
     parent::assertTrue($status, $message);
 
     $status = strpos($contents, "gtm_auth=$variables->environment_token") !== FALSE;
-    $message = 'Found in noscript snippet cache: environment_token';
+    $message = 'Found in noscript snippet file: environment_token';
     parent::assertTrue($status, $message);
   }
 
@@ -303,38 +279,7 @@ abstract class GTMTestBase extends BrowserTestBase {
   /**
    * Verify the tag in page response.
    */
-  protected function verifyScriptTagInline($variables, $cache) {
-    $id = $variables->container_id;
-    $xpath = "//script[contains(text(), '$id')]";
-    $elements = $this->xpath($xpath);
-    if (!is_array($elements) || count($elements) > 1) {
-      $message = 'Found only one script tag';
-      parent::assertFalse($status, $message);
-      return;
-    }
-
-    $contents = $elements[0]->getHtml();
-
-    $status = strpos($contents, "(window,document,'script','dataLayer','$id')") !== FALSE;
-    $message = 'Found in script tag: container_id and data data_layer';
-    parent::assertTrue($status, $message);
-
-    $status = strpos($contents, "gtm_preview=$variables->environment_id") !== FALSE;
-    $message = 'Found in script tag: environment_id';
-    parent::assertTrue($status, $message);
-
-    $status = strpos($contents, "gtm_auth=$variables->environment_token") !== FALSE;
-    $message = 'Found in script tag: environment_token';
-    parent::assertTrue($status, $message);
-
-    $message = 'Contents of script tag matches cache';
-    parent::assertTrue($contents == $cache, $message);
-  }
-
-  /**
-   * Verify the tag in page response.
-   */
-  protected function verifyNoScriptTag($realpath, $variables, $cache = '') {
+  protected function verifyNoScriptTag($realpath, $variables) {
     // The tags are sorted by weight.
     $index = isset($variables->weight) ? $variables->weight - 1 : 0;
     $xpath = '//noscript//iframe';
@@ -352,18 +297,6 @@ abstract class GTMTestBase extends BrowserTestBase {
     $status = strpos($contents, "gtm_auth=$variables->environment_token") !== FALSE;
     $message = 'Found in noscript tag: environment_token';
     parent::assertTrue($status, $message);
-
-    if ($cache) {
-      $message = 'Contents of noscript tag matches cache';
-      parent::assertTrue(strpos($cache, $contents) !== FALSE, $message);
-    }
-  }
-
-  /**
-   * Verify the tag in page response.
-   */
-  protected function verifyNoScriptTagInline($variables, $cache) {
-    $this->verifyNoScriptTag('', $variables, $cache);
   }
 
 }

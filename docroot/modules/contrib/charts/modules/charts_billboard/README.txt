@@ -48,5 +48,6 @@ If you use Composer to manage dependencies, edit "/composer.json" as follows.
             }
         }
 
-4. Run "composer require --prefer-dist billboardjs/billboard:1.6.2 d3v4/d3:4.9.1"
+  4. Run "composer require --prefer-dist billboardjs/billboard:1.6.2
+     d3v4/d3:4.9.1"
 - you should find that new directories have been created under "/libraries"

@@ -7,7 +7,7 @@ dependencies:
   - drupal:ckeditor
   - paragraphs_features:paragraphs_features
 
-# Information added by Drupal.org packaging script on 2021-07-09
-version: '8.x-1.12'
+# Information added by Drupal.org packaging script on 2022-01-14
+version: '8.x-1.15'
 project: 'paragraphs_features'
-datestamp: 1625838475
+datestamp: 1642166576

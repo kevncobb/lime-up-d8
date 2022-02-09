@@ -31,7 +31,17 @@ const baseRules = [
     },
   },
   { test: /\.(txt|yaml)$/, loader: "raw-loader" },
-  { test: /\.(png|jpg|jpeg|gif|svg)$/, loader: "url-loader" },
+  {
+    test: /\.(png|jpg|jpeg|gif|svg)$/,
+    use: [
+      {
+        loader: "url-loader",
+        options: {
+          esModule: false,
+        },
+      },
+    ],
+  },
   {
     test: /\.(woff|woff2)$/,
     loader: "url-loader?",
@@ -59,7 +69,6 @@ export default function buildConfig(
         PACKAGE_VERSION: pkg.version,
         GIT_COMMIT: gitInfo.hash,
         GIT_DIRTY: gitInfo.dirty,
-        HOSTNAME: os.hostname(),
         BUILD_TIME: new Date().toUTCString(),
       }),
     }),
@@ -118,7 +127,7 @@ export default function buildConfig(
         // these aliases make sure that we don't bundle same libraries twice
         // when the versions of these libraries diverge between swagger-js and swagger-ui
         alias: {
-          "@babel/runtime-corejs2": path.resolve(__dirname, "..", "node_modules/@babel/runtime-corejs2"),
+          "@babel/runtime-corejs3": path.resolve(__dirname, "..", "node_modules/@babel/runtime-corejs3"),
           "js-yaml": path.resolve(__dirname, "..", "node_modules/js-yaml"),
           "lodash": path.resolve(__dirname, "..", "node_modules/lodash")
         },
@@ -134,8 +143,8 @@ export default function buildConfig(
 
       performance: {
         hints: "error",
-        maxEntrypointSize: 1024000,
-        maxAssetSize: 1024000,
+        maxEntrypointSize: 1153434,
+        maxAssetSize: 1153434,
       },
 
       optimization: {

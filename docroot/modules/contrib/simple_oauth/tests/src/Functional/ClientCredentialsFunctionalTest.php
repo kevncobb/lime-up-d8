@@ -12,6 +12,34 @@ use Drupal\Component\Serialization\Json;
 class ClientCredentialsFunctionalTest extends TokenBearerFunctionalTestBase {
 
   /**
+   * @inheritDoc
+   */
+  protected function setUp() {
+    parent::setUp();
+    // Client credentials also need a valid default user set.
+    $this->client->set('user_id', $this->user)->save();
+  }
+
+  /**
+   * Ensure incorrectly-configured clients without a user are unusable.
+   */
+  public function testMisconfiguredClient() {
+    $this->client->set('user_id', NULL)->save();
+    // 1. Craft a valid request.
+    $valid_payload = [
+      'grant_type' => 'client_credentials',
+      'client_id' => $this->client->uuid(),
+      'client_secret' => $this->clientSecret,
+      'scope' => $this->scope,
+    ];
+    // 2. The client is misconfigured.
+    $response = $this->post($this->url, $valid_payload);
+    $parsed_response = Json::decode((string) $response->getBody());
+    $this->assertEquals(500, $response->getStatusCode());
+    $this->assertStringContainsString('Invalid default user for client.', $parsed_response['message']);
+  }
+
+  /**
    * Test the valid ClientCredentials grant.
    */
   public function testClientCredentialsGrant() {

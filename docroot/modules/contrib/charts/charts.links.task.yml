@@ -1,4 +1,4 @@
 charts.settings:
-  title: 'Charts Default Settings'
+  title: 'Charts Settings'
   route_name: charts.settings
   base_route: charts.settings

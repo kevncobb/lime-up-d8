@@ -197,7 +197,8 @@ class WidgetUploadTest extends MediaLibraryTestBase {
     // Assert we can now only upload one more media item.
     $this->openMediaLibraryForField('field_twin_media');
     $this->switchToMediaType('Four');
-    $this->assertFalse($assert_session->fieldExists('Add file')->hasAttribute('multiple'));
+    // Despite the 'One file only' text, we don't limit the number of uploads.
+    $this->assertTrue($assert_session->fieldExists('Add file')->hasAttribute('multiple'));
     $assert_session->pageTextContains('One file only.');
 
     // Assert media type four should only allow jpg files by trying a png file
@@ -311,11 +312,11 @@ class WidgetUploadTest extends MediaLibraryTestBase {
     // Remove the second file and assert the focus is shifted to the container
     // of the next media item and field values are still correct.
     $page->pressButton('media-1-remove-button');
+    $this->assertTrue($assert_session->waitForText('The media item ' . $filenames[1] . ' has been removed.'));
     $this->assertJsCondition('jQuery("[data-media-library-added-delta=2]").is(":focus")');
-    $assert_session->pageTextContains('The media item ' . $filenames[1] . ' has been removed.');
     // Assert the file was deleted.
     $this->assertEmpty($file_storage->loadByProperties(['filename' => $filenames[1]]));
-    $this->assertFileNotExists($file_1_uri);
+    $this->assertFileDoesNotExist($file_1_uri);
 
     // When a file is already in usage, it should not be deleted. To test,
     // let's add a usage for $filenames[3] (now in the third position).
@@ -538,7 +539,8 @@ class WidgetUploadTest extends MediaLibraryTestBase {
     // Assert we can now only upload one more media item.
     $this->openMediaLibraryForField('field_twin_media');
     $this->switchToMediaType('Four');
-    $this->assertFalse($assert_session->fieldExists('Add file')->hasAttribute('multiple'));
+    // Despite the 'One file only' text, we don't limit the number of uploads.
+    $this->assertTrue($assert_session->fieldExists('Add file')->hasAttribute('multiple'));
     $assert_session->pageTextContains('One file only.');
 
     // Assert media type four should only allow jpg files by trying a png file
@@ -582,6 +584,7 @@ class WidgetUploadTest extends MediaLibraryTestBase {
     // a file.
     $this->getSession()->executeScript("jQuery('.js-media-library-add-form-current-selection').val('1,2,{$unpublished_media->id()}')");
     $this->addMediaFileToField('Add files', $this->container->get('file_system')->realpath($png_uri_3));
+    $this->assertMediaAdded();
     // Assert the pre-selected items are shown.
     $this->getSelectionArea();
     // Assert the published items are selected and the unpublished item is not
@@ -602,15 +605,15 @@ class WidgetUploadTest extends MediaLibraryTestBase {
     $this->assertTrue($assert_session->fieldExists('Add files')->hasAttribute('multiple'));
     $png_uri_5 = $file_system->copy($png_image->uri, 'public://');
     $this->addMediaFileToField('Add files', $this->container->get('file_system')->realpath($png_uri_5));
-    // assertWaitOnAjaxRequest() required for input "id" attributes to
-    // consistently match their label's "for" attribute.
-    $assert_session->assertWaitOnAjaxRequest();
+    $this->assertMediaAdded();
     $page->fillField('Alternative text', $this->randomString());
     // Assert the pre-selected items are shown.
     $selection_area = $this->getSelectionArea();
     $assert_session->checkboxChecked("Select $existing_media_name", $selection_area);
     $selection_area->uncheckField("Select $existing_media_name");
-    $assert_session->hiddenFieldValueEquals('current_selection', '');
+    $page->waitFor(10, function () use ($page) {
+      return $page->find('hidden_field_selector', ['hidden_field', 'current_selection'])->getValue() === '';
+    });
     // Close the details element so that clicking the Save and select works.
     // @todo Fix dialog or test so this is not necessary to prevent random
     //   fails. https://www.drupal.org/project/drupal/issues/3055648
@@ -685,7 +688,7 @@ class WidgetUploadTest extends MediaLibraryTestBase {
     $assert_session->pageTextContains('The media item ' . $filenames[1] . ' has been removed.');
     // Assert the file was deleted.
     $this->assertEmpty($file_storage->loadByProperties(['filename' => $filenames[1]]));
-    $this->assertFileNotExists($file_1_uri);
+    $this->assertFileDoesNotExist($file_1_uri);
 
     // When a file is already in usage, it should not be deleted. To test,
     // let's add a usage for $filenames[3] (now in the third position).
@@ -723,6 +726,7 @@ class WidgetUploadTest extends MediaLibraryTestBase {
     // Remove the last file and assert the focus is shifted to the container
     // of the first media item and field values are still correct.
     $page->pressButton('media-2-remove-button');
+    $this->assertTrue($assert_session->waitForText('The media item ' . $filenames[2] . ' has been removed.'));
     $this->assertJsCondition('jQuery("[data-media-library-added-delta=0]").is(":focus")');
     $assert_session->pageTextContains('The media item ' . $filenames[2] . ' has been removed.');
     $assert_session->elementNotExists('css', '[data-media-library-added-delta=1]');
@@ -730,80 +734,6 @@ class WidgetUploadTest extends MediaLibraryTestBase {
     $media_item_one = $assert_session->elementExists('css', '[data-media-library-added-delta=0]');
     $assert_session->fieldValueEquals('Name', $filenames[0], $media_item_one);
     $assert_session->fieldValueEquals('Alternative text', $filenames[0], $media_item_one);
-  }
-
-  /**
-   * Tests if the widget is working correctly when opened from a modal.
-   */
-  public function testWidgetInModalContext() {
-    $page = $this->getSession()->getPage();
-
-    foreach ($this->getTestFiles('image') as $image) {
-      $extension = pathinfo($image->filename, PATHINFO_EXTENSION);
-      if ($extension === 'png') {
-        $png_image = $image;
-      }
-      elseif ($extension === 'jpg') {
-        $jpg_image = $image;
-      }
-    }
-
-    if (!isset($png_image) || !isset($jpg_image)) {
-      $this->fail('Expected test files not present.');
-    }
-
-    // Create a user that can create media for all media types.
-    $user = $this->drupalCreateUser([
-      'access administration pages',
-      'access content',
-      'create basic_page content',
-      'create media',
-      'view media',
-    ]);
-    $this->drupalLogin($user);
-    $this->drupalGet('/media-library-test-modal');
-    $assert_session = $this->assertSession();
-    $this->click('.modal-basic_page');
-    $assert_session->waitForElement('css', '.ui-dialog-content');
-
-    $file_storage = $this->container->get('entity_type.manager')->getStorage('file');
-    /** @var \Drupal\Core\File\FileSystemInterface $file_system */
-    $file_system = $this->container->get('file_system');
-
-    // Add to the twin media field.
-    // Add to the twin media field.
-    $this->openMediaLibraryForField('field_twin_media');
-
-    // Assert the upload form is now visible for default tab type_three.
-    $assert_session->elementExists('css', '.js-media-library-add-form');
-    $assert_session->fieldExists('Add files');
-
-    // Assert we can upload a file to the default tab type_three.
-    $assert_session->elementNotExists('css', '.js-media-library-add-form[data-input]');
-    $this->addMediaFileToField('Add files', $this->container->get('file_system')->realpath($png_image->uri));
-    $this->assertMediaAdded();
-    $assert_session->elementExists('css', '.js-media-library-add-form[data-input]');
-    // We do not have pre-selected items, so the container should not be added
-    // to the form.
-    $assert_session->pageTextNotContains('Additional selected media');
-    // Files are temporary until the form is saved.
-    $files = $file_storage->loadMultiple();
-    $file = array_pop($files);
-    $this->assertSame('public://type-three-dir', $file_system->dirname($file->getFileUri()));
-    $this->assertTrue($file->isTemporary());
-    // Assert the revision_log_message field is not shown.
-    $upload_form = $assert_session->elementExists('css', '.js-media-library-add-form');
-    $assert_session->fieldNotExists('Revision log message', $upload_form);
-    // Assert the name field contains the filename and the alt text is required.
-    $assert_session->fieldValueEquals('Name', $png_image->filename);
-    $page->fillField('Alternative text', $this->randomString());
-    $buttons = $this->assertElementExistsAfterWait('css', '.media-library-widget-modal .ui-dialog-buttonpane');
-
-    $buttons->pressButton('Save');
-    $this->waitForText('Insert selected');
-    $buttons->pressButton('Insert selected');
-    $assert_session->waitForElementVisible('css', '#field_twin_media-media-library-wrapper .js-media-library-selection .js-media-library-item');
-
   }
 
 }

@@ -9,6 +9,7 @@ use Symfony\Component\Yaml\Yaml;
 use Drupal\Core\Config\InstallStorage;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Config\FileStorage;
+use Vardot\Entity\EntityDefinitionUpdateManager;
 
 /**
  * Implements hook_install().
@@ -62,6 +63,11 @@ function varbase_carousels_install() {
     }
   }
   // --------------------------------------------------------------------------.
+  // Entity updates to clear up any mismatched entity and/or field definitions
+  // And Fix changes were detected in the entity type and field definitions.
+  \Drupal::classResolver()
+    ->getInstanceFromDefinition(EntityDefinitionUpdateManager::class)
+    ->applyUpdates();
 }
 
 /**
@@ -95,4 +101,20 @@ function varbase_carousels_requirements($phase) {
   }
 
   return $requirements;
+}
+
+/**
+ * Issue #3222166: Fix Entity Storage Exception on Column not found.
+ */
+function varbase_carousels_update_9001() {
+
+  // --------------------------------------------------------------------------.
+  // Entity updates to clear up any mismatched entity and/or field definitions
+  // And Fix changes were detected in the entity type and field definitions.
+  \Drupal::classResolver()
+    ->getInstanceFromDefinition(EntityDefinitionUpdateManager::class)
+    ->applyUpdates();
+
+  // Full flash and clear cash and rebuilding.
+  drupal_flush_all_caches();
 }

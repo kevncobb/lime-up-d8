@@ -44,7 +44,8 @@
     this.linkTextClose = field.attr('data-link-text-close');
     this.linkClassOpen = field.attr('data-link-class-open');
     this.linkClassClose = field.attr('data-link-class-close');
-    this.text = this.content.html();
+    this.text = this.content.text();
+    this.html = this.content.html();
     this.showMore = Drupal.t(this.linkTextOpen);
     this.showLess = Drupal.t(this.linkTextClose);
 
@@ -78,14 +79,14 @@
 
       if (this.state === 'expanded') {
         // Trim the content content to a predefined number of characters.
-        content = this.trimText(this.text);
+        content = this.trimText(this.html);
 
         linkText = this.showMore;
         linkClass = 'ec-toggle-link ' + this.linkClassOpen;
         this.state = 'collapsed';
       }
       else {
-        content = this.text;
+        content = this.html;
         linkText = this.showLess;
         linkClass = 'ec-toggle-link ' + this.linkClassClose;
         this.state = 'expanded';

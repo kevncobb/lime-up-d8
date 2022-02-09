@@ -9,6 +9,11 @@ namespace Drupal\charts\Services;
  */
 class ChartService implements ChartServiceInterface {
 
+  /**
+   * The selected library.
+   *
+   * @var string
+   */
   private $librarySelected;
 
   /**

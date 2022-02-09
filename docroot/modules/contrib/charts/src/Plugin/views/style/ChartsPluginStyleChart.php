@@ -2,12 +2,12 @@
 
 namespace Drupal\charts\Plugin\views\style;
 
+use Drupal\charts\Plugin\chart\Library\ChartInterface;
 use Drupal\charts\Services\ChartAttachmentServiceInterface;
-use Drupal\charts\Plugin\chart\ChartManager;
-use Drupal\charts\Services\ChartsSettingsService;
-use Drupal\charts\Settings\ChartsBaseSettingsForm;
-use Drupal\charts\Settings\ChartsTypeInfo;
-use Drupal\charts\Theme\ChartsInterface;
+use Drupal\charts\ChartManager;
+use Drupal\Component\Serialization\Json;
+use Drupal\Component\Utility\Html;
+use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\core\form\FormStateInterface;
 use Drupal\Core\Plugin\ContainerFactoryPluginInterface;
 use Drupal\Core\Render\Element;
@@ -29,24 +29,42 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
  */
 class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactoryPluginInterface {
 
+  /**
+   * The config factory service.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
+  protected $configFactory;
+
+  /**
+   * Fields.
+   *
+   * @var usesFields
+   */
   protected $usesFields = TRUE;
 
+  /**
+   * RowPlugin.
+   *
+   * @var usesRowPlugin
+   */
   protected $usesRowPlugin = TRUE;
 
+  /**
+   * The attachment service.
+   *
+   * @var \Drupal\charts\Services\ChartAttachmentService
+   */
   protected $attachmentService;
 
   /**
    * The chart manager service.
    *
-   * @var \Drupal\charts\Plugin\chart\ChartManager
+   * @var \Drupal\charts\ChartManager
    */
   protected $chartManager;
 
-  protected $moduleHandler;
-
-  protected $chartsDefaultSettings;
-
-  protected $chartsBaseSettingsForm;
+  protected $labelFieldKey;
 
   /**
    * Constructs a ChartsPluginStyleChart object.
@@ -57,25 +75,18 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
    *   The plugin_id for the plugin instance.
    * @param mixed $plugin_definition
    *   The plugin implementation definition.
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
+   *   The config factory service.
    * @param \Drupal\charts\Services\ChartAttachmentServiceInterface $attachment_service
    *   The attachment service.
-   * @param \Drupal\charts\Plugin\chart\ChartManager $chart_manager
+   * @param \Drupal\charts\ChartManager $chart_manager
    *   The chart manager service.
-   * @param \Drupal\charts\Services\ChartsSettingsService $chartsSettings
    */
-  public function __construct(
-    array $configuration,
-    $plugin_id,
-    $plugin_definition,
-    ChartAttachmentServiceInterface $attachment_service,
-    ChartManager $chart_manager,
-    ChartsSettingsService $chartsSettings
-  ) {
+  public function __construct(array $configuration, $plugin_id, $plugin_definition, ConfigFactoryInterface $config_factory, ChartAttachmentServiceInterface $attachment_service, ChartManager $chart_manager) {
     parent::__construct($configuration, $plugin_id, $plugin_definition);
     $this->attachmentService = $attachment_service;
     $this->chartManager = $chart_manager;
-    $this->chartsDefaultSettings = $chartsSettings->getChartsSettings();
-    $this->chartsBaseSettingsForm = new ChartsBaseSettingsForm();
+    $this->configFactory = $config_factory;
   }
 
   /**
@@ -86,9 +97,9 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
       $configuration,
       $plugin_id,
       $plugin_definition,
+      $container->get('config.factory'),
       $container->get('charts.charts_attachment'),
       $container->get('plugin.manager.charts'),
-      $container->get('charts.settings')
     );
   }
 
@@ -97,23 +108,20 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
    */
   protected function defineOptions() {
     $options = parent::defineOptions();
-
-    $options['allow_advanced_rendering'] = [
-      'default' => FALSE,
+    $charts_settings = $this->configFactory->get('charts.settings');
+    $charts_default_settings = $charts_settings->get('charts_default_settings') ?? [];
+    $options['chart_settings'] = [
+      'default' => $charts_default_settings,
     ];
+    $options['chart_settings']['fields']['allow_advanced_rendering'] = FALSE;
 
-    // Get the default chart values.
-    if ($defaults = $this->chartsDefaultSettings) {
-      foreach ($defaults as $default_key => $default_value) {
-        $options[$default_key]['default'] = $default_value;
-      }
-    }
+    $options['chart_settings']['library'] = '';
 
     // @todo: ensure that chart extensions inherit defaults from parent
     // Remove the default setting for chart type so it can be inherited if this
     // is a chart extension type.
     if ($this->view->style_plugin === 'chart_extension') {
-      $options['type']['default'] = NULL;
+      $options['chart_settings']['default']['type'] = NULL;
     }
     $options['path'] = ['default' => 'charts'];
 
@@ -128,13 +136,14 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
 
     $handlers = $this->displayHandler->getHandlers('field');
     if (empty($handlers)) {
-      $form['error_markup'] = ['#markup' => '<div class="error messages">' . t('You need at least one field before you can configure your table settings') . '</div>'];
+      $form['error_markup'] = ['#markup' => '<div class="error messages">' . $this->t('You need at least one field before you can configure your table settings') . '</div>'];
+      return;
     }
 
     // Limit grouping options (we only support one grouping field).
     if (isset($form['grouping'][0])) {
-      $form['grouping'][0]['field']['#title'] = t('Grouping field');
-      $form['grouping'][0]['field']['#description'] = t('If grouping by a particular field, that field will be used to determine stacking of the chart. Generally this will be the same field as what you select for the "Label field" below. If you do not have more than one "Provides data" field below, there will be nothing to stack. If you want to have another series displayed, use a "Chart attachment" display, and set it to attach to this display.');
+      $form['grouping'][0]['field']['#title'] = $this->t('Grouping field');
+      $form['grouping'][0]['field']['#description'] = $this->t('If grouping by a particular field, that field will be used to determine stacking of the chart. Generally this will be the same field as what you select for the "Label field" below. If you do not have more than one "Provides data" field below, there will be nothing to stack. If you want to have another series displayed, use a "Chart attachment" display, and set it to attach to this display.');
       $form['grouping'][0]['field']['#attributes']['class'][] = 'charts-grouping-field';
       // Grouping by rendered version has no effect in charts. Hide the options.
       $form['grouping'][0]['rendered']['#access'] = FALSE;
@@ -144,49 +153,29 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
       $form['grouping'][1]['#access'] = FALSE;
     }
 
-    // Add a views-specific chart option to allow advanced rendering.
-    $form['allow_advanced_rendering'] = [
-      '#type' => 'checkbox',
-      '#title' => $this->t('Allow advanced rendering'),
-      '#description' => $this->t('Allow views field rewriting etc. for label and data fields. This can break charts if you rewrite the field to a value the charting library cannot handle - e.g. passing a string value into a numeric data column.'),
-      '#default_value' => $this->options['allow_advanced_rendering'],
-    ];
-
     // Merge in the global chart settings form.
     $field_options = $this->displayHandler->getFieldLabels();
     $form_state->set('default_options', $this->options);
-    $form = $this->chartsBaseSettingsForm->getChartsBaseSettingsForm($form, 'view', $this->options, $field_options, ['style_options']);
-
+    $form['chart_settings'] = [
+      '#type' => 'charts_settings',
+      '#used_in' => 'view_form',
+      '#required' => TRUE,
+      '#field_options' => $field_options,
+      '#default_value' => $this->options['chart_settings'],
+    ];
   }
 
   /**
    * {@inheritdoc}
    */
   public function validate() {
-
     $errors = parent::validate();
-    $dataFields = $this->options['data_fields'];
-    $dataFieldsValueState = [];
+    $chart_settings = $this->options['chart_settings'];
+    $selected_data_fields = is_array($chart_settings['fields']['data_providers']) ? $this->getSelectedDataFields($chart_settings['fields']['data_providers']) : NULL;
 
     // Avoid calling validation before arriving on the view edit page.
-    if (\Drupal::routeMatch()->getRouteName() != 'views_ui.add') {
-      if (isset($dataFields)) {
-        foreach ($dataFields as $value) {
-          if (empty($value)) {
-            array_push($dataFieldsValueState, 0);
-          }
-          else {
-            array_push($dataFieldsValueState, 1);
-          }
-        }
-      }
-
-      // If total sum of dataFieldsValueState is less than 1, then no dataFields
-      // were selected otherwise 1 or more selected total sum will be greater
-      // than 1.
-      if (array_sum($dataFieldsValueState) < 1) {
-        $errors[] = $this->t('At least one data field must be selected in the chart configuration before this chart may be shown');
-      }
+    if (\Drupal::routeMatch()->getRouteName() != 'views_ui.add' && empty($selected_data_fields)) {
+      $errors[] = $this->t('At least one data field must be selected in the chart configuration before this chart may be shown');
     }
 
     return $errors;
@@ -196,157 +185,169 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
    * {@inheritdoc}
    */
   public function render() {
-
     $field_handlers = $this->view->getHandlers('field');
+    $chart_settings = $this->options['chart_settings'];
+    $chart_fields = $chart_settings['fields'];
+    $is_grouped = isset($this->options['grouping'][0]['field']);
 
     // Calculate the labels field alias.
-    $label_field = FALSE;
-    $label_field_key = NULL;
-    if ($this->options['label_field'] && array_key_exists($this->options['label_field'], $field_handlers)) {
-      $label_field = $field_handlers[$this->options['label_field']];
-      $label_field_key = $this->options['label_field'];
-    }
+    $label_field_key = $this->getLabelFieldKey();
 
     // Assemble the fields to be used to provide data access.
-    $data_field_options = array_filter($this->options['data_fields']);
-    $data_fields = [];
-    foreach ($data_field_options as $field_key) {
-      if (isset($field_handlers[$field_key])) {
-        $data_fields[$field_key] = $field_handlers[$field_key];
+    $field_keys = array_keys($this->getSelectedDataFields($chart_fields['data_providers']));
+    $data_fields = array_filter($field_handlers, function ($field_handler) use ($field_keys, $label_field_key) {
+      if (isset($field_handler['exclude']) && ($field_handler['exclude'] == FALSE || $field_handler['exclude'] == 0)) {
+        $field_id = $field_handler['id'];
       }
-    }
-    // Do not allow the label field to be used as a data field.
-    if (isset($data_fields[$label_field_key])) {
-      unset($data_fields[$label_field_key]);
-    }
+      else {
+        $field_id = '';
+      }
+      // Do not allow the label field to be used as a data field.
+      return $field_id !== $label_field_key && in_array($field_id, $field_keys);
+    });
+
     // Allow argument tokens in the title.
+    $title = !empty($chart_settings['display']['title']) ? $chart_settings['display']['title'] : '';
     if (!empty($this->view->build_info['substitutions'])) {
       $tokens = $this->view->build_info['substitutions'];
-      $title = $this->options['title_position'] ? $this->options['title'] : FALSE;
       $title = $this->viewsTokenReplace($title, $tokens);
-      $this->options['title'] = $title;
-    }
-    else {
-      $title = $this->options['title_position'] ? $this->options['title'] : FALSE;
     }
 
-    $chart_id = $this->view->id() . '__' . $this->view->current_display;
+    // To be used with the exposed chart type field.
+    if ($this->view->storage->get('exposed_chart_type')) {
+      $chart_settings['type'] = $this->view->storage->get('exposed_chart_type');
+    }
+
+    $chart_id = $this->view->id() . '_' . $this->view->current_display;
     $chart = [
       '#type' => 'chart',
-      '#chart_type' => $this->options['type'],
-      '#chart_library' => $this->options['library'],
+      '#chart_type' => $chart_settings['type'],
+      '#chart_library' => $chart_settings['library'],
       '#chart_id' => $chart_id,
-      '#id' => ('chart_' . $chart_id),
-    // '#title' => $this->options['title_position'] ? $this->options['title'] : FALSE,
+      '#id' => Html::getUniqueId('chart_' . $chart_id),
+      '#stacking' => $chart_settings['fields']['stacking'] ?? '0',
+      '#polar' => $chart_settings['display']['polar'],
+      '#three_dimensional' => $chart_settings['display']['three_dimensional'],
+      '#gauge' => $chart_settings['display']['gauge'],
       '#title' => $title,
-      '#title_position' => $this->options['title_position'],
-      '#tooltips' => $this->options['tooltips'],
-      '#data_labels' => $this->options['data_labels'],
-      '#colors' => isset($this->options['colors']) ? $this->options['colors'] : NULL,
-      '#background' => $this->options['background'] ? $this->options['background'] : 'transparent',
-      '#legend' => $this->options['legend_position'] ? TRUE : FALSE,
-      '#legend_position' => $this->options['legend_position'] ? $this->options['legend_position'] : NULL,
-      '#width' => $this->options['width'],
-      '#height' => $this->options['height'],
-      '#width_units' => $this->options['width_units'],
-      '#height_units' => $this->options['height_units'],
-      '#view' => $this->view,
+      '#title_position' => $chart_settings['display']['title_position'],
+      '#tooltips' => $chart_settings['display']['tooltips'],
+      '#data_labels' => $chart_settings['display']['data_labels'],
+      // Colors only used if a grouped view or using a type such as a pie chart.
+      '#colors' => $chart_settings['display']['colors'] ?? [],
+      '#background' => $chart_settings['display']['background'] ?? 'transparent',
+      '#legend' => !empty($chart_settings['display']['legend_position']),
+      '#legend_position' => $chart_settings['display']['legend_position'] ?? '',
+      '#width' => $chart_settings['display']['dimensions']['width'],
+      '#height' => $chart_settings['display']['dimensions']['height'],
+      '#width_units' => $chart_settings['display']['dimensions']['width_units'],
+      '#height_units' => $chart_settings['display']['dimensions']['height_units'],
+      '#attributes' => ['data-drupal-selector-chart' => Html::getId($chart_id)],
       // Pass info about the actual view results to allow further processing.
-      '#theme' => 'views_view_charts',
+      '#view' => $this->view,
     ];
-    $chartTypes = new ChartsTypeInfo();
-    $chart_type_info = $chartTypes->getChartType($this->options['type']);
-    if ($chart_type_info['axis'] === ChartsInterface::CHARTS_SINGLE_AXIS) {
+
+    /** @var \Drupal\charts\TypeManager $chart_type_plugin_manager */
+    $chart_type_plugin_manager = \Drupal::service('plugin.manager.charts_type');
+    $chart_type = $chart_type_plugin_manager->getDefinition($chart_settings['type']);
+    if ($chart_type['axis'] === ChartInterface::SINGLE_AXIS) {
       $data_field_key = key($data_fields);
       $data_field = $data_fields[$data_field_key];
       $data = [];
       $this->renderFields($this->view->result);
       $renders = $this->rendered_fields;
-      foreach ($renders as $row_number => $row) {
-        $data_row = [];
-        if ($label_field_key) {
-          // Labels need to be decoded, as the charting library will re-encode.
-          $data_row[] = htmlspecialchars_decode($this->getField($row_number, $label_field_key), ENT_QUOTES);
+      if (!$label_field_key && count($renders) === 1 && count($data_fields) > 1) {
+        foreach ($data_fields as $field_id => $row) {
+          $data_row = [];
+          if (!empty($row['label'])) {
+            $data_row['name'] = strip_tags($row['label'], ENT_QUOTES);
+          }
+          if (!empty($chart_fields['data_providers'][$field_id]['color'])) {
+            $data_row['color'] = $chart_fields['data_providers'][$field_id]['color'];
+          }
+          $data_row['y'] = $this->processNumberValueFromField(0, $field_id);
+          $data[] = $data_row;
         }
-        $value = $this->getField($row_number, $data_field_key);
-        // Convert empty strings to NULL.
-        if ($value === '') {
-          $value = NULL;
+      }
+      else {
+        foreach ($renders as $row_number => $row) {
+          $data_row = [];
+          if ($label_field_key) {
+            // Labels need to be decoded, as the charting library will re-encode.
+            $data_row[] = strip_tags($this->getField($row_number, $label_field_key), ENT_QUOTES);
+          }
+          $data_row[] = $this->processNumberValueFromField($row_number, $data_field_key);
+          $data[] = $data_row;
         }
-        else {
-          // Strip thousands placeholders if present, then cast to float.
-          $value = (float) str_replace([',', ' '], '', $value);
-        }
-        $data_row[] = $value;
-        $data[] = $data_row;
       }
 
-      if ($label_field) {
-        $chart['#legend_title'] = $label_field['label'];
-      }
-
+      // @todo: create a textfield for chart legend title.
+      // if ($chart_fields['label']) {
+      // $chart['#legend_title'] = $chart_fields['label'];
+      // }
       $chart[$this->view->current_display . '_series'] = [
         '#type' => 'chart_data',
         '#data' => $data,
         '#title' => $data_field['label'],
+        '#color' => isset($chart_fields['data_providers'][$data_field_key]) ? $chart_fields['data_providers'][$data_field_key]['color'] : '',
       ];
-
     }
     else {
       $chart['xaxis'] = [
         '#type' => 'chart_xaxis',
-        '#title' => $this->options['xaxis_title'] ? $this->options['xaxis_title'] : FALSE,
-        '#labels_rotation' => $this->options['xaxis_labels_rotation'],
+        '#title' => $chart_settings['xaxis']['title'] ?? '',
+        '#labels_rotation' => $chart_settings['xaxis']['labels_rotation'],
       ];
       $chart['yaxis'] = [
         '#type' => 'chart_yaxis',
-        '#title' => $this->options['yaxis_title'] ? $this->options['yaxis_title'] : FALSE,
-        '#labels_rotation' => $this->options['yaxis_labels_rotation'],
-        '#max' => $this->options['yaxis_max'],
-        '#min' => $this->options['yaxis_min'],
+        '#title' => $chart_settings['yaxis']['title'] ?? '',
+        '#labels_rotation' => $chart_settings['yaxis']['labels_rotation'],
+        '#max' => $chart_settings['yaxis']['max'],
+        '#min' => $chart_settings['yaxis']['min'],
       ];
-      $sets = $this->renderGrouping($this->view->result, $this->options['grouping'], TRUE);
-      $series_index = -1;
-      foreach ($sets as $series_label => $data_set) {
-        $series_index++;
-        foreach ($data_fields as $field_key => $field_handler) {
-          $chart[$this->view->current_display . '__' . $field_key . '_' . $series_index] = [
-            '#type' => 'chart_data',
-            '#data' => [],
-            // If using a grouping field, inherit from the chart level colors.
-            '#color' => ($series_label === '' && isset($this->options['field_colors'][$field_key])) ? $this->options['field_colors'][$field_key] : NULL,
-            '#title' => $series_label ? $series_label : $field_handler['label'],
-            '#prefix' => $this->options['yaxis_prefix'] ? $this->options['yaxis_prefix'] : NULL,
-            '#suffix' => $this->options['yaxis_suffix'] ? $this->options['yaxis_suffix'] : NULL,
-            '#decimal_count' => $this->options['yaxis_decimal_count'] ? $this->options['yaxis_decimal_count'] : NULL,
-          ];
-        }
 
-        // Grouped results come back indexed by their original result number
-        // from before the grouping, so we need to keep our own row number when
-        // looping through the rows.
-        $row_number = 0;
-        foreach ($data_set['rows'] as $result_number => $row) {
-          if ($label_field_key && !isset($chart['xaxis']['#labels'][$row_number])) {
-            $chart['xaxis']['#labels'][$row_number] = $this->getField($result_number, $label_field_key);
-          }
+      $view_records = $this->view->result;
+      $sets = $this->renderGrouping($view_records, $this->options['grouping'], TRUE);
+      if ($is_grouped) {
+        $this->groupedChartElementBuild($chart, $sets, $data_fields);
+      }
+      else {
+        $series_index = 0;
+        foreach ($sets as $series_label => $data_set) {
           foreach ($data_fields as $field_key => $field_handler) {
-            // Don't allow the grouping field to provide data.
-            if (isset($this->options['grouping'][0]['field']) && $field_key === $this->options['grouping'][0]['field']) {
-              continue;
-            }
-            $value = $this->getField($result_number, $field_key);
-            // Convert empty strings to NULL.
-            if ($value === '') {
-              $value = NULL;
-            }
-            else {
-              // Strip thousands placeholders if present, then cast to float.
-              $value = (float) str_replace([',', ' '], '', $value);
-            }
-            $chart[$this->view->current_display . '__' . $field_key . '_' . $series_index]['#data'][] = $value;
+            $element_key = $this->view->current_display . '__' . $field_key . '_' . $series_index;
+            $chart[$element_key] = [
+              '#type' => 'chart_data',
+              '#data' => [],
+              // If using a grouping field, inherit from the chart level colors.
+              '#color' => ($series_label === '' && isset($chart_fields['data_providers'][$field_key])) ? $chart_fields['data_providers'][$field_key]['color'] : '',
+              '#title' => $series_label ? strip_tags($series_label) : $field_handler['label'],
+              '#prefix' => $chart_settings['yaxis']['prefix'] ?? NULL,
+              '#suffix' => $chart_settings['yaxis']['suffix'] ?? NULL,
+              '#decimal_count' => $chart_settings['yaxis']['decimal_count'] ?? '',
+            ];
           }
-          $row_number++;
+
+          // Grouped results come back indexed by their original result number
+          // from before the grouping, so we need to keep our own row number when
+          // looping through the rows.
+          foreach ($data_set['rows'] as $result_number => $row) {
+            $xaxis_label = strip_tags($this->getField($result_number, $label_field_key));
+            if ($label_field_key) {
+              $xaxis_labels = $chart['xaxis']['#labels'] ?? [];
+              if (!in_array($xaxis_label, $xaxis_labels)) {
+                $chart['xaxis']['#labels'][] = $xaxis_label;
+              }
+            }
+            foreach ($data_fields as $field_key => $field_handler) {
+              $element_key = $this->view->current_display . '__' . $field_key . '_' . $series_index;
+              $value = $this->processNumberValueFromField($result_number, $field_key);
+              $chart[$element_key]['#data'][] = $value;
+            }
+          }
+
+          // Incrementing series index.
+          $series_index++;
         }
       }
     }
@@ -368,16 +369,19 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
       // a display.
       $subview = $this->view->createDuplicate();
       $subview->setDisplay($child_display);
+      $child_display_handler = $this->view->displayHandlers->get($child_display);
+      $child_display_settings = $subview->display_handler->options['style']['options']['chart_settings'];
 
       // Copy the settings for our axes over to the child view.
-      foreach ($this->options as $option_name => $option_value) {
-        if ($this->view->displayHandlers->get($child_display)->options['inherit_yaxis'] === '1') {
-          $subview->display_handler->options['style_options'][$option_name] = $option_value;
+      foreach ($chart_settings as $option_name => $option_value) {
+        if ($child_display_handler->options['inherit_yaxis'] === '1') {
+          $child_display_settings[$option_name] = $option_value;
         }
       }
 
-      // Set the arguments on the subview if it is configured to inherit arguments.
-      if (!empty($this->view->displayHandlers->get($child_display)->display['display_options']['inherit_arguments']) && $this->view->displayHandlers->get($child_display)->display['display_options']['inherit_arguments'] == '1') {
+      // Set the arguments on the subview if it is configured to inherit;
+      // arguments.
+      if (!empty($child_display_handler->display['display_options']['inherit_arguments']) && $child_display_handler->display['display_options']['inherit_arguments'] == '1') {
         $subview->setArguments($this->view->args);
       }
 
@@ -395,7 +399,7 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
       array_push($attachments, $subview);
 
       // Create a secondary axis if needed.
-      if ($this->view->displayHandlers->get($child_display)->options['inherit_yaxis'] !== '1' && isset($subchart['yaxis'])) {
+      if ($child_display_handler->options['inherit_yaxis'] !== '1' && isset($subchart['yaxis'])) {
         $chart['secondary_yaxis'] = $subchart['yaxis'];
         $chart['secondary_yaxis']['#opposite'] = TRUE;
       }
@@ -409,7 +413,7 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
           if ($subchart['#chart_type'] !== $chart['#chart_type']) {
             $chart[$key]['#chart_type'] = $subchart['#chart_type'];
           }
-          if ($this->view->displayHandlers->get($child_display)->options['inherit_yaxis'] !== '1') {
+          if ($child_display_handler->options['inherit_yaxis'] !== '1') {
             $chart[$key]['#target_axis'] = 'secondary_yaxis';
           }
         }
@@ -422,6 +426,65 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
   }
 
   /**
+   * {@inheritdoc}
+   */
+  public function renderGrouping($records, $groupings = [], $group_rendered = NULL) {
+    if (empty($this->options['grouping'])) {
+      return parent::renderGrouping($records, $groupings, $group_rendered);
+    }
+
+    $xaxis_labels = [];
+    // Get the entire sets with grouping.
+    $sets = [];
+    // For the chart plugin the grouping level is always going to be at index
+    // 0 since only one grouping is allowed.
+    $grouping_level = 0;
+    $grouping_field_info = $groupings[$grouping_level];
+    $grouping_field = $grouping_field_info['field'];
+    $xaxis_label_field_key = $this->getLabelFieldKey();
+
+    foreach ($records as $index => $row) {
+      $set = &$sets;
+
+      // Extract xaxis labels.
+      if (isset($this->view->field[$xaxis_label_field_key])) {
+        $xaxis_label = $this->getField($index, $xaxis_label_field_key);
+        $xaxis_label = trim(strip_tags(htmlspecialchars_decode($xaxis_label)));
+        if (!in_array($xaxis_label, $xaxis_labels, TRUE)) {
+          $xaxis_labels[] = $xaxis_label;
+        }
+        $row->xaxis_label_index = array_flip($xaxis_labels)[$xaxis_label];
+      }
+
+      $grouping = '';
+      $group_content = '';
+      // Extract grouping content/label.
+      if (isset($this->view->field[$grouping_field])) {
+        $group_content = $this->getField($index, $grouping_field);
+        $group_content = $grouping = trim(strip_tags(htmlspecialchars_decode($group_content)));
+      }
+
+      // Create the group if it does not exist yet.
+      if (empty($set[$grouping])) {
+        $set[$grouping]['group'] = $group_content;
+        $set[$grouping]['level'] = $grouping_level;
+        $set[$grouping]['rows'] = [];
+      }
+
+      // Move the set reference into the row set of the group we just determined.
+      $set = &$set[$grouping]['rows'];
+      // Add the row to the hierarchically positioned row set we just determined.
+      $set[$index] = $row;
+    }
+
+    // Adding a workaround to pass the xaxis labels of grouping to the calling
+    // function.
+    $sets['_charts_xaxis_labels'] = $xaxis_labels;
+
+    return $sets;
+  }
+
+  /**
    * Utility function to check if this chart has a parent display.
    *
    * @return bool
@@ -429,7 +492,6 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
    */
   public function getParentChartDisplay() {
     $parent_display = FALSE;
-
     return $parent_display;
   }
 
@@ -440,7 +502,6 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
    *   Children Chart Display.
    */
   public function getChildrenChartDisplays() {
-
     $children_displays = $this->displayHandler->getAttachedDisplays();
     foreach ($children_displays as $key => $child) {
       $display_handler = $this->view->displayHandlers->get($child);
@@ -466,6 +527,115 @@ class ChartsPluginStyleChart extends StylePluginBase implements ContainerFactory
     }
 
     return $dependencies;
+  }
+
+  /**
+   * Processes number value based on field.
+   *
+   * @param int $number
+   *   The number.
+   * @param string $field
+   *   The field.
+   *
+   * @return \Drupal\Component\Render\MarkupInterface|float|null
+   *   The value.
+   */
+  public function processNumberValueFromField($number, $field) {
+    if (is_array($this->getField($number, $field))) {
+      $value = $this->getField($number, $field)->__toString();
+    }
+    else {
+      $value = $this->getField($number, $field);
+    }
+    if (\Drupal::service('twig')->isDebug()) {
+      $value = trim(strip_tags($value));
+    }
+    if (strpos($field, 'field_charts_fields_scatter') === 0) {
+
+      return Json::decode($value);
+    }
+    // Convert empty strings to NULL.
+    if ($value === '' || is_null($value)) {
+      $value = NULL;
+    }
+    else {
+      // Strip thousands placeholders if present, then cast to float.
+      $value = (float) str_replace([',', ' '], '', $value);
+    }
+
+    return $value;
+  }
+
+  /**
+   * Utility method to filter out unselected fields from data providers fields.
+   *
+   * @param array $data_providers
+   *   The data providers.
+   *
+   * @return array
+   *   The fields.
+   */
+  private function getSelectedDataFields(array $data_providers) {
+    return array_filter($data_providers, function ($value) {
+
+      return !empty($value['enabled']);
+    });
+  }
+
+  private function getLabelFieldKey() {
+    if (!isset($this->labelFieldKey)) {
+      $field_handlers = $this->view->getHandlers('field');
+      $chart_settings = $this->options['chart_settings'];
+      $chart_fields = $chart_settings['fields'];
+      $label_field = $field_handlers[$chart_fields['label']] ?? '';
+      $this->labelFieldKey = $label_field ? $chart_fields['label'] : '';
+    }
+    return $this->labelFieldKey;
+  }
+
+  private function groupedChartElementBuild(&$chart, $sets, $data_fields) {
+    $xaxis_labels = [];
+    $label_field_key = $this->getLabelFieldKey();
+    if (!empty($sets['_charts_xaxis_labels'])) {
+      $chart['xaxis']['#labels'] = $sets['_charts_xaxis_labels'];
+      unset($sets['_charts_xaxis_labels']);
+      // Flipping the labels here to get access to their index based on value.
+      $xaxis_labels = array_flip($chart['xaxis']['#labels']);
+    }
+
+    $series_index = 0;
+    foreach ($sets as $set_label => $data_set) {
+      $element_key_prefix = $this->view->current_display . '__' . $label_field_key;
+
+      /** Drupal\views\ResultRow $row */
+      $name = strtolower(Html::cleanCssIdentifier($set_label));
+      $element_key = $element_key_prefix . '__' . $name;
+      $chart[$element_key] = [
+        '#type' => 'chart_data',
+        '#data' => $xaxis_labels ? array_fill(0, count($xaxis_labels), 0) : [],
+        // If using a grouping field, inherit from the chart level colors.
+        //'#color' => ($set_label === '' && isset($chart_fields['data_providers'][$field_key])) ? $chart_fields['data_providers'][$field_key]['color'] : '',
+        '#title' => $set_label,
+        '#prefix' => $chart_settings['yaxis']['prefix'] ?? NULL,
+        '#suffix' => $chart_settings['yaxis']['suffix'] ?? NULL,
+        '#decimal_count' => $chart_settings['yaxis']['decimal_count'] ?? '',
+      ];
+
+      foreach ($data_set['rows'] as $result_number => $row) {
+        $set_id = $row->xaxis_label_index ?? $series_index;
+        foreach ($data_fields as $field_key => $field_handler) {
+          // Don't allow the grouping field to provide data.
+          if ($field_key === $this->options['grouping'][0]['field']) {
+            continue;
+          }
+          $value = $this->processNumberValueFromField($result_number, $field_key);
+          $chart[$element_key]['#data'][$set_id] = $value;
+        }
+      }
+
+      // Incrementing series index.
+      $series_index++;
+    }
   }
 
 }

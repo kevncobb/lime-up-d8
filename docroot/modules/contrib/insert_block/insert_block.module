@@ -2,7 +2,7 @@
 
 /**
  * @file
- * Insert blocks into the body of a node
+ * Insert blocks into the body of a node.
  *
  * Sidebar blocks contain all sorts of nifty stuff, but sometimes you
  * want to stick that stuff into the body of your node. Instead of using
@@ -17,7 +17,7 @@
  */
 
 /**
- * Implements of hook_help().
+ * Implements hook_help().
  */
 function insert_block_help($path, $arg) {
   switch ($path) {

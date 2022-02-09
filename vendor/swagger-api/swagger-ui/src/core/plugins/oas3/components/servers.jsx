@@ -104,7 +104,7 @@ export default class Servers extends React.Component {
     return (
       <div className="servers">
         <label htmlFor="servers">
-          <select onChange={ this.onServerChange }>
+          <select onChange={ this.onServerChange } value={currentServer}>
             { servers.valueSeq().map(
               ( server ) =>
               <option
@@ -129,7 +129,7 @@ export default class Servers extends React.Component {
             <table>
               <tbody>
                 {
-                  currentServerVariableDefs.map((val, name) => {
+                  currentServerVariableDefs.entrySeq().map(([name, val]) => {
                     return <tr key={name}>
                       <td>{name}</td>
                       <td>

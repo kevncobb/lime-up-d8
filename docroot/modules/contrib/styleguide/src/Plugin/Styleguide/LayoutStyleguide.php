@@ -138,7 +138,7 @@ class LayoutStyleguide extends StyleguidePluginBase {
               ],
             ];
           }
-          $layoutInstance = $this->layoutPluginManager->createInstance($definition->id());
+          $layoutInstance = $this->layoutPluginManager->createInstance($layout);
           $build = $layoutInstance->build($regions);
         }
 

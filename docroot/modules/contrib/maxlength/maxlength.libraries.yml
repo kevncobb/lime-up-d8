@@ -1,5 +1,8 @@
 maxlength:
   version: VERSION
+  css:
+    theme:
+      css/maxlength.css: {}
   js:
     js/maxlength.js: {}
   dependencies:

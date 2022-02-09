@@ -54,7 +54,9 @@ class TokenAuthUser implements TokenAuthUserInterface {
       $this->subject = $this->consumer->get('user_id')->entity;
     }
     if (!$this->subject) {
-      throw OAuthServerException::invalidClient();
+      $server_request = \Drupal::service('psr7.http_message_factory')
+        ->createRequest(\Drupal::request());
+      throw OAuthServerException::invalidClient($server_request);
     }
     $this->token = $token;
   }
@@ -843,7 +845,7 @@ class TokenAuthUser implements TokenAuthUserInterface {
   /**
    * {@inheritdoc}
    */
-  public function getIterator() {
+  public function getIterator(): \Traversable {
     throw new \Exception('Invalid use of getIterator in token authentication.');
   }
 
@@ -851,7 +853,7 @@ class TokenAuthUser implements TokenAuthUserInterface {
    * {@inheritdoc}
    */
   public function toUrl($rel = 'canonical', array $options = []) {
-    $this->subject->toUrl($rel, $options);
+    return $this->subject->toUrl($rel, $options);
   }
 
   /**

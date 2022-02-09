@@ -33,6 +33,7 @@ class ScopeEntity implements ScopeEntityNameInterface {
   /**
    * {@inheritdoc}
    */
+  #[\ReturnTypeWillChange]
   public function jsonSerialize() {
     return $this->getIdentifier();
   }

@@ -1,12 +1,12 @@
-name: 'Varbase Email'
+name: "Varbase Email"
 type: module
-description: 'Adds email template for varbase emails'
+description: "Adds email template for varbase emails"
 package: Varbase
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^9
 dependencies:
   - swiftmailer:swiftmailer
 
-# Information added by Drupal.org packaging script on 2020-12-01
-version: '8.x-6.5'
+# Information added by Drupal.org packaging script on 2021-10-07
+version: '9.0.1'
 project: 'varbase_email'
-datestamp: 1606839357
+datestamp: 1633624845

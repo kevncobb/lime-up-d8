@@ -9,6 +9,11 @@ namespace Drupal\charts\Services;
  */
 class ChartAttachmentService implements ChartAttachmentServiceInterface {
 
+  /**
+   * The view attachment.
+   *
+   * @var array
+   */
   private $attachmentViews;
 
   /**

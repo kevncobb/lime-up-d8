@@ -6,13 +6,22 @@ input[type="text"] {
   max-width: 100%;
 }
 
-#edit-created-from,
-#edit-created-to,
-#edit-user-created-from,
-#edit-user-created-to,
-#edit-content-created-from,
-#edit-content-created-to {
-  width: 150px;
+.views-exposed-form__item {
+
+  [id*="edit-created-from"],
+  [id*="edit-created-to"],
+  [id*="edit-user-created-from"],
+  [id*="edit-user-created-to"],
+  [id*="edit-content-created-from"],
+  [id*="edit-content-created-to"] {
+    width: 9rem;
+  }
+
+  [id*="edit-langcode"],
+  [id*="edit-uid"] {
+    width: 12rem;
+  }
+
 }
 
 .node-form {

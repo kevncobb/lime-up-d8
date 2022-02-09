@@ -1,11 +1,11 @@
 charts_c3:
   version: 1.x
   js:
-    js/charts_c3.js: {  }
+    js/charts_c3.js: { weight: -1 }
   dependencies:
+    - charts/global
     - core/jquery
     - core/jquery.once
-    - core/drupal
 d3:
   remote: 'https://d3js.org/d3.v3.min.js'
   version: 3

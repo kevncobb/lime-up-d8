@@ -259,7 +259,7 @@ class ContentEntityNormalizer implements ContentEntityNormalizerInterface {
           // Rebuild references on layout_builder.
           foreach ($value['components'] as $key => $component) {
             if (isset($component['configuration']['id'])) {
-              [$component_type, $component_bundle] = explode(PluginBase::DERIVATIVE_SEPARATOR, $component['configuration']['id']);
+              [$component_type] = explode(PluginBase::DERIVATIVE_SEPARATOR, $component['configuration']['id']);
               if ($component_type == 'inline_block') {
                 $target_uuid = $component['additional']['target_uuid'] ?? NULL;
                 if ($target_uuid && $block_content = $this->entityRepository->loadEntityByUuid('block_content', $target_uuid)) {

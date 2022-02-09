@@ -14,6 +14,8 @@ use Drupal\Tests\UnitTestCase;
 class ChartsDefaultColorsTest extends UnitTestCase {
 
   /**
+   * The chart default color.
+   *
    * @var \Drupal\charts\Settings\ChartsDefaultColors
    */
   private $chartsDefaultColors;

@@ -7,7 +7,7 @@ use Drupal\layout_builder\LayoutBuilderEvents;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 /**
- * Class LayoutBuilderComponentRenderArray.
+ * Event subscriber to add classes when components are rendered.
  */
 class LayoutBuilderComponentRenderArray implements EventSubscriberInterface {
 

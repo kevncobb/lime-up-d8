@@ -6,15 +6,23 @@ use Drupal\Core\Config\ConfigFactoryInterface;
 
 /**
  * Charts Settings Service.
+ *
+ * @deprecated in charts:5.0.0-alpha3 and is removed from charts:5.0.0-alpha4.
+ *   Use $config = \Drupal::config('charts.settings') instead.
  */
 class ChartsSettingsService implements ChartsSettingsServiceInterface {
 
+  /**
+   * The factory configuration.
+   *
+   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   */
   private $configFactory;
 
   /**
    * Construct.
    *
-   * @param ConfigFactoryInterface $config_factory
+   * @param \Drupal\Core\Config\ConfigFactoryInterface $config_factory
    *   Config factory.
    */
   public function __construct(ConfigFactoryInterface $config_factory) {

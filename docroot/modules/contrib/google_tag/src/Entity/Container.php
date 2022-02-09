@@ -256,6 +256,7 @@ class Container extends ConfigEntityBase implements ConfigEntityInterface, Entit
    */
   protected function scriptSnippet() {
     // Gather data.
+    $compact = \Drupal::config('google_tag.settings')->get('compact_snippet');
     $container_id = $this->variableClean('container_id');
     $data_layer = $this->variableClean('data_layer');
     $query = $this->environmentQuery();
@@ -263,6 +264,7 @@ class Container extends ConfigEntityBase implements ConfigEntityInterface, Entit
     // Build script snippet.
     $script = <<<EOS
 (function(w,d,s,l,i){
+
   w[l]=w[l]||[];
   w[l].push({'gtm.start':new Date().getTime(),event:'gtm.js'});
   var f=d.getElementsByTagName(s)[0];
@@ -271,9 +273,13 @@ class Container extends ConfigEntityBase implements ConfigEntityInterface, Entit
   j.src='https://www.googletagmanager.com/gtm.js?id='+i+dl+'$query';
   j.async=true;
   f.parentNode.insertBefore(j,f);
+
 })(window,document,'script','$data_layer','$container_id');
 EOS;
-    return $this->compactSnippet($script);
+    if ($compact) {
+      $script = str_replace(["\n", '  '], '', $script);
+    }
+    return $script;
   }
 
   /**
@@ -284,6 +290,7 @@ EOS;
    */
   protected function noscriptSnippet() {
     // Gather data.
+    $compact = \Drupal::config('google_tag.settings')->get('compact_snippet');
     $container_id = $this->variableClean('container_id');
     $query = $this->environmentQuery();
 
@@ -292,7 +299,10 @@ EOS;
 <noscript aria-hidden="true"><iframe src="https://www.googletagmanager.com/ns.html?id=$container_id$query"
  height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
 EOS;
-    return $this->compactSnippet($noscript, ["\n"]);
+    if ($compact) {
+      $noscript = str_replace("\n", '', $noscript);
+    }
+    return $noscript;
   }
 
   /**
@@ -323,14 +333,8 @@ EOS;
 
     if ($classes) {
       // Build data layer snippet.
-      $classes = json_encode($classes);
-      $script = <<<EOS
-(function(w,l){
-  w[l]=w[l]||[];
-  w[l].push($classes);
-})(window,'$data_layer');
-EOS;
-      return $this->compactSnippet($script);
+      $script = "var $data_layer = [" . json_encode($classes) . '];';
+      return $script;
     }
   }
 
@@ -364,22 +368,6 @@ EOS;
    */
   public function variableClean($variable) {
     return trim(json_encode($this->get($variable)), '"');
-  }
-
-  /**
-   * Returns the compacted snippet.
-   *
-   * @param string $snippet
-   *   The JavaScript snippet.
-   * @param array $search
-   *   The array of strings to replace with blank.
-   *
-   * @return string
-   *   The compacted snippet.
-   */
-  protected function compactSnippet($snippet, array $search = ["\n", '  ']) {
-    $compact = \Drupal::config('google_tag.settings')->get('compact_snippet');
-    return $compact ? str_replace($search, '', $snippet) : $snippet;
   }
 
   /**
@@ -530,19 +518,6 @@ EOS;
   }
 
   /**
-   * Returns the snippet cache ID for a snippet type.
-   *
-   * @param string $type
-   *   The snippet type.
-   *
-   * @return string
-   *   The snippet cache ID.
-   */
-  public function snippetCid($type) {
-    return "google_tag:$type:{$this->id()}";
-  }
-
-  /**
    * Returns tag array for the snippet type.
    *
    * @param string $type
@@ -581,7 +556,9 @@ EOS;
    *   The tag array.
    */
   public function inlineTag($type, $weight) {
-    $contents = $this->getSnippetContents($type);
+    $uri = $this->snippetURI($type);
+    $url = \Drupal::service('file_system')->realpath($uri);
+    $contents = @file_get_contents($url);
     $attachment = [
       $contents ? [
         '#type' => 'html_tag',
@@ -617,7 +594,9 @@ EOS;
     // As markup, core removes the 'style' attribute from the noscript snippet.
     // With the inline template type, core does not alter the noscript snippet.
 
-    $contents = $this->getSnippetContents($type);
+    $uri = $this->snippetURI($type);
+    $url = \Drupal::service('file_system')->realpath($uri);
+    $contents = @file_get_contents($url);
     $attachment = $contents ? [
       "google_tag_{$type}_tag__{$this->id()}" => [
         '#type' => 'inline_template',
@@ -626,20 +605,6 @@ EOS;
       ],
     ] : [];
     return $attachment;
-  }
-
-  /**
-   * Returns the snippet contents for the snippet type.
-   *
-   * @param string $type
-   *   The snippet type.
-   *
-   * @return string
-   *   The snippet contents.
-   */
-  public function getSnippetContents($type) {
-    $cache = \Drupal::service('cache.data')->get($this->snippetCid($type));
-    return $cache ? $cache->data : '';
   }
 
   /**

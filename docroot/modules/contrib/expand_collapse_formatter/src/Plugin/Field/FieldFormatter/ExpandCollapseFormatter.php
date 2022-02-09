@@ -20,7 +20,8 @@ use Drupal\Core\Form\FormStateInterface;
  *   field_types = {
  *     "text_long",
  *     "string_long",
- *     "text_with_summary"
+ *     "text_with_summary",
+ *     "text_long_with_summary"
  *   }
  * )
  */

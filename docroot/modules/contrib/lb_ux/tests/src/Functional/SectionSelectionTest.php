@@ -29,7 +29,7 @@ class SectionSelectionTest extends BrowserTestBase {
   /**
    * {@inheritdoc}
    */
-  protected function setUp() {
+  protected function setUp(): void {
     parent::setUp();
 
     // Enable Layout Builder for one content type.

@@ -114,12 +114,7 @@ class Webp {
       // If we can generate a GD resource from the source image, generate the URI
       // of the WebP copy and try to create it.
       if ($sourceImage !== NULL) {
-        $pathInfo = pathinfo($uri);
-        $destination = strtr('@directory/@filename.webp', [
-          '@directory' => $pathInfo['dirname'],
-          '@filename' => $pathInfo['filename'],
-          '@extension' => $pathInfo['extension'],
-        ]);
+        $destination = $this->getWebpDestination($uri, '@directory@filename.webp');
 
         imagesavealpha($sourceImage, TRUE);
         imagealphablending($sourceImage, TRUE);
@@ -198,12 +193,11 @@ class Webp {
     // We'll convert the image into webp.
     $ImageMagickImg->apply('convert', ['extension' => 'webp', 'quality' => $quality]);
 
-    $pathInfo = pathinfo($uri);
-    $destination = $pathInfo['dirname'] . '/' . $pathInfo['filename'] . '.webp';
-    if ($ImageMagickImg->save($pathInfo['dirname'] . '/' . $pathInfo['filename'] . '.webp')) {
+    $destination = $this->getWebpDestination($uri, '@directory@filename.webp');
+    if ($ImageMagickImg->save($destination)) {
       $webp = $destination;
 
-      $msg = $this->t('Generated WebP image with Image Magick. Quality: ' . $quality . ' Destination:' . $pathInfo['dirname'] . '/' . $pathInfo['filename'] . '.webp');
+      $msg = $this->t('Generated WebP image with Image Magick. Quality: ' . $destination);
       $this->logger->info($msg);
     }
     else {
@@ -212,6 +206,28 @@ class Webp {
     }
 
     return $webp;
+  }
+
+  /**
+   * Return source destination for given uri.
+   * @param $uri
+   * @param $template
+   *
+   * @return string
+   */
+  public function getWebpDestination($uri, $template) {
+    $path_info = pathinfo($uri);
+    $path = $path_info['dirname'];
+    // If path is just the stream wrapper scheme, e.g. "public:" or
+    // "temporary:" append two slashes, otherwise just one.
+    $path .= (substr($path, (strlen($path) - 1)) === ':') ? '//' : '/';
+    $destination = strtr($template, [
+      '@directory' => $path,
+      '@filename' => $path_info['filename'],
+      '@extension' => $path_info['extension'],
+    ]);
+
+    return $destination;
   }
 
 }

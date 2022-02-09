@@ -341,8 +341,8 @@ table {
   margin-top: 0;
   margin-bottom: 0;
   padding-top: 7px;
-  padding-left:  ($grid-gutter-width / 2);
-  padding-right: ($grid-gutter-width / 2);
+  padding-left:  ($grid-gutter-width * .5);
+  padding-right: ($grid-gutter-width * .5);
   text-align: right;
 }
 
@@ -491,12 +491,9 @@ div.features-export-list {
 }
 
 // CKEditor Improvements.
-.cke_editable body {
-  background: white;
-}
-
-.cke_editable {
+body.cke_editable {
   padding: 10px;
+  background: white;
 }
 
 .field-collection-view {
@@ -512,7 +509,7 @@ div.features-export-list {
 #admin-menu-search {
   float: right;
   .form-control {
-    float: auto;
+    float: inherit;
   }
 }
 

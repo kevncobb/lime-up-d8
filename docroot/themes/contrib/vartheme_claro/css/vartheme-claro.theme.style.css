@@ -7,13 +7,18 @@ input[type="text"] {
   max-width: 100%;
 }
 
-#edit-created-from,
-#edit-created-to,
-#edit-user-created-from,
-#edit-user-created-to,
-#edit-content-created-from,
-#edit-content-created-to {
-  width: 150px;
+.views-exposed-form__item [id*="edit-created-from"],
+.views-exposed-form__item [id*="edit-created-to"],
+.views-exposed-form__item [id*="edit-user-created-from"],
+.views-exposed-form__item [id*="edit-user-created-to"],
+.views-exposed-form__item [id*="edit-content-created-from"],
+.views-exposed-form__item [id*="edit-content-created-to"] {
+  width: 9rem;
+}
+
+.views-exposed-form__item [id*="edit-langcode"],
+.views-exposed-form__item [id*="edit-uid"] {
+  width: 12rem;
 }
 
 .node-form .field--name-title input {

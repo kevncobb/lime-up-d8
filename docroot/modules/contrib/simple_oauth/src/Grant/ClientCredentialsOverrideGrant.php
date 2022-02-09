@@ -3,6 +3,7 @@
 namespace Drupal\simple_oauth\Grant;
 
 use League\OAuth2\Server\Entities\ClientEntityInterface;
+use League\OAuth2\Server\Exception\OAuthServerException;
 use League\OAuth2\Server\Grant\ClientCredentialsGrant;
 use League\OAuth2\Server\ResponseTypes\ResponseTypeInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -67,6 +68,18 @@ class ClientCredentialsOverrideGrant extends ClientCredentialsGrant {
     return $client_drupal_entity
       ? $client_drupal_entity->get('user_id')->target_id
       : NULL;
+  }
+
+  /**
+   * @inheritDoc
+   */
+  protected function validateClient(ServerRequestInterface $request) {
+    $client = parent::validateClient($request);
+    // The client must also have a valid default user.
+    if (!$this->getDefaultUser($client)) {
+      throw OAuthServerException::serverError('Invalid default user for client.');
+    }
+      return $client;
   }
 
 }

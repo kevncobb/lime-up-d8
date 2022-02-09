@@ -2,10 +2,16 @@
 
 namespace Drupal\paragraphs_edit\Form;
 
+use Drupal\Component\Datetime\TimeInterface;
 use Drupal\Core\Entity\ContentEntityForm;
+use Drupal\Core\Entity\EntityFieldManagerInterface;
+use Drupal\Core\Entity\EntityRepositoryInterface;
+use Drupal\Core\Entity\EntityTypeBundleInfoInterface;
+use Drupal\Core\Entity\EntityTypeRepositoryInterface;
 use Drupal\Core\Form\FormStateInterface;
 use Drupal\Component\Utility\Html;
 use Drupal\paragraphs_edit\ParagraphFormHelperTrait;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * ParagraphCloneForm class.
@@ -19,6 +25,44 @@ class ParagraphCloneForm extends ContentEntityForm {
    * @var \Drupal\paragraphs\ParagraphInterface
    */
   protected $originalEntity;
+
+  /**
+   * The entityFieldManager.
+   *
+   * @var EntityFieldManagerInterface
+   */
+  protected $entityFieldManager;
+
+  /**
+   * The entityTypeRepository.
+   *
+   * @var EntityTypeRepositoryInterface
+   */
+  protected $entityTypeRepository;
+
+  /**
+   * Constructs a ContentEntityForm object.
+   *
+   */
+  public function __construct(EntityRepositoryInterface $entity_repository, EntityTypeBundleInfoInterface $entity_type_bundle_info, TimeInterface $time, EntityFieldManagerInterface $entityFieldManager, EntityTypeRepositoryInterface $entityTypeRepository) {
+    parent::__construct($entity_repository, $entity_type_bundle_info, $time);
+
+    $this->entityFieldManager = $entityFieldManager;
+    $this->entityTypeRepository = $entityTypeRepository;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function create(ContainerInterface $container) {
+    return new static(
+      $container->get('entity.repository'),
+      $container->get('entity_type.bundle.info'),
+      $container->get('datetime.time'),
+      $container->get('entity_field.manager'),
+      $container->get('entity_type.repository')
+    );
+  }
 
   /**
    * {@inheritdoc}
@@ -52,8 +96,7 @@ class ParagraphCloneForm extends ContentEntityForm {
     ];
 
     $potential_destinations = $this->getPotentialCloneDestinations($this->entity->bundle());
-
-    $entity_type_labels = $this->entityManager->getEntityTypeLabels();
+    $entity_type_labels = $this->entityTypeRepository->getEntityTypeLabels();
     $entity_types = array_intersect_key($entity_type_labels, $potential_destinations);
 
     $form['paragraphs_edit']['entity_type'] = [
@@ -137,7 +180,7 @@ class ParagraphCloneForm extends ContentEntityForm {
    * {@inheritdoc}
    */
   protected function getPotentialCloneDestinations($paragraph_type) {
-    $types_with_paragraphs = $this->entityManager->getFieldMapByFieldType('entity_reference_revisions');
+    $types_with_paragraphs = $this->entityFieldManager->getFieldMapByFieldType('entity_reference_revisions');
     $field_definitions_bundle = [];
     $destinations = [];
     foreach ($types_with_paragraphs as $entity_type_id => $entity_type) {
@@ -145,7 +188,7 @@ class ParagraphCloneForm extends ContentEntityForm {
       foreach ($entity_type as $field => $info) {
         foreach ($info['bundles'] as $bundle) {
           if (!isset($field_definitions_bundle[$entity_type_id][$bundle])) {
-            $field_definitions_bundle[$entity_type_id][$bundle] = $this->entityManager->getFieldDefinitions($entity_type_id, $bundle);
+            $field_definitions_bundle[$entity_type_id][$bundle] = $this->entityFieldManager->getFieldDefinitions($entity_type_id, $bundle);
           }
           /** @var \Drupal\field\FieldConfigInterface $field_definition */
           $field_definition = $field_definitions_bundle[$entity_type_id][$bundle][$field];

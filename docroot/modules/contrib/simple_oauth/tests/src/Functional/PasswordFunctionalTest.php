@@ -15,14 +15,56 @@ class PasswordFunctionalTest extends TokenBearerFunctionalTestBase {
   protected $path;
 
   /**
-   * Test the valid Password grant.
+   * Ensure public clients still validate client secrets when they are sent.
    */
-  public function testPasswordGrant() {
-    // 1. Test the valid request.
+  public function testValidateSecretEvenIfPublic() {
+    $this->client->set('confidential', FALSE)->save();
+    // 1. Send an invalid secret.
+    $invalid_payload = [
+      'grant_type' => 'password',
+      'client_id' => $this->client->uuid(),
+      'client_secret' => 'invalidClientSecret',
+      'username' => $this->user->getAccountName(),
+      'password' => $this->user->pass_raw,
+      'scope' => $this->scope,
+    ];
+    $response = $this->post($this->url, $invalid_payload);
+    $this->assertEquals(401, $response->getStatusCode());
+    // 2. A valid secret is validated correctly.
     $valid_payload = [
       'grant_type' => 'password',
       'client_id' => $this->client->uuid(),
       'client_secret' => $this->clientSecret,
+      'username' => $this->user->getAccountName(),
+      'password' => $this->user->pass_raw,
+      'scope' => $this->scope,
+    ];
+    $response = $this->post($this->url, $valid_payload);
+    $this->assertValidTokenResponse($response, TRUE);
+    // 3. The client has a secret registered, so it's always required.
+    $invalid_payload = [
+      'grant_type' => 'password',
+      'client_id' => $this->client->uuid(),
+      // No client secret sent.
+      'username' => $this->user->getAccountName(),
+      'password' => $this->user->pass_raw,
+      'scope' => $this->scope,
+    ];
+    $response = $this->post($this->url, $invalid_payload);
+    $this->assertEquals(401, $response->getStatusCode());
+  }
+
+  /**
+   * Test the valid Password grant.
+   */
+  public function testPasswordGrant() {
+    $this->client->set('confidential', FALSE);
+    $this->client->set('secret', NULL)->save();
+    // 1. Test the valid request.
+    $valid_payload = [
+      'grant_type' => 'password',
+      'client_id' => $this->client->uuid(),
+      // This is a public client. PKCE and secrets are tested elsewhere.
       'username' => $this->user->getAccountName(),
       'password' => $this->user->pass_raw,
       'scope' => $this->scope,
@@ -131,12 +173,12 @@ class PasswordFunctionalTest extends TokenBearerFunctionalTestBase {
         'code' => 401,
       ],
       'username' => [
-        'error' => 'invalid_credentials',
-        'code' => 401,
+        'error' => 'invalid_grant',
+        'code' => 400,
       ],
       'password' => [
-        'error' => 'invalid_credentials',
-        'code' => 401,
+        'error' => 'invalid_grant',
+        'code' => 400,
       ],
     ];
     foreach ($data as $key => $value) {
@@ -147,6 +189,12 @@ class PasswordFunctionalTest extends TokenBearerFunctionalTestBase {
       $this->assertSame($value['error'], $parsed_response['error'], sprintf('Correct error code %s for %s.', $value['error'], $key));
       $this->assertSame($value['code'], $response->getStatusCode(), sprintf('Correct status code %d for %s.', $value['code'], $key));
     }
+    // Test sending an invalid secret; this is a public client, so it's not
+    // required, but demonstrates the secret is validated when sent.
+    $this->client->set('confidential', FALSE);
+    $payload_with_invalid_secret = ['client_secret' => 'invalid'] + $valid_payload;
+    $response = $this->post($this->url, $payload_with_invalid_secret);
+    $this->assertEquals(401, $response->getStatusCode());
   }
 
 }

@@ -1,10 +1,10 @@
 .block-varbase-create-content .item-list ul {
+  margin: 0;
   -webkit-margin-after: 0;
   -webkit-margin-before: 0;
   -webkit-margin-end: 0;
   -webkit-margin-start: 0;
   -webkit-padding-start: 0;
-  margin: 0;
 }
 
 .block-varbase-create-content .item-list li {
@@ -167,21 +167,6 @@
 
 [dir="rtl"] .panel.block-varbase-user .action-links {
   text-align: left;
-}
-
-.vtc-dashboard-masonry .masonry-item-1 {
-  width: 30% !important;
-  margin-bottom: 20px;
-}
-
-.vtc-dashboard-masonry .masonry-item-2 {
-  width: 61% !important;
-  margin-bottom: 20px;
-}
-
-.vtc-dashboard-masonry .masonry-item-3 {
-  width: 100% !important;
-  margin-bottom: 20px;
 }
 
 .dashboard-block .spam {

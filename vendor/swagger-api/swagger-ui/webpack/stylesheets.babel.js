@@ -31,19 +31,24 @@ export default {
           {
             loader: "postcss-loader",
             options: {
-              sourceMap: true,
-              plugins: [
-                require("cssnano")(),
-                require("autoprefixer")(),
-              ],
+              postcssOptions: {
+                sourceMap: true,
+                plugins: [
+                  require("cssnano")(),
+                  "postcss-preset-env" // applies autoprefixer
+                ],
+
+              }
             },
           },
           {
             loader: "sass-loader",
             options: {
-              outputStyle: "expanded",
               sourceMap: true,
-              sourceMapContents: "true",
+              sassOptions: {
+                outputStyle: "expanded",
+                // sourceMapContents: "true", // if sourceMap: true, sassOptions.sourceMapContents is ignored
+              },
             },
           },
         ],

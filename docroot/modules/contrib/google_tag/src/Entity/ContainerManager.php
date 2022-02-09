@@ -3,10 +3,9 @@
 namespace Drupal\google_tag\Entity;
 
 // use Drupal\google_tag\Entity\ContainerManagerInterface;
-use Drupal\Core\Cache\CacheBackendInterface;
-use Drupal\Core\Config\ConfigFactoryInterface;
 use Drupal\Core\Config\Entity\ConfigEntityInterface;
 use Drupal\Core\Entity\EntityTypeManagerInterface;
+use Drupal\Core\Extension\ModuleHandlerInterface;
 use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\Logger\LoggerChannelFactoryInterface;
 use Drupal\Core\Messenger\MessengerInterface;
@@ -27,11 +26,11 @@ class ContainerManager implements ContainerManagerInterface {
   protected $entityTypeManager;
 
   /**
-   * The module configuration.
+   * The module handler.
    *
-   * @var \Drupal\Core\Config\ConfigFactoryInterface
+   * @var \Drupal\Core\Extension\ModuleHandlerInterface
    */
-  protected $config;
+  protected $moduleHandler;
 
   /**
    * The file system.
@@ -39,13 +38,6 @@ class ContainerManager implements ContainerManagerInterface {
    * @var \Drupal\Core\File\FileSystemInterface
    */
   protected $fileSystem;
-
-  /**
-   * The cache backend.
-   *
-   * @var \Drupal\Core\Cache\CacheBackendInterface
-   */
-  protected $cache;
 
   /**
    * The messenger.
@@ -64,11 +56,10 @@ class ContainerManager implements ContainerManagerInterface {
   /**
    * {@inheritdoc}
    */
-  public function __construct(EntityTypeManagerInterface $entity_type_manager, ConfigFactoryInterface $config_factory, FileSystemInterface $file_system, CacheBackendInterface $cache, MessengerInterface $messenger, LoggerChannelFactoryInterface $logger_factory) {
+  public function __construct(EntityTypeManagerInterface $entity_type_manager, ModuleHandlerInterface $module_handler, FileSystemInterface $file_system, MessengerInterface $messenger, LoggerChannelFactoryInterface $logger_factory) {
     $this->entityTypeManager = $entity_type_manager;
-    $this->config = $config_factory->get('google_tag.settings');
+    $this->moduleHandler = $module_handler;
     $this->fileSystem = $file_system;
-    $this->cache = $cache;
     $this->messenger = $messenger;
     $this->logger = $logger_factory->get('google_tag');
   }
@@ -77,11 +68,6 @@ class ContainerManager implements ContainerManagerInterface {
    * {@inheritdoc}
    */
   public function createAssets(ConfigEntityInterface $container) {
-    $include_script_as_file = $this->config->get('include_file');
-    if (!$include_script_as_file) {
-      return $this->saveSnippets($container);
-    }
-
     $result = TRUE;
     $directory = $container->snippetDirectory();
     if (!is_dir($directory) || !_google_tag_is_writable($directory) || !_google_tag_is_executable($directory)) {
@@ -103,22 +89,13 @@ class ContainerManager implements ContainerManagerInterface {
    * {@inheritdoc}
    */
   public function saveSnippets(ConfigEntityInterface $container) {
-    $include_script_as_file = $this->config->get('include_file');
     // Save the altered snippets after hook_google_tag_snippets_alter().
     $result = TRUE;
     $snippets = $container->snippets();
     foreach ($snippets as $type => $snippet) {
-      if ($include_script_as_file && $type != 'noscript') {
-        // Write to file.
-        $uri = $container->snippetURI($type);
-        $path = $this->fileSystem->saveData($snippet, $uri, FileSystemInterface::EXISTS_REPLACE);
-        $result = !$path ? FALSE : $result;
-      }
-      else {
-        // Write to cache (noscript is always inline).
-        $cid = $container->snippetCid($type);
-        $this->cache->set($cid, $snippet, CacheBackendInterface::CACHE_PERMANENT, $container->getCacheTags());
-      }
+      $uri = $container->snippetURI($type);
+      $path = $this->fileSystem->saveData($snippet, $uri, FileSystemInterface::EXISTS_REPLACE);
+      $result = !$path ? FALSE : $result;
     }
     $args = ['@count' => count($snippets), '%container' => $container->get('label')];
     if (!$result) {
@@ -184,7 +161,7 @@ class ContainerManager implements ContainerManagerInterface {
       }
 
       static $weight = 9;
-      $include_script_as_file = $this->config->get('include_file');
+      $include_script_as_file = \Drupal::config('google_tag.settings')->get('include_file');
       $include_classes = $container->get('include_classes');
       // @todo Only want one data_layer snippet even with multiple containers.
       // If user sorts containers such that the first does not define the data
@@ -193,9 +170,20 @@ class ContainerManager implements ContainerManagerInterface {
       $types = $include_classes ? ['data_layer', 'script'] : ['script'];
 
       // Add data_layer and script snippets to head (no longer by default).
-      $function = $include_script_as_file ? 'fileTag' : 'inlineTag';
-      foreach ($types as $type) {
-        $attachments['#attached']['html_head'][] = $container->$function($type, $weight++);
+      if ($include_script_as_file) {
+        foreach ($types as $type) {
+          // @todo Will it matter if file is empty?
+          // @todo Check config for the whitelist and blacklist classes before adding.
+          $attachments['#attached']['html_head'][] = $container->fileTag($type, $weight++);
+        }
+      }
+      else {
+        foreach ($types as $type) {
+          // @see drupal_get_js() in 7.x core.
+          // For inline JavaScript to validate as XHTML, all JavaScript containing
+          // XHTML needs to be wrapped in CDATA.
+          $attachments['#attached']['html_head'][] = $container->inlineTag($type, $weight++);
+        }
       }
     }
   }
@@ -236,8 +224,8 @@ class ContainerManager implements ContainerManagerInterface {
    * {@inheritdoc}
    */
   public function deleteAllAssets() {
-    if ($this->config->get('flush_snippets')) {
-      $directory = $this->config->get('uri');
+    if (\Drupal::config('google_tag.settings')->get('flush_snippets')) {
+      $directory = \Drupal::config('google_tag.settings')->get('uri');
       if (!empty($directory)) {
         // Remove any stale files (e.g. module update or machine name change).
         return $this->fileSystem->deleteRecursive($directory . '/google_tag');
@@ -264,10 +252,7 @@ class ContainerManager implements ContainerManagerInterface {
     $include_classes = $container->get('include_classes');
     $types = $include_classes ? ['data_layer', 'script', 'noscript'] : ['script', 'noscript'];
     $directory = $container->snippetDirectory();
-    $result = TRUE;
-    if (!empty($directory) && is_dir($directory)) {
-      $result = $this->fileSystem->deleteRecursive($directory);
-    }
+    $result = $this->fileSystem->deleteRecursive($directory);
 
     $args = ['@count' => count($types), '%container' => $container->get('label')];
     if (!$result) {
@@ -290,24 +275,14 @@ class ContainerManager implements ContainerManagerInterface {
    * {@inheritdoc}
    */
   public function findAssets(ConfigEntityInterface $container) {
-    $include_script_as_file = $this->config->get('include_file');
     $include_classes = $container->get('include_classes');
     $types = $include_classes ? ['data_layer', 'script', 'noscript'] : ['script', 'noscript'];
-
+    $result = TRUE;
     foreach ($types as $type) {
-      if ($include_script_as_file && $type != 'noscript') {
-        $uri = $container->snippetURI($type);
-        if (!is_file($uri)) {
-          return FALSE;
-        }
-      }
-      else {
-        if (!$cache = $this->cache->get($container->snippetCid($type))) {
-          return FALSE;
-        }
-      }
+      $uri = $container->snippetURI($type);
+      $result = !is_file($uri) ? FALSE : $result;
     }
-    return TRUE;
+    return $result;
   }
 
 }

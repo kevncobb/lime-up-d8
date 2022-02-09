@@ -655,9 +655,6 @@ class InlineParagraphsWidget extends WidgetBase {
         elseif (function_exists('field_group_form_process')) {
           $element['subform']['#process'][] = 'field_group_form_process';
         }
-        if (function_exists('field_group_form_pre_render')) {
-          $element['subform']['#pre_render'][] = 'field_group_form_pre_render';
-        }
       }
 
       if ($item_mode == 'edit') {

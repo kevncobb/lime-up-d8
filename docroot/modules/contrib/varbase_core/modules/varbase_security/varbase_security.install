@@ -9,7 +9,7 @@ use Symfony\Component\Yaml\Yaml;
 use Drupal\Core\Config\InstallStorage;
 use Drupal\Core\Config\StorageInterface;
 use Drupal\Core\Config\FileStorage;
-use Drupal\varbase\Entity\VarbaseEntityDefinitionUpdateManager;
+use Vardot\Entity\EntityDefinitionUpdateManager;
 
 /**
  * Implements hook_install().
@@ -71,7 +71,7 @@ function varbase_security_install() {
   // Entity updates to clear up any mismatched entity and/or field definitions
   // And Fix changes were detected in the entity type and field definitions.
   \Drupal::classResolver()
-    ->getInstanceFromDefinition(VarbaseEntityDefinitionUpdateManager::class)
+    ->getInstanceFromDefinition(EntityDefinitionUpdateManager::class)
     ->applyUpdates();
 
   // Have forced configs import after the entity and definitions updates.
@@ -87,4 +87,54 @@ function varbase_security_install() {
     $config_factory->setData($config_data)->save(TRUE);
   }
 
+}
+
+/**
+ * Add Flood Control module for login attempt limiting.
+ *
+ * And remove the Flood Unblock module as it will be
+ * discontinued by its maintainers.
+ */
+function varbase_security_update_9001() {
+
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('varbase_core', 'varbase_security_update_9001');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Reinforce spam protection and enable "Honeypot" spam detection.
+ *
+ * Enabling protection on a wider array of forms and enabling time limit of 2 seconds.
+ */
+function varbase_security_update_9002() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('varbase_core', 'varbase_security_update_9002');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
+}
+
+/**
+ * Issue #3252064: Add Antibot module with config to Varbase Security.
+ *
+ * Reinforce spam protection via the "Antibot" spam detection mechanism.
+ */
+function varbase_security_update_9003() {
+  /** @var \Drupal\update_helper\Updater $updateHelper */
+  $updateHelper = \Drupal::service('update_helper.updater');
+
+  // Execute configuration update definitions with logging of success.
+  $updateHelper->executeUpdate('varbase_core', 'varbase_security_update_9003');
+
+  // Output logged messages to related channel of update execution.
+  return $updateHelper->logger()->output();
 }

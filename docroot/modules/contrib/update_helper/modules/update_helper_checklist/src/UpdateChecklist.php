@@ -178,8 +178,10 @@ class UpdateChecklist {
     $flatKeys = [];
 
     foreach ($module_update_list as $module_name => $updates) {
-      foreach ($updates as $update) {
-        $flatKeys[] = str_replace('.', '_', $module_name . ':' . $update);
+      if (is_array($updates) && count($updates) > 0) {
+        foreach ($updates as $update) {
+          $flatKeys[] = str_replace('.', '_', $module_name . ':' . $update);
+        }
       }
     }
 
@@ -207,7 +209,9 @@ class UpdateChecklist {
       }
     }
 
-    $current_progress['#completed_items'] = count($current_progress['#items']);
+    if (isset($current_progress['#items']) && is_array($current_progress['#items'])) {
+      $current_progress['#completed_items'] = count($current_progress['#items']);
+    }
     $current_progress['#changed'] = $time;
     $current_progress['#changed_by'] = $user;
 

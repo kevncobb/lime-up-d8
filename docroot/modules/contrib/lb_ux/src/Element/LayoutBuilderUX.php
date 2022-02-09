@@ -127,23 +127,6 @@ class LayoutBuilderUX extends LayoutBuilder {
           ],
           'content' => $build['layout-builder__section'][$region][$uuid]['content'],
         ];
-
-        if(\Drupal::moduleHandler()->moduleExists('layout_builder_component_attributes')) {
-          $build['layout-builder__section'][$region][$uuid]['content']['actions']['layout_builder_block_attributes'] = [
-            '#type' => 'link',
-            '#title' => $this->t('<span class="visually-hidden">Manage attributes @block</span>', ['@block' => $preview_fallback_string]),
-            '#url' => Url::fromRoute('layout_builder_component_attributes.manage_attributes', $route_parameters),
-            '#attributes' => [
-              'class' => [
-                'use-ajax',
-                'layout-builder__link',
-                'layout-builder__link--layout_builder_block_attributes',
-              ],
-              'data-dialog-type' => 'dialog',
-              'data-dialog-renderer' => 'off_canvas',
-            ],
-          ];
-        }
       }
     }
     return $build;

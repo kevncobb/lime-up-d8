@@ -1,6 +1,5 @@
 .joyride-tip-guide h1,
 .joyride-tip-guide .heading-a {
-  margin-bottom: 19px;
   margin-bottom: 1rem;
   color: #fff;
   font-size: 2.35em;
@@ -71,34 +70,18 @@
   background-image: none;
 }
 
-.joyride-tip-guide .button-action:before {
-  display: none;
-}
-
-.joyride-tip-guide .action-links {
-  margin: 2em 0;
-}
-
-.joyride-tip-guide .button--primary {
-  border-color: #0071b8;
-  background: #0071b8;
-}
-
-.joyride-tip-guide .button--primary:hover,
-.joyride-tip-guide .button--primary:focus {
-  border-color: #1f86c7;
-  background-color: #1f86c7;
-  background-image: none;
-}
-
 .joyride-tip-guide .button:focus {
   border-color: #68a3cf;
   outline: #c1e0ff solid 2px;
   box-shadow: none;
 }
 
-.joyride-tip-guide .button--small:focus {
-  outline: none;
+.joyride-tip-guide .button-action:before {
+  display: none;
+}
+
+.joyride-tip-guide .action-links {
+  margin: 2em 0;
 }
 
 .joyride-tip-guide .action-links .button--primary {
@@ -122,6 +105,22 @@
 
 .joyride-tip-guide .action-links .button--primary:focus {
   border-color: #08639b;
+  outline: none;
+}
+
+.joyride-tip-guide .button--primary {
+  border-color: #0071b8;
+  background: #0071b8;
+}
+
+.joyride-tip-guide .button--primary:hover,
+.joyride-tip-guide .button--primary:focus {
+  border-color: #1f86c7;
+  background-color: #1f86c7;
+  background-image: none;
+}
+
+.joyride-tip-guide .button--small:focus {
   outline: none;
 }
 

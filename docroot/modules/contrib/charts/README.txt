@@ -86,18 +86,16 @@ Using Composer and wikimedia/composer-merge-plugin:
 2: Ensure that you have the `oomphinc/composer-installers-extender` package
    installed.
 3: Add an "installer-types" section in the "extra" of your project composer.json
-   file, make sure you have "bower-asset" and "npm-asset" listed.
+   file, make sure you have "npm-asset" listed.
    For example:
      "installer-types": [
-         "bower-asset",
          "npm-asset"
      ],
 4: In the "installer-paths" section in the "extra" of your project composer.json
-   file, ensure you have an the types drupal-library, bower-asset, and npm-asset.
+ file, ensure you have the types drupal-library and npm-asset.
    For example:
      "web/libraries/{$name}": [
          "type:drupal-library",
-         "type:bower-asset",
          "type:npm-asset"
      ],
 5: Add a "merge-plugin" section in the "extra" of your project composer.json

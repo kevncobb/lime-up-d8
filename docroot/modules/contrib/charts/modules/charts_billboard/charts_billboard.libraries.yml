@@ -1,11 +1,11 @@
 charts_billboard:
   version: 1.x
   js:
-    js/charts_billboard.js: {  }
+    js/charts_billboard.js: { weight: -1 }
   dependencies:
+    - charts/global
     - core/jquery
     - core/jquery.once
-    - core/drupal
 d3:
   remote: 'https://cdnjs.cloudflare.com/ajax/libs/d3/4.9.1/d3.js'
   version: 4.9.1

@@ -1,4 +1,4 @@
-@import "../../node_modules/rfs/scss";
+@import "node_modules/rfs/scss";
 
 .block-varbase-create-content {
   .item-list {
@@ -176,23 +176,6 @@
     .action-links {
       text-align: left;
     }
-  }
-}
-
-.vtc-dashboard-masonry {
-  .masonry-item-1 {
-    width: 30% !important;
-    margin-bottom: 20px;
-  }
-
-  .masonry-item-2 {
-    width: 61% !important;
-    margin-bottom: 20px;
-  }
-
-  .masonry-item-3 {
-    width: 100% !important;
-    margin-bottom: 20px;
   }
 }
 

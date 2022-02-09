@@ -12,6 +12,8 @@ use Drupal\charts\Services\ChartAttachmentService;
 class ChartAttachmentServiceTest extends UnitTestCase {
 
   /**
+   * The chart attachment service.
+   *
    * @var \Drupal\charts\Services\ChartAttachmentService
    */
   private $chartAttachmentService;

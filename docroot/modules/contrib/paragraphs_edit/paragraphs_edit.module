@@ -5,6 +5,7 @@
  * Allows users to edit, clone and delete paragraphs.
  */
 
+use Drupal\Core\Entity\EntityChangedInterface;
 use Drupal\paragraphs\ParagraphInterface;
 use Drupal\paragraphs_edit\Form\ParagraphCloneForm;
 use Drupal\paragraphs_edit\Form\ParagraphDeleteForm;
@@ -47,8 +48,12 @@ function paragraphs_edit_paragraph_view_alter(array &$build, ParagraphInterface 
         'root_parent' => $root_parent->id(),
         'paragraph' => $entity->id(),
       ],
-      'metadata' => ['changed' => $root_parent->getChangedTime()],
     ];
+
+    if ($root_parent instanceof EntityChangedInterface) {
+      $build['#contextual_links']['paragraph']['metadata'] =
+        ['changed' => $root_parent->getChangedTime()];
+    }
   }
 }
 

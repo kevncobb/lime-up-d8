@@ -71,6 +71,7 @@ class UrlHelperTest extends TestCase {
       'john%20doe:secret:foo@example.org/',
       'example.org/~,$\'*;',
       'caf%C3%A9.example.org',
+      // cspell:ignore FEDC
       '[FEDC:BA98:7654:3210:FEDC:BA98:7654:3210]:80/index.html',
     ];
 
@@ -478,43 +479,6 @@ class UrlHelperTest extends TestCase {
   }
 
   /**
-   * Tests dangerous url protocol filtering.
-   *
-   * @dataProvider providerTestStripDangerousProtocols
-   * @covers ::setAllowedProtocols
-   * @covers ::stripDangerousProtocols
-   *
-   * @param string $uri
-   *   Protocol URI.
-   * @param string $expected
-   *   Expected escaped value.
-   * @param array $protocols
-   *   Protocols to allow.
-   */
-  public function testStripDangerousProtocols($uri, $expected, $protocols) {
-    UrlHelper::setAllowedProtocols($protocols);
-    $stripped = UrlHelper::stripDangerousProtocols($uri);
-    $this->assertEquals($expected, $stripped);
-  }
-
-  /**
-   * Provides data for self::testStripDangerousProtocols().
-   *
-   * @return array
-   */
-  public static function providerTestStripDangerousProtocols() {
-    return [
-      ['javascript://example.com', '//example.com', ['http', 'https']],
-      // Test custom protocols.
-      ['http://example.com', '//example.com', ['https']],
-      // Valid protocol.
-      ['http://example.com', 'http://example.com', ['https', 'http']],
-      // Colon not part of the URL scheme.
-      ['/test:8888', '/test:8888', ['http']],
-    ];
-  }
-
-  /**
    * Tests subdirectories filtering.
    */
   public function testStripSubdirectories() {
@@ -553,7 +517,44 @@ class UrlHelperTest extends TestCase {
   }
 
   /**
-   * Enhances test urls with schemes
+   * Tests dangerous url protocol filtering.
+   *
+   * @dataProvider providerTestStripDangerousProtocols
+   * @covers ::setAllowedProtocols
+   * @covers ::stripDangerousProtocols
+   *
+   * @param string $uri
+   *   Protocol URI.
+   * @param string $expected
+   *   Expected escaped value.
+   * @param array $protocols
+   *   Protocols to allow.
+   */
+  public function testStripDangerousProtocols($uri, $expected, $protocols) {
+    UrlHelper::setAllowedProtocols($protocols);
+    $stripped = UrlHelper::stripDangerousProtocols($uri);
+    $this->assertEquals($expected, $stripped);
+  }
+
+  /**
+   * Provides data for self::testStripDangerousProtocols().
+   *
+   * @return array
+   */
+  public static function providerTestStripDangerousProtocols() {
+    return [
+      ['javascript://example.com', '//example.com', ['http', 'https']],
+      // Test custom protocols.
+      ['http://example.com', '//example.com', ['https']],
+      // Valid protocol.
+      ['http://example.com', 'http://example.com', ['https', 'http']],
+      // Colon not part of the URL scheme.
+      ['/test:8888', '/test:8888', ['http']],
+    ];
+  }
+
+  /**
+   * Enhances test urls with schemes.
    *
    * @param array $urls
    *   The list of urls.
@@ -593,7 +594,7 @@ class UrlHelperTest extends TestCase {
   }
 
   /**
-   * Test detecting external urls that point to local resources.
+   * Tests detecting external urls that point to local resources.
    *
    * @param string $url
    *   The external url to test.
@@ -648,7 +649,7 @@ class UrlHelperTest extends TestCase {
   }
 
   /**
-   * Test invalid url arguments.
+   * Tests invalid url arguments.
    *
    * @param string $url
    *   The url to test.

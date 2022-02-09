@@ -30,8 +30,9 @@
     "composer/installers": "~1.0 || ~2.0",
     "oomphinc/composer-installers-extender": "~1.0 || ~2.0",
     "cweagans/composer-patches": "~1.0",
-    "drupal/core": "^8.8.0 || ~9.0.0",
-    "drupal/varbase_media": "~7.0",
+    "drupal/core": "~9.0",
+    "vardot/entity-definition-update-manager": "~1.0",
+    "drupal/varbase_media": "~9.0.0 || 9.0.x-dev",
     "drupal/paragraphs": "1.12",
     "drupal/paragraphs_previewer": "1.5",
     "drupal/paragraphs_edit": "~2.0",
@@ -39,13 +40,10 @@
     "drupal/webform": "~6.0",
     "drupal/field_group": "~3.0",
     "drupal/advanced_text_formatter": "~2.0",
-    "drupal/maxlength": "~1",
+    "drupal/maxlength": "~2",
     "drupal/entity_usage": "~2.0"
   },
   "extra": {
-    "branch-alias": {
-      "dev-8.x-7.x": "8.7.x-dev"
-    },
     "enable-patching": true,
     "composer-exit-on-patch-failure": true,
     "patches": {
@@ -53,7 +51,7 @@
         "Issue #2924774: Let Editors add/delete/clone paragraphs When [Editing a translation]":
         "https://www.drupal.org/files/issues/2018-06-03/2924774-29.patch",
         "Issue #3138609: Fixe Field group support broken":
-        "https://www.drupal.org/files/issues/2020-05-25/3138609-9.patch"
+        "https://www.drupal.org/files/issues/2020-06-03/3138609-24.patch"
       },
       "drupal/paragraphs_previewer": {
         "Issue #2904917: Make paragraph previewer work with new UI/UX improvement patch":

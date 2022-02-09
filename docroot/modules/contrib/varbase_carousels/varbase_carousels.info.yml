@@ -1,8 +1,8 @@
-name: 'Varbase Carousels'
-description: 'This feature provides the base implementation for the carousels in your website. Admins will be able to create carousels on the spot and place it anywhere in the site.'
+name: "Varbase Carousels"
+description: "This feature provides the base implementation for the carousels in your website. Admins will be able to create carousels on the spot and place it anywhere in the site."
 type: module
-package: 'Varbase Blocks'
-core_version_requirement: ^8 || ^9
+package: "Varbase Blocks"
+core_version_requirement: ^9
 dependencies:
   - drupal:block
   - drupal:block_content
@@ -16,7 +16,7 @@ dependencies:
   - varbase_media:varbase_media
   - slick:slick
 
-# Information added by Drupal.org packaging script on 2020-12-01
-version: '8.x-7.7'
+# Information added by Drupal.org packaging script on 2022-01-12
+version: '9.0.2'
 project: 'varbase_carousels'
-datestamp: 1606835802
+datestamp: 1641993257

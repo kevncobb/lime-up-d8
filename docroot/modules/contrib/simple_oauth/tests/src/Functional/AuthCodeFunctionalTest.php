@@ -80,13 +80,17 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
   }
 
   /**
-   * Test the valid AuthCode grant.
+   * Test the valid AuthCode grant with a public client.
    */
-  public function testAuthCodeGrant() {
+  public function testPublicAuthCodeGrant() {
+    $this->client->set('confidential', FALSE)->save();
     $valid_params = [
       'response_type' => 'code',
       'client_id' => $this->client->uuid(),
-      'client_secret' => $this->clientSecret,
+      // Not sending a client secret.
+      'redirect_uri' => Url::fromRoute('oauth2_token.test_token', [], [
+        'absolute' => TRUE,
+      ])->toString(),
     ];
     // 1. Anonymous request invites the user to log in.
     $this->drupalGet($this->authorizeUrl->toString(), [
@@ -102,7 +106,7 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
     ]);
     $this->assertGrantForm();
 
-    // 3. Grant access by submitting the form and get the token back.
+    // 3. Grant access by submitting the form and get the code back.
     $this->drupalPostForm($this->authorizeUrl, [], 'Grant', [
       'query' => $valid_params,
     ]);
@@ -110,8 +114,12 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
     $code = $this->getAndValidateCodeFromResponse();
 
     // 4. Send the code to get the access token.
-    $response = $this->postGrantedCodeWithScopes($code, $this->scope);
+    $response = $this->postGrantedCodeWithScopes($code, $this->scope, FALSE);
     $this->assertValidTokenResponse($response, TRUE);
+
+    // 5. Ensure codes cannot be re-used.
+    $response = $this->postGrantedCodeWithScopes($code, $this->scope, FALSE);
+    $this->assertEquals(400, $response->getStatusCode());
   }
 
   /**
@@ -124,7 +132,9 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
     $valid_params = [
       'response_type' => 'code',
       'client_id' => $this->client->uuid(),
-      'client_secret' => $this->clientSecret,
+      'redirect_uri' => Url::fromRoute('oauth2_token.test_token', [], [
+        'absolute' => TRUE,
+      ])->toString(),
     ];
     // 1. Anonymous request invites the user to log in.
     $this->drupalGet($this->authorizeUrl->toString(), [
@@ -158,7 +168,9 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
     $valid_params = [
       'response_type' => 'code',
       'client_id' => $this->client->uuid(),
-      'client_secret' => $this->clientSecret,
+      'redirect_uri' => Url::fromRoute('oauth2_token.test_token', [], [
+        'absolute' => TRUE,
+      ])->toString(),
     ];
     // 1. Anonymous request invites the user to log in.
     $this->drupalGet($this->authorizeUrl->toString(), [
@@ -256,6 +268,9 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
       'client_id' => $this->client->uuid(),
       'code_challenge' => $code_challenge,
       'code_challenge_method' => 'S256',
+      'redirect_uri' => Url::fromRoute('oauth2_token.test_token', [], [
+        'absolute' => TRUE,
+      ])->toString(),
     ];
 
     // 1. Anonymous request redirect to log in.
@@ -330,19 +345,23 @@ class AuthCodeFunctionalTest extends TokenBearerFunctionalTestBase {
    *   The granted code.
    * @param string $scopes
    *   The list of scopes to request access to.
+   * @param bool $send_secret
+   *   Whether to send the client secret.
    *
    * @return \Psr\Http\Message\ResponseInterface
    *   The response.
    */
-  protected function postGrantedCodeWithScopes($code, $scopes) {
+  protected function postGrantedCodeWithScopes($code, $scopes, $send_secret = TRUE) {
     $valid_payload = [
       'grant_type' => 'authorization_code',
       'client_id' => $this->client->uuid(),
-      'client_secret' => $this->clientSecret,
       'code' => $code,
       'scope' => $scopes,
       'redirect_uri' => $this->redirectUri,
     ];
+    if ($send_secret) {
+      $valid_payload['client_secret'] = $this->clientSecret;
+    }
     return $this->post($this->url, $valid_payload);
   }
 

@@ -1,8 +1,8 @@
-name: 'Varbase Media'
-description: 'Manages type of media contents and entity browsers in the site.'
+name: "Varbase Media"
+description: "Manages type of media contents and entity browsers in the site."
 type: module
 package: Varbase
-core_version_requirement: ^8 || ^9
+core_version_requirement: ^9
 configure: varbase_media.settings
 components:
   - entity_browser_generic_embed
@@ -36,6 +36,7 @@ dependencies:
   - focal_point:focal_point
   - views_infinite_scroll:views_infinite_scroll
 install:
+  - media_bulk_upload
   - media_library_edit
   - media_revisions_ui
   - views_bulk_operations
@@ -44,7 +45,7 @@ install:
   - slick
   - webp
 
-# Information added by Drupal.org packaging script on 2021-10-24
-version: '8.x-7.42'
+# Information added by Drupal.org packaging script on 2022-01-23
+version: '9.0.7'
 project: 'varbase_media'
-datestamp: 1635094657
+datestamp: 1642946441

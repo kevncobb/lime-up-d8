@@ -15,7 +15,6 @@ use Drupal\Core\File\FileSystemInterface;
 use Drupal\Core\File\Exception\FileException;
 use Drupal\field\Entity\FieldConfig;
 use Drupal\field\Entity\FieldStorageConfig;
-use Drupal\varbase\Entity\VarbaseEntityDefinitionUpdateManager;
 
 /**
  * Implements hook_install().
@@ -477,34 +476,20 @@ function _varbase_media_slick_media_fix_dependencies($dependency_type, $dependen
  *  and uninstall.
  */
 function varbase_media_update_8708() {
-
+  // The Slick module had released the update.
+  // It is doing the same update process in the Slick module.
+  // --------------------------------------------------------
   // Move all module dependencies on existing config entities from
   // "slick_media" to "slick".
-  _varbase_media_slick_media_fix_dependencies('module', 'slick_media', function ($module) {
-    return $module === 'slick_media' ? 'slick' : $module;
-  });
-
-  // Fix the update process to uninstall.
-  $query = \Drupal::database()->delete('key_value')
-    ->condition('collection', 'system.schema')
-    ->condition('name', 'slick_media')
-    ->execute();
-
-  if (isset($query)) {
-    // Entity updates to clear up any mismatched entity and/or field definitions
-    // And Fix changes were detected in the entity type and field definitions.
-    \Drupal::classResolver()
-      ->getInstanceFromDefinition(VarbaseEntityDefinitionUpdateManager::class)
-      ->applyUpdates();
-  }
-
+  // Entity updates to clear up any mismatched entity and/or field definitions
+  // And Fix changes were detected in the entity type and field definitions.
 }
 
 /**
  * Issue #3171237: Fix deprecated function getCurrentUserId.
  *
  * Replaced by getDefaultEntityOwner in all
- *  core.base_field_override.media.MEDIA_TYPES.uid
+ *  core.base_field_override.media.MEDIA_TYPES.uid.
  */
 function varbase_media_update_8709() {
   $config_factory = \Drupal::service('config.factory');
@@ -530,8 +515,43 @@ function varbase_media_update_8709() {
 /**
  * Issue #3192175: Add WebP module ~1.0 and enable by default.
  */
-function varbase_media_update_8710() {
+function varbase_media_update_9001() {
   if (!\Drupal::moduleHandler()->moduleExists('webp')) {
     \Drupal::service('module_installer')->install(['webp'], FALSE);
+  }
+}
+
+/**
+ * Issue #3206185: Add Media Bulk Upload module.
+ */
+function varbase_media_update_9002() {
+  if (!\Drupal::moduleHandler()->moduleExists('media_bulk_upload')) {
+    // Enable Media upload module.
+    \Drupal::service('module_installer')->install(['media_bulk_upload'], FALSE);
+
+    $module_path = Drupal::service('module_handler')->getModule('varbase_media')->getPath();
+    $optional_install_path = $module_path . '/' . InstallStorage::CONFIG_OPTIONAL_DIRECTORY;
+
+    // List of media bulk upload configs needed for Varbase media.
+    $media_bulk_upload_configs = [
+      'core.entity_form_mode.media.bulk_upload',
+      'core.entity_form_display.media.audio.bulk_upload',
+      'core.entity_form_display.media.file.bulk_upload',
+      'core.entity_form_display.media.image.bulk_upload',
+      'core.entity_form_display.media.video.bulk_upload',
+      'media_bulk_upload.media_bulk_config.media_bulk_upload',
+    ];
+
+    // Import list of needed configs for Meida Build Upload.
+    foreach ($media_bulk_upload_configs as $media_bulk_upload_config) {
+      $media_config_path = $optional_install_path . '/' . $media_bulk_upload_config . '.yml';
+
+      if (file_exists($media_config_path)) {
+        $media_config_content = file_get_contents($media_config_path);
+        $media_config_data = (array) Yaml::parse($media_config_content);
+        $media_config_factory = \Drupal::configFactory()->getEditable($media_bulk_upload_config);
+        $media_config_factory->setData($media_config_data)->save(TRUE);
+      }
+    }
   }
 }

@@ -9,7 +9,7 @@ dependencies:
   - schemata:schemata
   - schemata:schemata_json_schema
 
-# Information added by Drupal.org packaging script on 2020-10-22
-version: '8.x-2.0'
+# Information added by Drupal.org packaging script on 2021-09-19
+version: '3.0.2'
 project: 'openapi_jsonapi'
-datestamp: 1603342691
+datestamp: 1632062732

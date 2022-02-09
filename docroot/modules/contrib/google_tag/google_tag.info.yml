@@ -5,7 +5,7 @@ package: 'Statistics'
 core_version_requirement: ^8.8 || ^9
 configure: google_tag.settings_form
 
-# Information added by Drupal.org packaging script on 2020-06-18
-version: '8.x-1.4+8-dev'
+# Information added by Drupal.org packaging script on 2020-06-05
+version: '8.x-1.4'
 project: 'google_tag'
-datestamp: 1592512628
+datestamp: 1591383266

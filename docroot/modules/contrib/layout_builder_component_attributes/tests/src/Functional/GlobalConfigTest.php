@@ -108,21 +108,21 @@ class GlobalConfigTest extends BrowserTestBase {
     // Verify storage in config.
     $allowed_block_attributes = $config->get('allowed_block_attributes');
     $expected_value = [
+      'id' => FALSE,
       'class' => TRUE,
       'style' => TRUE,
       'data' => TRUE,
-      'id' => FALSE,
     ];
-    $this->assertIdentical($allowed_block_attributes, $expected_value);
+    $this->assertSame($allowed_block_attributes, $expected_value);
 
     $allowed_block_title_attributes = $config->get('allowed_block_title_attributes');
     $expected_value = [
       'id' => TRUE,
+      'class' => FALSE,
       'style' => TRUE,
       'data' => TRUE,
-      'class' => FALSE,
     ];
-    $this->assertIdentical($allowed_block_title_attributes, $expected_value);
+    $this->assertSame($allowed_block_title_attributes, $expected_value);
 
     $allowed_block_content_attributes = $config->get('allowed_block_content_attributes');
     $expected_value = [
@@ -131,7 +131,7 @@ class GlobalConfigTest extends BrowserTestBase {
       'style' => FALSE,
       'data' => FALSE,
     ];
-    $this->assertIdentical($allowed_block_content_attributes, $expected_value);
+    $this->assertSame($allowed_block_content_attributes, $expected_value);
 
     // Reload settings page to verify no warnings, etc. are thrown.
     $this->drupalGet('/admin/config/content/layout-builder-component-attributes');

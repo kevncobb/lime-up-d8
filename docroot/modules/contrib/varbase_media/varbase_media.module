@@ -208,32 +208,6 @@ function varbase_media_theme_suggestions_media_oembed_iframe_alter(&$suggestions
 }
 
 /**
- * Implements hook_page_attachments_alter().
- */
-function varbase_media_page_attachments_alter(array &$attachments) {
-
-  // Attached the varbase media common library.
-  $attachments['#attached']['library'][] = 'varbase_media/common';
-
-  if (!(\Drupal::currentUser()->isAnonymous())) {
-    // Attached the varbase media common logged in users library.
-    $attachments['#attached']['library'][] = 'varbase_media/common_logged';
-  }
-
-  if (Drupal::service('module_handler')->moduleExists('blazy')) {
-    // Attach the Blazy load library.
-    $attachments['#attached']['library'][] = 'blazy/load';
-
-    // Add the Varbase Media Blazy Blurry behaviour.
-    $use_blazy_blurry = \Drupal::config('varbase_media.settings')->get('use_blazy_blurry');
-    if (isset($use_blazy_blurry) && $use_blazy_blurry === TRUE) {
-      $attachments['#attached']['library'][] = 'varbase_media/blazy_blurry';
-    }
-  }
-
-}
-
-/**
  * Implements hook_ckeditor_css_alter().
  */
 function varbase_media_ckeditor_css_alter(array &$css, Editor $editor) {
@@ -386,8 +360,8 @@ function varbase_media_form_entity_embed_dialog_alter(&$form, FormStateInterface
     // No revision information or revision log message.
     if (isset($form['revision_information'])) {
       $form['revision_information']['#disabled'] = TRUE;
-      $form['revision_information']['#attributes']['style'][] = 'display:none;';
-      $form['revision_information']['#prefix'] = '<div style="display:none;">';
+      $form['revision_information']['#attributes']['style'][] = 'display: none;';
+      $form['revision_information']['#prefix'] = '<div style="display: none;">';
       $form['revision_information']['#suffix'] = '</div>';
     }
 
@@ -395,13 +369,13 @@ function varbase_media_form_entity_embed_dialog_alter(&$form, FormStateInterface
     if (isset($form['revision'])) {
       $form['revision']['#default_value'] = TRUE;
       $form['revision']['#disabled'] = TRUE;
-      $form['revision']['#attributes']['style'][] = 'display:none;';
+      $form['revision']['#attributes']['style'][] = 'display: none;';
     }
 
     // Hide revistion log message.
     if (isset($form['revision_log_message'])) {
       $form['revision_log_message']['#disabled'] = TRUE;
-      $form['revision_log_message']['#attributes']['style'][] = 'display:none;';
+      $form['revision_log_message']['#attributes']['style'][] = 'display: none;';
     }
   }
 }
@@ -415,7 +389,7 @@ function varbase_media_inline_entity_form_entity_form_alter(&$entity_form, &$for
   if (isset($entity_form['revision_information'])) {
     $entity_form['revision_information']['#disabled'] = TRUE;
     $entity_form['revision_information']['#attributes']['style'][] = 'display:none;';
-    $entity_form['revision_information']['#prefix'] = '<div style="display:none;">';
+    $entity_form['revision_information']['#prefix'] = '<div style="display: none;">';
     $entity_form['revision_information']['#suffix'] = '</div>';
   }
 
@@ -423,13 +397,13 @@ function varbase_media_inline_entity_form_entity_form_alter(&$entity_form, &$for
   if (isset($entity_form['revision'])) {
     $entity_form['revision']['#default_value'] = TRUE;
     $entity_form['revision']['#disabled'] = TRUE;
-    $entity_form['revision']['#attributes']['style'][] = 'display:none;';
+    $entity_form['revision']['#attributes']['style'][] = 'display: none;';
   }
 
   // Hide revistion log message.
   if (isset($entity_form['revision_log_message'])) {
     $entity_form['revision_log_message']['#disabled'] = TRUE;
-    $entity_form['revision_log_message']['#attributes']['style'][] = 'display:none;';
+    $entity_form['revision_log_message']['#attributes']['style'][] = 'display: none;';
   }
 }
 
@@ -458,21 +432,21 @@ function varbase_media_entity_view_alter(array &$build, EntityInterface $entity,
     && $build['#view_mode'] != 'field_preview') {
 
     // Attached the varbase media common library.
-    $page['#attached']['library'][] = 'varbase_media/common';
+    $build['#attached']['library'][] = 'varbase_media/common';
 
     if (!(\Drupal::currentUser()->isAnonymous())) {
       // Attached the varbase media common logged in users library.
-      $page['#attached']['library'][] = 'varbase_media/common_logged';
+      $build['#attached']['library'][] = 'varbase_media/common_logged';
     }
 
     if (Drupal::service('module_handler')->moduleExists('blazy')) {
       // Attach the Blazy load library.
-      $page['#attached']['library'][] = 'blazy/load';
+      $build['#attached']['library'][] = 'blazy/load';
 
       // Add the Varbase Media Blazy Blurry behaviour.
       $use_blazy_blurry = \Drupal::config('varbase_media.settings')->get('use_blazy_blurry');
       if (isset($use_blazy_blurry) && $use_blazy_blurry === TRUE) {
-        $page['#attached']['library'][] = 'varbase_media/blazy_blurry';
+        $build['#attached']['library'][] = 'varbase_media/blazy_blurry';
       }
     }
 
@@ -539,7 +513,7 @@ function varbase_media_form_alter(&$form, &$form_state, $form_id) {
       if (isset($form['revision_information'])) {
         $form['revision_information']['#disabled'] = TRUE;
         $form['revision_information']['#attributes']['style'][] = 'display:none;';
-        $form['revision_information']['#prefix'] = '<div style="display:none;">';
+        $form['revision_information']['#prefix'] = '<div style="display: none;">';
         $form['revision_information']['#suffix'] = '</div>';
       }
 
@@ -547,13 +521,13 @@ function varbase_media_form_alter(&$form, &$form_state, $form_id) {
       if (isset($form['revision'])) {
         $form['revision']['#default_value'] = TRUE;
         $form['revision']['#disabled'] = TRUE;
-        $form['revision']['#attributes']['style'][] = 'display:none;';
+        $form['revision']['#attributes']['style'][] = 'display: none;';
       }
 
       // Hide revistion log message.
       if (isset($form['revision_log_message'])) {
         $form['revision_log_message']['#disabled'] = TRUE;
-        $form['revision_log_message']['#attributes']['style'][] = 'display:none;';
+        $form['revision_log_message']['#attributes']['style'][] = 'display: none;';
       }
     }
   }
@@ -634,6 +608,27 @@ function varbase_media_form_alter(&$form, &$form_state, $form_id) {
     }
   }
 
+  if ($form_id === 'media_bulk_upload_form') {
+    $form['#submit'][] = '_varbase_media_bulk_upload_form_submit_handler';
+  }
+
+}
+
+/**
+ * Varbase media bulk upload form submit handler.
+ *
+ * Redirect the user back to the Media page (/admin/content/media)
+ * after successful bulk upload.
+ */
+function _varbase_media_bulk_upload_form_submit_handler(&$form, &$form_state) {
+  if (\Drupal::moduleHandler()->moduleExists('media_library')) {
+    $media_library_grid_url = Url::fromRoute('view.media_library.page');
+    $form_state->setRedirectUrl($media_library_grid_url);
+  }
+  else {
+    $media_library_table_url = Url::fromRoute('entity.media.collection');
+    $form_state->setRedirectUrl($media_library_table_url);
+  }
 }
 
 /**

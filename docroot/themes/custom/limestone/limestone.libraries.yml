@@ -111,5 +111,5 @@ library-chat:
   version: 1.x
   header: true
   js:
-    https://libanswers.limestone.edu/load_chat.php?hash=3ae9316081b06c525ac5da9b910d025d: { type:external }
+    https://libanswers.limestone.edu/load_chat.php?hash=3ae9316081b06c525ac5da9b910d025d: { type: external }
 

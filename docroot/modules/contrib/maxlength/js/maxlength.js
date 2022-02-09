@@ -1,4 +1,4 @@
-(function($) {
+(function ($, Drupal) {
 
   // Make evrything local
   var ml = ml || {};
@@ -12,7 +12,7 @@
         ml.ckeditor();
       }
 
-      $context.find('.maxlength').not('.description').once('maxlength').each(function () {
+      $context.find('.maxlength').filter(':input').once('maxlength').each(function () {
         var options = {};
         var $this = $(this);
         options['counterText'] = $this.attr('maxlength_js_label');
@@ -274,6 +274,9 @@
     else if ($(this).next('div.grippie').length) {
       $(this).next('div.grippie').after(counterElement);
     }
+    else if ($(this).next('div.cke_chrome').length) {
+      $(this).next('div.cke_chrome').after(counterElement);
+    }
     else {
       $(this).after(counterElement);
     }
@@ -357,4 +360,4 @@
     }});
   }
 
-})(jQuery);
+})(jQuery, Drupal);

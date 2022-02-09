@@ -1,32 +1,10 @@
 <?php
 
+use Drupal\Core\Url;
+use Drupal\Core\Template\Attribute;
 use Drupal\Core\Link;
 
-/**
- * Implements theme_menu_local_tasks().
- */
-function zurb_foundation_menu_local_tasks(&$variables) {
-  $output = '';
 
-  if (!empty($variables['primary'])) {
-    $variables['primary']['#prefix'] = '<h2 class="visually-hidden">' . t('Primary tabs') . '</h2>';
-    $variables['primary']['#prefix'] .= '<div class="button-group">';
-    $variables['primary']['#suffix'] = '</div>';
-    $output .= \Drupal::service('renderer')->render($variables['primary']);
-  }
-  if (!empty($variables['secondary'])) {
-    $variables['secondary']['#prefix'] = '<h2 class="visually-hidden">' . t('Secondary tabs') . '</h2>';
-    $variables['secondary']['#prefix'] .= '<div class="button-group">';
-    $variables['secondary']['#suffix'] = '</div>';
-    $output .= \Drupal::service('renderer')->render($variables['secondary']);
-  }
-
-  return $output;
-}
-
-/**
- * Implements theme_preprocess_menu_local_task().
- */
 function zurb_foundation_preprocess_menu_local_task(&$variables) {
   $link = $variables['element']['#link'];
   $link_text = [
@@ -77,7 +55,7 @@ function zurb_foundation_preprocess_menu(&$variables) {
  */
 function zurb_foundation_preprocess_menu__main(&$variables) {
   if ($variables['top_bar'] = theme_get_setting('zurb_foundation_top_bar_enable')) {
-    $top_bar_attributes = new \Drupal\Core\Template\Attribute();
+    $top_bar_attributes = new Attribute();
 
     if (theme_get_setting('zurb_foundation_top_bar_grid')) {
       $top_bar_attributes->addClass('row column');
@@ -116,7 +94,7 @@ function zurb_foundation_preprocess_menu__main(&$variables) {
     // Format the linked site name.
     $site_name = \Drupal::config('system.site')->get('name');
     $title = strip_tags($site_name) . ' ' . t('Home');
-    $url = \Drupal\Core\Url::fromRoute('<front>');
+    $url = Url::fromRoute('<front>');
     $url->setOption('attributes', ['title' => $title]);
 
     $variables['linked_site_name'] = '';
